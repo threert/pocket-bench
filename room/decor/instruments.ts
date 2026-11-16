@@ -447,27 +447,28 @@ function buildScope(shop: Workshop, at: V3): MeshStandardMaterial {
   p.box([8, 0.3, 12], [jack[0], jack[1] + 6.05, jack[2] + 30], "yellow");
   p.lathe([[4.2, 0], [3.6, 5], [2.4, 14], [0, 14]], [jack[0], jack[1], jack[2] + 43], { rubber: "slate" }, "z", { sides: 12 });
   const world = (v: V3): V3 => [at[0] + v[0] * mm, at[1] + v[1] * mm, at[2] + v[2] * mm];
-  const start = world([jack[0], jack[1], jack[2] + 56]), y = SHELF + 0.0017;
+  const start = world([jack[0], jack[1], jack[2] + 56]), y = SHELF + 0.0021;
   const cx = at[0] - 0.221, cz = at[2] - 0.006;     // the coil's centre, left of the scope
   const lead: V3[] = [
     [start[0], start[1], start[2] - 0.006], start, [start[0] - 0.001, start[1] - 0.004, start[2] + 0.012], [start[0] - 0.004, y + 0.008, start[2] + 0.024],
     [start[0] - 0.014, y, start[2] + 0.031], [start[0] - 0.05, y, start[2] + 0.028], [start[0] - 0.11, y, start[2] + 0.02], [start[0] - 0.17, y, start[2] + 0.024],
     [cx + 0.03, y, cz + 0.058],
     ...coilPoints(cx, cz, 0.042, 2.75, Math.PI / 2, y, 0.0024, 0.006),
-    [cx + 0.049, y + 0.006, cz + 0.026], [cx + 0.058, y + 0.0045, cz + 0.043], [cx + 0.07, y + 0.004, cz + 0.047],
+    [cx + 0.049, y + 0.007, cz + 0.026], [cx + 0.058, y + 0.006, cz + 0.043], [cx + 0.07, y + 0.0056, cz + 0.047],
   ];
   const cable = new Part(shop, "scope-probe", shop.kit.group("scope-probe", [0, 0, 0]));
   cable.put(null, () => tube(curve(lead, 4), 0.0016, 6), { rubber: "slate" }, [0, 0, 0]);
   // The probe lies along X in front of the scope, tip to the right.
-  const probe = shop.part("scope-probe", [cx + 0.07, SHELF + 0.0058, cz + 0.047]);
-  probe.lathe([[2.2, 0], [4.4, 14], [4.4, 14], [5.6, 15], [5.6, 62], [5.9, 62], [5.9, 66], [5.6, 66], [5.6, 72], [3.2, 90], [3.2, 90], [2.9, 112], [1.6, 114], [0.5, 114], [0.5, 121], [0, 121]], [0, 0, 0], "grey", "x", { sides: 16 });
-  probe.cyl(5.95, 4, [64, 0, 0], "yellow", "x", { sides: 16 });
+  const probe = shop.part("scope-probe", [cx + 0.07, SHELF + 0.0077, cz + 0.047]);
+  probe.lathe([[2.2, 0], [2.6, 5], [3.4, 13], [3.4, 13], [5.0, 14.5], [5.6, 17], [5.6, 60], [5.6, 60], [7.4, 62], [7.6, 63.2], [7.4, 64.4], [5.4, 66.5], [5.2, 72], [3.3, 90]], [0, 0, 0], "grey", "x", { sides: 20 });
+  for (let i = 0; i < 5; i++) probe.cyl(5.75, 1.1, [26 + i * 3.2, 0, 0], "slate", "x", { sides: 20 });
+  probe.cyl(5.75, 4, [52, 0, 0], "yellow", "x", { sides: 20 });
   probe.lathe([[3.25, 0], [3.25, 22], [2.95, 24.2]], [90, 0, 0], "black", "x", { sides: 16 });
   probe.cyl(0.55, 7, [117.5, 0, 0], shop.metal, "x", { sides: 8 });
   // Its ground lead: a short wire from the probe's collar to a small clip.
-  probe.cyl(6.3, 3, [76, 0, 0], "black", "x", { sides: 16 });
-  probe.tube([[76, 3, 5], [78, 1.2, 12], [86, -4.6, 20], [100, -4.9, 24], [116, -4.9, 20], [128, -4.9, 21]], 0.9, { rubber: "black" }, { sides: 5, steps: 4 });
-  const clip = probe.group([128, -4.9, 21]);
+  probe.cyl(5.4, 3, [76, 0, 0], "black", "x", { sides: 16 });
+  probe.tube([[76, 3, 5], [78, 0.5, 12], [86, -6.3, 20], [100, -6.8, 24], [116, -6.8, 20], [128, -6.8, 21]], 0.9, { rubber: "black" }, { sides: 5, steps: 4 });
+  const clip = probe.group([128, -6.8, 21]);
   clip.rotation.y = -0.05;
   probe.soft([20, 5, 6], 2, [9, 1.6, 0], { rubber: "black" }, { parent: clip, seg: 2 });
   for (const side of [-1, 1]) {
@@ -508,7 +509,7 @@ function buildSupply(shop: Workshop, at: V3): MeshStandardMaterial {
   const posts: [number, Tone][] = [[68, "black"], [87, "green"], [106, "red"]];
   for (const [px, tone] of posts) p.post(panel.at(px, 122), tone);
   const leads = new Part(shop, "psu-leads", shop.kit.group("psu-leads", [0, 0, 0]));
-  const y = TABLE + 0.0019;
+  const y = TABLE + 0.0023;
   for (const [px, tone, sag, end] of [[68, "black", 0, -0.705], [106, "red", 0.012, -0.688]] as const) {
     const [x, py, z] = panel.at(px, 122);
     // A stacking plug: its body on the post's axis, the cable leaving downward.
@@ -516,8 +517,8 @@ function buildSupply(shop: Workshop, at: V3): MeshStandardMaterial {
     p.cyl(3.4, 9, [x, py - 7.5, z + 25], tone, "y", { sides: 12, top: 4.2 });
     const wx = at[0] + x * mm, wy = at[1] + (py - 12) * mm, wz = at[2] + (z + 25) * mm, drift = tone === "red" ? 0.007 : 0.004;
     const path: V3[] = [
-      [wx, wy + 0.01, wz], [wx, wy, wz], [wx - drift * 0.2, wy - 0.05, wz + 0.003], [wx + drift * 0.5, TABLE + 0.15, wz - 0.002 + sag * 0.5], [wx + drift * 1.4, TABLE + 0.05, wz - 0.016 + sag],
-      [wx + drift * 1.8, y + 0.003, wz - 0.05 + sag], [wx + drift * 1.2, y, wz - 0.1], [wx + drift * 1.9, y, wz - 0.165], [wx + drift * 0.9, y + 0.0028, end + 0.034], [wx + drift * 0.9, y + 0.0028, end + 0.02],
+      [wx, wy + 0.01, wz], [wx, wy, wz], [wx - drift * 0.5, wy - 0.045, wz + 0.004], [wx - drift * 1.2, TABLE + 0.17, wz + 0.002 + sag * 0.4], [wx + drift * 0.6, TABLE + 0.085, wz - 0.006 + sag * 0.8],
+      [wx + drift * 2.2, TABLE + 0.03, wz - 0.022 + sag], [wx + drift * 2.6, y + 0.002, wz - 0.052 + sag], [wx + drift * 1.2, y, wz - 0.1], [wx + drift * 2.1, y, wz - 0.165], [wx + drift * 0.9, y + 0.0028, end + 0.034], [wx + drift * 0.9, y + 0.0028, end + 0.02],
     ];
     leads.put(null, () => tube(curve(path.slice(1), 5), 0.0019, 6), { rubber: tone }, [0, 0, 0]);
     // The free end: a 4 mm plug lying behind the riser's post.
@@ -729,7 +730,7 @@ function buildStation(shop: Workshop, at: V3, holderAt: V3): MeshStandardMateria
   // The cable: from the plug along the bench, then up to the handle.
   const c = Math.cos(elevation), s = Math.sin(elevation);
   const end: V3 = [holderAt[0], holderAt[1] + (tip[1] + s * 193) * mm, holderAt[2] + (tip[2] + c * 193) * mm];
-  const from: V3 = [at[0] + (socket[0] + 20) * mm, at[1] + socket[1] * mm, at[2] + (socket[2] + 12) * mm], y = TABLE + 0.0024;
+  const from: V3 = [at[0] + (socket[0] + 20) * mm, at[1] + socket[1] * mm, at[2] + (socket[2] + 12) * mm], y = TABLE + 0.0029;
   const path: V3[] = [
     [from[0] - 0.01, from[1], from[2]], from, [from[0] + 0.012, from[1] - 0.004, from[2] + 0.002], [from[0] + 0.03, y + 0.004, from[2] + 0.006], [from[0] + 0.05, y, from[2] + 0.009],
     [from[0] + 0.085, y, from[2] + 0.008], [end[0] - 0.075, y, end[2] + 0.012], [end[0] - 0.058, y + 0.012, end[2] + 0.018], [end[0] - 0.046, y + 0.07, end[2] + 0.021],
@@ -765,7 +766,7 @@ function buildHandheld(shop: Workshop, at: V3, yaw: number): void {
 
 function buildLeads(shop: Workshop, cx: number, cz: number): void {
   const p = new Part(shop, "dmm-leads", shop.kit.group("dmm-leads", [0, 0, 0]));
-  const y = TABLE + 0.0018;
+  const y = TABLE + 0.0022;
   for (const [tone, R, dy, dz, plugX, plugZ, turn, probeZ] of [["red", 0.041, 0, 0, -0.047, 0.088, 1.25, -0.047], ["black", 0.036, 0.0036, 0.002, -0.024, 0.104, 1.0, -0.031]] as const) {
     const z0 = cz + dz, probe: V3 = [cx + 0.062, TABLE + 0.0064, cz + probeZ];
     // The plug: right-angled, lying on the bench; the cable leaves along its +X.
@@ -836,11 +837,11 @@ export function buildInstruments(scene: Scene): InstrumentHandles {
   // The riser, left to right. Each instrument's place is the middle of its front, on the shelf.
   const scopeScreen = buildScope(shop, [-0.624, SHELF, -0.595]);
   buildSolder(shop, [-0.408, SHELF, -0.565]);
-  const psuDisplay = buildSupply(shop, [-0.28, SHELF, -0.492]);
-  const dmmDisplay = buildMeter(shop, [-0.055, SHELF, -0.496]);
-  buildPartsBox(shop, [-0.07, SHELF + 0.095, -0.63]);
+  const psuDisplay = buildSupply(shop, [-0.28, SHELF, -0.5]);
+  const dmmDisplay = buildMeter(shop, [-0.055, SHELF, -0.506]);
+  buildPartsBox(shop, [-0.07, SHELF + 0.095, -0.64]);
   buildJumpers(shop, [0.152, SHELF, -0.578]);
-  buildGenerator(shop, [0.412, SHELF, -0.495]);
+  buildGenerator(shop, [0.412, SHELF, -0.505]);
   // The bench's back corners.
   const stationDisplay = buildStation(shop, [0.64, TABLE, -0.374], [0.82, TABLE, -0.445]);
   buildHandheld(shop, [-0.855, TABLE, -0.395], 0.1);
