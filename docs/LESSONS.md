@@ -13,8 +13,7 @@ in turn and decides by itself, from the live bench, when a step is done.
 
 The ten: `hello` 你好，Tab5 · `weather` 桌面气象站 (env3) · `radar` 倒车雷达 (sonic) · `mixer` 调光台 (angle8) · `door`
 门禁打卡 (rfid2, relay4) · `lamp` 智能台灯 (dlight, relay4) · `scale` 厨房秤 (scales) · `game` 摇杆小游戏 (joystick2) ·
-`thermo` 测温枪 (ncir) · `timer` 番茄钟 (encoder). `hello` and `weather` have solutions; the other eight have
-their texts and checks and wait for one.
+`thermo` 测温枪 (ncir) · `timer` 番茄钟 (encoder). All ten have a reference solution and a playthrough test.
 
 ## What the app sees
 

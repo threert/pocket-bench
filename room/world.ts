@@ -89,6 +89,7 @@ export class World {
   // The Tab5 in the hand: how far it is leaned from its rest, and how fast that changes.
   private lean = { pitch: 0, roll: 0, wantPitch: 0, wantRoll: 0, vPitch: 0, vRoll: 0, held: false, sent: "", cable: "" };
   private trace: string[] = [];
+  private sensed: Record<string, unknown> = {};
   private note(text: string): void { this.trace.push(`${this.time.toFixed(2)} ${text}`); if (this.trace.length > 12) this.trace.shift(); }
 
   constructor(private readonly parts: RoomParts, private readonly post: Post) {
@@ -274,7 +275,7 @@ export class World {
         put("screen", this.tab5Point(PANEL.at));
         put("screen:tl", this.tab5Point([PANEL.at[0] - PANEL.width / 2, PANEL.height / 2, PANEL.at[2]]));
         put("screen:br", this.tab5Point([PANEL.at[0] + PANEL.width / 2, -PANEL.height / 2, PANEL.at[2]]));
-        this.post({ t: "ui.probe", trace: this.trace, points, view: this.view, where: Object.fromEntries([...this.units.values()].map(unit => [unit.model.spec.id, unit.where])) });
+        this.post({ t: "ui.probe", sensed: this.sensed, trace: this.trace, points, view: this.view, where: Object.fromEntries([...this.units.values()].map(unit => [unit.model.spec.id, unit.where])) });
         break;
       }
     }
@@ -812,9 +813,12 @@ export class World {
           for (const state of this.propStates) {
             if (this.carried?.kind === "prop" && this.carried.state === state) continue;
             const p = state.prop;
-            const t = rayBox(origin, dir, p.root, [0, p.half[1], 0], [p.half[0] + 0.012, p.half[1] + 0.02, p.half[2]]);
+            // Neither sensor looks along a line: the thermopile sees a wide cone, the ultrasonic beam a narrower one.
+            const spread = unit.model.spec.id === "ncir" ? 0.06 : 0.035;
+            const t = rayBox(origin, dir, p.root, [0, p.half[1], 0], [p.half[0] + spread, p.half[1] + 0.02, p.half[2]]);
             if (t !== null && t < nearest) { nearest = t; celsius = p.id === "dryer" && p.on ? 86 : p.celsius; }
           }
+          this.sensed[unit.model.spec.id] = { face, nearest: Math.round(nearest * 1000), celsius, mug: this.propStates.find(state => state.prop.id === "mug")!.pose.at };
           if (unit.model.spec.id === "sonic") unit.values.millimetres = Math.round(nearest * 1000);
           else { unit.values.objectCelsius = celsius; unit.values.ambientCelsius = AMBIENT.celsius + 1.2; }
           break;
