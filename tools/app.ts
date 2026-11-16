@@ -5,6 +5,10 @@ import { join, resolve } from "node:path";
 
 const root = resolve(import.meta.dir, "..");
 const args = process.argv.slice(2);
+// Printed surfaces first: the room's textures are files.
+await $`${process.execPath} tools/unit-art.ts`.cwd(root).quiet();
+await $`${process.execPath} tools/quest-art.ts`.cwd(root).quiet();
+await $`${process.execPath} tools/art.ts`.cwd(root);
 await $`${process.execPath} tools/room.ts`.cwd(root);
 if (!args.includes("--no-core")) await $`cargo build --release`.cwd(join(root, "core")).env({ ...process.env, PATH: `${process.env.HOME}/.cargo/bin:${process.env.PATH}` });
 await $`xcodegen generate --quiet`.cwd(join(root, "app"));

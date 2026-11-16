@@ -172,7 +172,12 @@ final class Model: ObservableObject {
         case "ui.view": view = post["name"] as? String ?? "bench"
         case "ui.lights": lightsOn = post["on"] as? Bool ?? true
         case "ui.toast": toast(post["text"] as? String ?? "", tone: post["tone"] as? String ?? "info")
-        case "ui.quest": showLessons = true
+        case "ui.quest":
+            // A clipboard on the wall is its task card.
+            if let index = post["index"] as? Int, index < lessons.count, lesson?.id != lessons[index].id {
+                send("lesson.start", ["id": lessons[index].id])
+                room(do: "view", ["name": "bench"])
+            } else { showLessons = true }
         case "ui.sound": Sounds.play(post["name"] as? String ?? "")
         case "ui.probe": probe = post
         default: break

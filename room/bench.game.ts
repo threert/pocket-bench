@@ -1,5 +1,5 @@
 // The room: a hardware studio with an M5Stack Tab5 on the bench.
-import { PerspectiveCamera, Scene, SkyColor, Vector3 } from "@threert/scene";
+import { PerspectiveCamera, Scene, SkyColor, Texture, Vector3 } from "@threert/scene";
 import { defineGame, host } from "@threert/gameplay";
 import { buildBench } from "./bench.ts";
 import { VIEWS } from "./layout.ts";
@@ -38,6 +38,8 @@ export default defineGame({
     const wall = buildWall(scene);
     buildStation(scene);
     buildInstruments(scene);
+    // The clipboards carry the first six task cards (tools/quest-art.ts).
+    wall.quests.forEach((quest, index) => { quest.material.map = new Texture(`room/assets/gen/quests/quest-${index}.png`); });
     const quests: QuestBoard[] = wall.quests.map(quest => ({ group: quest.group, center: quest.center, half: [0.115, 0.165, 0.02] }));
     const view = VIEWS.bench!;
     const camera = new PerspectiveCamera(view.fov, 16 / 10, 0.02, 60);

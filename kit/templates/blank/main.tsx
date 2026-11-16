@@ -2,9 +2,10 @@
 // the worker's `state` channel; it never touches hardware itself.
 import { createSignal } from "solid-js";
 import { mount } from "@pocketjs/framework/solid";
-import { hex } from "./drivers/bus";
 import { Command, State } from "./protocol";
 import { Button, Card, Field, Header, Label, Row, Screen, Stat, send, useChannel } from "./ui";
+
+const hex = (address: number) => `0x${address.toString(16).toUpperCase().padStart(2, "0")}`;
 
 mount(() => {
   // The worker's newest record, decoded; it changes four times a second.
@@ -22,7 +23,7 @@ mount(() => {
       </Card>
       <Card title="WORKER" grow justify="between">
         <Row gap={0} align="stretch">
-          <Label tone="muted" grow>worker.ts runs beside the UI and owns the hardware.</Label>
+          <Label tone="muted" grow>worker.ts talks to the hardware.</Label>
         </Row>
         <Field label="Running for" value={`${state().uptime.toFixed(0)} s`} />
         <Field label="Records published" value={`${state().ticks} so far`} />
