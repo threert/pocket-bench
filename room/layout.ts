@@ -32,8 +32,8 @@ export const PROP_HOMES: Record<string, V3> = {
 /** Camera views. The app's chat panel covers the right quarter of the window, so each view looks a little to the
  *  right of its subject: the subject sits in the middle of what is left. */
 export const VIEWS: Record<string, { position: V3; target: V3; fov: number }> = {
-  room: { position: [0.75, 1.52, 2.7], target: [0.42, 1.02, -0.45], fov: 40 },
-  bench: { position: [0.25, 1.33, 0.70], target: [0.25, 0.82, -0.28], fov: 50 },
+  room: { position: [0.62, 1.58, 3.0], target: [0.32, 1.14, -0.5], fov: 42 },
+  bench: { position: [0.25, 1.30, 0.66], target: [0.25, 0.87, -0.30], fov: 50 },
   work: { position: [0.09, 1.10, 0.24], target: [0.09, 0.83, -0.29], fov: 40 },
   screen: { position: [0.043, 1.0, 0.0], target: [0.043, 0.868, -0.37], fov: 30 },
   parts: { position: [-0.27, 1.12, 0.2], target: [-0.27, 0.77, -0.2], fov: 42 },

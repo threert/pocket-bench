@@ -17,9 +17,9 @@
     <text x="60" y="40">AUTO</text><text x="170" y="40">TRIG</text><text x="486" y="40">10 V</text><text x="610" y="40" fill="#123229">HOLD</text><text x="366" y="40" fill="#123229">MATH</text><text x="266" y="40" fill="#123229">REM</text>
   </g>
   <!-- 17 mm digits: unit 100 -> 170, pitch 136 -->
-  <g transform="translate(78,78) skewX(-6) scale(1.7)">
-    <g fill="#0a1d18"><use xlink:href="#n8"/><use xlink:href="#n8" x="80"/><use xlink:href="#n8" x="160"/><use xlink:href="#n8" x="240"/><use xlink:href="#n8" x="320"/></g>
-    <g fill="#bfffe8"><use xlink:href="#n3"/><use xlink:href="#dp"/><use xlink:href="#n3" x="80"/><use xlink:href="#n0" x="160"/><use xlink:href="#n1" x="240"/><use xlink:href="#n2" x="320"/></g>
+  <g transform="translate(96,78) skewX(-6) scale(1.7)">
+    <g fill="#0a1d18"><use xlink:href="#n8"/><use xlink:href="#n8" x="76"/><use xlink:href="#n8" x="152"/><use xlink:href="#n8" x="228"/><use xlink:href="#n8" x="304"/></g>
+    <g fill="#bfffe8"><use xlink:href="#n3"/><use xlink:href="#dp"/><use xlink:href="#n3" x="76"/><use xlink:href="#n0" x="152"/><use xlink:href="#n1" x="228"/><use xlink:href="#n2" x="304"/></g>
   </g>
   <text x="792" y="246" font-size="150" font-weight="500" fill="#bfffe8">V</text>
   <text x="902" y="246" font-size="84" font-weight="500" fill="#bfffe8">DC</text>

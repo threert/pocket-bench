@@ -18,7 +18,7 @@ type Numeric = Exclude<Scalar, "bool">;
 export type Field = Scalar | `${Numeric}[${number}]` | `utf8[${number}]`;
 export type Schema = Record<string, Field>;
 export type FieldValue<F extends Field> = F extends "bool" ? boolean : F extends Scalar ? number : F extends `utf8[${number}]` ? string : number[];
-export type Values<S extends Schema> = { [K in keyof S]: FieldValue<S[K]> };
+export type Values<S extends Schema> = { -readonly [K in keyof S]: FieldValue<S[K]> };
 
 const SIZE: Record<Scalar, number> = { u8: 1, i8: 1, u16: 2, i16: 2, u32: 4, i32: 4, f32: 4, bool: 1 };
 

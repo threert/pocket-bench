@@ -176,12 +176,15 @@ function boxGeometry(size: V3): BufferGeometry {
   ]);
 }
 
-/** Loops of a coiled lead lying flat: control points around (cx, cz), rising by `rise` a turn. */
-function coilPoints(cx: number, cz: number, R: number, turns: number, start: number, y: number, rise: number, random: () => number): V3[] {
+/**
+ * Loops of a loosely coiled lead lying flat: control points around (cx, cz), rising by `rise` a turn. The loops
+ * wander by `loose` so that they lie beside each other and not in one ring.
+ */
+function coilPoints(cx: number, cz: number, R: number, turns: number, start: number, y: number, rise: number, loose: number): V3[] {
   const out: V3[] = [], per = 8, count = Math.round(turns * per);
   for (let i = 0; i <= count; i++) {
-    const a = start + (i / per) * Math.PI * 2, r = R + (random() - 0.5) * 0.004;
-    out.push([cx + Math.cos(a) * r, y + (rise * i) / per, cz + Math.sin(a) * r]);
+    const t = (i / per) * Math.PI * 2, a = start + t, r = R + loose * 0.7 * Math.sin(t * 0.53 + 2);
+    out.push([cx + loose * Math.sin(t * 0.37 + 1) + Math.cos(a) * r, y + (rise * i) / per, cz + loose * 0.8 * Math.cos(t * 0.29) + Math.sin(a) * r]);
   }
   return out;
 }
@@ -217,7 +220,7 @@ class Workshop {
 
   constructor(scene: Scene) {
     this.kit = new Kit(scene);
-    const paint = noiseTexture(33, 128, [0.86, 0.865, 0.86], 0.012, 12);
+    const paint = noiseTexture(33, 128, [0.79, 0.795, 0.79], 0.012, 12);
     paint.repeat = [2, 2];
     this.steel = coated("inst_case_steel", 0xffffff, 0.42, 0.35);
     this.steel.map = paint;
@@ -432,13 +435,12 @@ function buildScope(shop: Workshop, at: V3): MeshStandardMaterial {
   p.lathe([[4.2, 0], [3.6, 5], [2.4, 14], [0, 14]], [jack[0], jack[1], jack[2] + 43], { rubber: "slate" }, "z", { sides: 12 });
   const world = (v: V3): V3 => [at[0] + v[0] * mm, at[1] + v[1] * mm, at[2] + v[2] * mm];
   const start = world([jack[0], jack[1], jack[2] + 56]), y = SHELF + 0.0017;
-  const random = rng(71);
   const cx = at[0] - 0.221, cz = at[2] - 0.006;     // the coil's centre, left of the scope
   const lead: V3[] = [
     [start[0], start[1], start[2] - 0.006], start, [start[0] - 0.001, start[1] - 0.004, start[2] + 0.012], [start[0] - 0.004, y + 0.008, start[2] + 0.024],
     [start[0] - 0.014, y, start[2] + 0.031], [start[0] - 0.05, y, start[2] + 0.028], [start[0] - 0.11, y, start[2] + 0.02], [start[0] - 0.17, y, start[2] + 0.024],
     [cx + 0.03, y, cz + 0.058],
-    ...coilPoints(cx, cz, 0.044, 2.75, Math.PI / 2, y, 0.0034, random),
+    ...coilPoints(cx, cz, 0.042, 2.75, Math.PI / 2, y, 0.0024, 0.006),
     [cx + 0.049, y + 0.006, cz + 0.026], [cx + 0.058, y + 0.0045, cz + 0.043], [cx + 0.07, y + 0.004, cz + 0.047],
   ];
   const cable = new Part(shop, "scope-probe", shop.kit.group("scope-probe", [0, 0, 0]));
@@ -489,8 +491,8 @@ function buildSupply(shop: Workshop, at: V3): MeshStandardMaterial {
     p.cyl(3.4, 9, [x, py - 7.5, z + 25], tone, "y", { sides: 12, top: 4.2 });
     const wx = at[0] + x * mm, wy = at[1] + (py - 12) * mm, wz = at[2] + (z + 25) * mm, drift = tone === "red" ? 0.007 : 0.004;
     const path: V3[] = [
-      [wx, wy + 0.01, wz], [wx, wy, wz], [wx, wy - 0.05, wz + 0.002], [wx + drift * 0.3, TABLE + 0.16, wz - 0.004 + sag * 0.5], [wx + drift * 0.6, TABLE + 0.05, wz - 0.02 + sag],
-      [wx + drift * 0.8, y + 0.004, wz - 0.052 + sag], [wx + drift, y, wz - 0.1], [wx + drift * 1.2, y, wz - 0.17], [wx + drift * 0.9, y + 0.0028, end + 0.034], [wx + drift * 0.9, y + 0.0028, end + 0.02],
+      [wx, wy + 0.01, wz], [wx, wy, wz], [wx - drift * 0.2, wy - 0.05, wz + 0.003], [wx + drift * 0.5, TABLE + 0.15, wz - 0.002 + sag * 0.5], [wx + drift * 1.4, TABLE + 0.05, wz - 0.016 + sag],
+      [wx + drift * 1.8, y + 0.003, wz - 0.05 + sag], [wx + drift * 1.2, y, wz - 0.1], [wx + drift * 1.9, y, wz - 0.165], [wx + drift * 0.9, y + 0.0028, end + 0.034], [wx + drift * 0.9, y + 0.0028, end + 0.02],
     ];
     leads.put(null, () => tube(curve(path.slice(1), 5), 0.0019, 6), { rubber: tone }, [0, 0, 0]);
     // The free end: a 4 mm plug lying behind the riser's post.
@@ -598,15 +600,21 @@ function buildJumpers(shop: Workshop, at: V3): void {
     p.box([1.4, H, D], [side * (W / 2 - 0.7), H / 2, 0], card);
   }
   p.put("jumpers:label", () => keycap(64 * mm, 30 * mm, 0.15 * mm, 1 * mm, 0, [0.5, 0, 1, 0.5], 2), shop.labels, [0, H / 2, D / 2 + 0.02]);
-  // A loose bundle of wires in the box, a few hanging over the front wall.
+  // A loose hank of wires in the box, a few hanging over the front wall.
   const random = rng(505), tones: Tone[] = ["red", "orange", "yellow", "green", "blue", "violet", "grey", "white", "black", "brown"];
-  for (let i = 0; i < 26; i++) {
-    const tone = tones[i % tones.length]!, z = -32 + random() * 62, lift = 3 + random() * 13, bow = (random() - 0.5) * 14;
-    const x0 = -48 + random() * 10, x1 = 38 + random() * 10;
-    const points: V3[] = [[x0, lift + 1, z], [x0 + 26, lift + random() * 3, z + bow * 0.5], [(x0 + x1) / 2, lift + random() * 4, z + bow], [x1 - 22, lift + random() * 3, z + bow * 0.6], [x1, lift + 1.5, z + bow * 0.2]];
-    p.tube(points, 0.65, tone, { sides: 5, steps: 3 });
-    p.box([12, 2.5, 2.5], [x0 - 4, lift + 1, z], "black").rotation.y = (random() - 0.5) * 0.3;
-    p.box([12, 2.5, 2.5], [x1 + 4, lift + 1.5, z + bow * 0.2], "black").rotation.y = (random() - 0.5) * 0.3;
+  for (let i = 0; i < 30; i++) {
+    const tone = tones[(i * 7) % tones.length]!, turn = (random() - 0.5) * 0.9, half = 36 + random() * 12, lift = 2 + (i / 30) * 13 + random() * 2;
+    const c = Math.cos(turn), sn = Math.sin(turn), ox = (random() - 0.5) * 16, oz = (random() - 0.5) * 34, bow = (random() - 0.5) * 22;
+    // Along the wire `u`, across it `v`: keep the ends inside the box.
+    const reach = Math.min(half, (W / 2 - 12) / Math.max(Math.abs(c), 0.3)), spot = (u: number, v: number, dy: number): V3 => {
+      const x = ox + u * c - v * sn, z = oz + u * sn + v * c;
+      return [Math.max(-W / 2 + 4, Math.min(W / 2 - 4, x)), lift + dy, Math.max(-D / 2 + 4, Math.min(D / 2 - 4, z))];
+    };
+    p.tube([spot(-reach, 0, 0), spot(-reach * 0.55, bow * 0.5, 1 + random() * 3), spot(0, bow, 2 + random() * 4), spot(reach * 0.55, bow * 0.6, 1 + random() * 3), spot(reach, bow * 0.1, 0)], 0.65, tone, { sides: 5, steps: 3 });
+    for (const [u, v] of [[-reach - 5, 0], [reach + 5, bow * 0.1]] as const) {
+      const end = spot(u, v, 0);
+      p.box([12, 2.5, 2.5], end, "black").rotation.y = -turn + (random() - 0.5) * 0.3;
+    }
   }
   for (const [x, tone, reach] of [[-28, "yellow", 24], [-21, "green", 30], [18, "red", 26]] as const) {
     p.tube([[x - 6, 14, -10], [x - 2, 22, 14], [x, H + 2.2, D / 2 - 0.5], [x + 2, H - 6, D / 2 + 5], [x + 3, 6, D / 2 + 9], [x + 6, 0.8, D / 2 + 16], [x + 9, 0.8, D / 2 + reach - 12]], 0.65, tone, { sides: 5, steps: 4 });
@@ -619,14 +627,14 @@ function buildJumpers(shop: Workshop, at: V3): void {
 function buildPartsBox(shop: Workshop, at: V3): void {
   const p = shop.part("parts-box", at, -0.07);
   p.soft([132, 21, 92], 3, [0, 10.5, 0], "frost", { seg: 3 });
-  p.soft([134, 6, 94], 2, [0, 23, 0], "white", { seg: 2 });
+  p.soft([134, 6, 94], 2, [0, 23, 0], "frost", { seg: 2 });
   for (const x of [-38, 38]) {
     p.soft([16, 12, 3], 1.2, [x, 18, 47.5], "blue");
-    p.soft([18, 5, 3], 1, [x, -0.5 + 6, -47.6], "white");
+    p.soft([18, 5, 3], 1, [x, 21, -47.6], "frost");
   }
   // The compartments show through the lid as a faint grid.
-  for (let i = 1; i < 6; i++) p.box([0.8, 0.2, 86], [-66 + i * 22, 26.05, 0], "frost");
-  for (const z of [-15, 15]) p.box([126, 0.2, 0.8], [0, 26.05, z], "frost");
+  for (let i = 1; i < 6; i++) p.box([0.8, 0.2, 86], [-66 + i * 22, 26.05, 0], "silver");
+  for (const z of [-15, 15]) p.box([126, 0.2, 0.8], [0, 26.05, z], "silver");
   const label = p.put("parts:label", () => keycap(64 * mm, 32 * mm, 0.15 * mm, 1.5 * mm, 0, [0.5, 0.5, 1, 1], 2), shop.labels, [-20, 26.1, 10]);
   label.rotation.x = -Math.PI / 2;
 }
@@ -661,18 +669,19 @@ function buildStation(shop: Workshop, at: V3, holderAt: V3): MeshStandardMateria
   const wool = h.put("wool:core", () => new SphereGeometry(20.5 * mm, 16, 10), shop.brass, [0, 21, 19]);
   wool.scale.set(1, 0.52, 1);
   const random = rng(909), strands: V3[] = [];
-  for (let i = 0; i < 90; i++) {
-    const a = random() * Math.PI * 2, b = Math.acos(random() * 0.95), r = 20.5 + random() * 2.5;
+  for (let i = 0; i < 150; i++) {
+    const a = random() * Math.PI * 2, b = Math.acos(random() * 0.95), r = 19.5 + random() * 3.5;
     strands.push([Math.cos(a) * Math.sin(b) * r, 21 + Math.cos(b) * r * 0.56, 19 + Math.sin(a) * Math.sin(b) * r]);
   }
-  h.tube(strands, 0.45, shop.brass, { sides: 4, steps: 3 });
+  h.tube(strands, 0.3, shop.brass, { sides: 4, steps: 3 });
   // Everything on the iron's axis is built along +Z of a group leaning back from the tip.
   const elevation = (55 * Math.PI) / 180, tip: V3 = [0, 30, -38];
   const lean = h.group(tip);
   lean.rotation.x = -elevation;
   const inLean = { parent: lean };
-  h.box([18, 30, 2], [0, 32, -12], shop.metal);
-  h.box([18, 1.6, 70], [0, -11.4, 43], shop.metal, inLean);
+  h.soft([12, 31, 2.4], 1, [0, 32, -12], "graphite", { seg: 1 });
+  h.soft([12, 2.4, 72], 1, [0, -11.8, 43], "graphite", { ...inLean, seg: 1 });
+  for (const z of [10, 76]) h.soft([4, 5, 3], 1, [0, -10.4, z], "graphite", { ...inLean, seg: 1 });
   h.cyl(5.2, 12, [0, 0, 2], shop.metal, "z", { ...inLean, sides: 14 });
   const spring: V3[] = [];
   for (let i = 0; i <= 10 * 12; i++) {
@@ -728,7 +737,7 @@ function buildHandheld(shop: Workshop, at: V3, yaw: number): void {
 
 function buildLeads(shop: Workshop, cx: number, cz: number): void {
   const p = new Part(shop, "dmm-leads", shop.kit.group("dmm-leads", [0, 0, 0]));
-  const y = TABLE + 0.0018, random = rng(1203);
+  const y = TABLE + 0.0018;
   for (const [tone, R, dy, dz, plugX, plugZ, turn, probeZ] of [["red", 0.041, 0, 0, -0.047, 0.088, 1.25, -0.047], ["black", 0.036, 0.0036, 0.002, -0.024, 0.104, 1.0, -0.031]] as const) {
     const z0 = cz + dz, probe: V3 = [cx + 0.062, TABLE + 0.0064, cz + probeZ];
     // The plug: right-angled, lying on the bench; the cable leaves along its +X.
@@ -742,7 +751,7 @@ function buildLeads(shop: Workshop, cx: number, cz: number): void {
     const out = (d: number): V3 => [plugAt[0] + c * d, plugAt[1], plugAt[2] - s * d];
     const path: V3[] = [
       out(0.004), out(0.014), out(0.03), [cx - R - 0.002, y + dy, z0 + 0.03],
-      ...coilPoints(cx, z0, R, 2.25, Math.PI, y + dy, 0.0035, random),
+      ...coilPoints(cx, z0, R, 2.25, Math.PI, y + dy, 0.0026, 0.0035),
       [cx + 0.03, y + dy + 0.006, z0 - R + 0.001], [probe[0] - 0.012, probe[1], probe[2]], probe, [probe[0] + 0.01, probe[1], probe[2]],
     ];
     p.put(null, () => tube(curve(path, 4).slice(4, -4), 0.0017, 6), { rubber: tone }, [0, 0, 0]);

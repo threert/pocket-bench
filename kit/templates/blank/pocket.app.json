@@ -1,0 +1,52 @@
+{
+  "$schema": "https://pocketjs.dev/schema/pocket-2.json",
+  "pocket": 2,
+  "id": "bench.local.blank",
+  "title": "Hello, Tab5",
+  "version": "0.1.0",
+  "engine": {
+    "capabilities": {
+      "requires": [
+        "runtime.worker",
+        "io.i2c",
+        "system.device",
+        "display.auxiliary",
+        "input.touch.auxiliary",
+        "text.glyphs.baked"
+      ]
+    }
+  },
+  "app": {
+    "entry": "main.tsx",
+    "output": "blank",
+    "framework": "solid",
+    "tickHz": 30,
+    "surfaces": {
+      "auxiliary": {
+        "fixed": {
+          "logical": [640, 360],
+          "presentation": "native"
+        }
+      }
+    },
+    "viewport": {
+      "fixed": {
+        "logical": [400, 240],
+        "presentation": "native"
+      }
+    }
+  },
+  "domains": {
+    "worker": {
+      "entry": "worker.ts",
+      "nodes": [
+        { "name": "porta", "kind": "i2c" },
+        { "name": "sys", "kind": "i2c" }
+      ],
+      "channels": [
+        { "name": "state", "kind": "snapshot", "direction": "worker-to-ui", "recordBytes": 256, "capacity": 1 },
+        { "name": "commands", "kind": "ring", "direction": "ui-to-worker", "recordBytes": 64, "capacity": 8 }
+      ]
+    }
+  }
+}

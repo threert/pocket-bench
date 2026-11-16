@@ -188,7 +188,7 @@ function whiteboard(): string {
     write("- PORT A = I2C", 50, 190, 40, black, r),
     write("- ENV 0X44 OK", 50, 254, 40, black, r),
     write("- 5V RAIL 4.96", 50, 318, 40, blue, r),
-    write("- ORDER GROVE X5", 50, 382, 40, black, r),
+    write("- BUY GROVE X5", 50, 382, 40, black, r),
     write("- RGB DATA > G2 ?", 50, 446, 40, red, r),
     // The wiring sketch: the Tab5, a hub, three Units.
     box(560, 250, 170, 110, black), write("TAB5", 588, 322, 38, black, r),

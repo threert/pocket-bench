@@ -7,7 +7,9 @@ import { buildProps } from "./props.ts";
 import { buildShell } from "./shell.ts";
 import { buildTab5 } from "./tab5.ts";
 import { buildUnits } from "./units.ts";
-import { World, type RoomParts } from "./world.ts";
+import { World, type QuestBoard, type RoomParts } from "./world.ts";
+import { buildWall } from "./decor/wall.ts";
+import { buildStation } from "./decor/station.ts";
 
 let parts: RoomParts | undefined;
 let world: World | undefined;
@@ -32,13 +34,16 @@ export default defineGame({
     const tab5 = buildTab5(scene);
     const kit = buildUnits(scene);
     const props = buildProps(scene);
+    const wall = buildWall(scene);
+    buildStation(scene);
+    const quests: QuestBoard[] = wall.quests.map(quest => ({ group: quest.group, center: quest.center, half: [0.115, 0.165, 0.02] }));
     const view = VIEWS.bench!;
     const camera = new PerspectiveCamera(view.fov, 16 / 10, 0.02, 60);
     camera.position.set(...view.position);
     camera.lookAt(new Vector3(...view.target));
     camera.setManualExposure(7.7);
     scene.add(camera);
-    parts = { scene, camera, bench, tab5, kit, props, ceiling };
+    parts = { scene, camera, bench, tab5, kit, props, ceiling, quests };
     world = undefined;
     return { scene, camera, options: { name: "pocket-bench", preset: "preview" as const, width: 1440, height: 900, overrides: { native: { maxBounces: 6 } } } };
   },

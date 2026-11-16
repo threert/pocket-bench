@@ -193,7 +193,9 @@ const SPHERE = new SphereGeometry(1, 24, 14);
 
 /** Adds parts to a parent, giving every id one object ("drawer", "drawer#2", ...: a pick reads the name before the #). */
 export class Kit {
-  private readonly used = new Map<string, number>();
+  /** Shared by every Kit: the parts of the room are built by several, and an id is one object in the scene. */
+  private static readonly used = new Map<string, number>();
+  private readonly used = Kit.used;
   constructor(readonly root: Object3D) {}
 
   add<T extends Object3D>(object: T, id: string | null, at: V3 = [0, 0, 0], parent: Object3D = this.root): T {

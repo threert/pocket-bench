@@ -158,7 +158,7 @@ export class World {
     // The Tab5: its panel, then its body.
     const screen = this.screenHit(origin, dir);
     if (screen) consider(screen.t, () => ({ kind: "screen", id: "tab5-screen", x: screen.x, y: screen.y }));
-    consider(rayBox(origin, dir, this.parts.tab5.root, [0, 0, 0], [0.066, 0.042, 0.008]), () => ({ kind: "tab5", id: "tab5" }));
+    consider(rayBox(origin, dir, this.parts.tab5.root, [0, 0, -0.0006], [0.066, 0.042, 0.0058]), () => ({ kind: "tab5", id: "tab5" }));
     for (const unit of this.units.values()) {
       const [length, height, depth] = unit.model.size;
       const extra = unit.model.spec.id === "scales" ? 0.012 : 0;
@@ -259,6 +259,8 @@ export class World {
         for (const load of this.parts.props.loads) put(`load:${load.id}`, load.center);
         put("switch", this.parts.props.switchPlate.center);
         put("screen", this.tab5Point(PANEL.at));
+        put("screen:tl", this.tab5Point([PANEL.at[0] - PANEL.width / 2, PANEL.height / 2, PANEL.at[2]]));
+        put("screen:br", this.tab5Point([PANEL.at[0] + PANEL.width / 2, -PANEL.height / 2, PANEL.at[2]]));
         this.post({ t: "ui.probe", trace: this.trace, points, view: this.view, where: Object.fromEntries([...this.units.values()].map(unit => [unit.model.spec.id, unit.where])) });
         break;
       }
@@ -376,12 +378,7 @@ export class World {
     const target = inside && !this.carried && !this.control ? this.pick(u, v) : null;
 
     // --- keys
-    if (input.pressed("1")) this.flyTo("room");
-    if (input.pressed("2")) this.flyTo("bench");
-    if (input.pressed("3")) this.flyTo("work");
-    if (input.pressed("4")) this.flyTo("screen");
-    if (input.pressed("5")) this.flyTo("parts");
-    if (input.pressed("6")) this.flyTo("wall");
+    ["room", "bench", "work", "screen", "parts", "wall"].forEach((name, index) => { if (input.pressed(String(index + 1))) this.flyTo(name); });
     if (input.pressed("Escape")) { this.select(""); this.flyTo("bench"); }
     if (input.pressed("L")) this.setLights(!this.lightsOn);
 
@@ -628,6 +625,7 @@ export class World {
 
   private orbit(du: number, dv: number): void {
     this.goal = null;
+    this.freeView();
     const offset = this.eye.clone().sub(this.look);
     const radius = offset.length();
     let yaw = Math.atan2(offset.x, offset.z), pitch = Math.asin(clamp(offset.y / radius, -1, 1));
@@ -639,6 +637,7 @@ export class World {
   }
   private pan(du: number, dv: number): void {
     this.goal = null;
+    this.freeView();
     const camera = this.parts.camera;
     const distance = this.eye.distanceTo(this.look);
     const right = new Vector3(1, 0, 0).applyQuaternion(camera.quaternion), up = new Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
@@ -649,6 +648,7 @@ export class World {
   }
   private dolly(notches: number, u: number, v: number): void {
     this.goal = null;
+    this.freeView();
     const offset = this.eye.clone().sub(this.look);
     const distance = offset.length();
     const next = clamp(distance * Math.exp(-notches * 0.12), 0.16, 4.2);
@@ -657,6 +657,12 @@ export class World {
     if (under && notches > 0 && under.distanceTo(this.look) < 1.5) this.look.lerp(under, 0.12);
     this.eye.copy(this.look).addScaledVector(offset.normalize(), next);
     this.keepInside();
+  }
+  /** The user moved the camera off a named view. */
+  private freeView(): void {
+    if (this.view === "free") return;
+    this.view = "free";
+    this.post({ t: "ui.view", name: "free" });
   }
   private keepInside(): void {
     this.eye.x = clamp(this.eye.x, ROOM.left + 0.25, ROOM.right - 0.25);

@@ -439,7 +439,7 @@ function buildPegboard(kit: Kit, f: Finishes): Group {
   for (const x of centres) {
     kit.mesh("pegboard_panel", panel, [x, 0, -P.proud / 2], coat, board);
     for (const sx of [-1, 0, 1]) for (const sy of [-1, 1]) {
-      const screw = kit.drum("pegboard_screw", 0.0042, 0.0022, [x + sx * (P.panel / 2 - 0.0125 - (sx === 0 ? 0 : 0)), sy * ((P.top - P.bottom) / 2 - 0.0125), 0.0011], f.steel, board, 0.0036, 12);
+      const screw = kit.drum("pegboard_screw", 0.0042, 0.0022, [x + sx * (P.panel / 2 - 0.0125), sy * ((P.top - P.bottom) / 2 - 0.0125), 0.0011], f.steel, board, 0.0036, 12);
       screw.rotation.x = Math.PI / 2;
     }
   }
@@ -552,9 +552,9 @@ function buildPegboard(kit: Kit, f: Finishes): Group {
   {
     const at = hole(1, 22, 20);
     hook(at, 0.04);
-    const s = seat(at, 0.016), reel = new Shape().ink("white"), cz = 0;
+    const s = seat(at, 0.016), reel = new Shape().ink("white");
     const group = kit.group("led_reel", [s[0], s[1] - 0.0125, s[2]], board);
-    reel.push([0, 0, cz], 0, Math.PI / 2);
+    reel.push([0, 0, 0], 0, Math.PI / 2);
     reel.turn([[0.0125, -0.008], [0.07, -0.008], [0.07, -0.0066], [0.0125, -0.0066], [0.0125, -0.008]], 36);
     reel.turn([[0.0125, -0.0066], [0.03, -0.0066], [0.03, 0.0066], [0.0125, 0.0066], [0.0125, -0.0066]], 28);
     reel.turn([[0.061, 0.0066], [0.07, 0.0066], [0.07, 0.008], [0.061, 0.008], [0.061, 0.0066]], 36);
@@ -589,10 +589,13 @@ function buildPegboard(kit: Kit, f: Finishes): Group {
     spool.ink("silver").cable([[0.019, 0.002, 0.004], [0.024, -0.012, 0.006], [0.02, -0.03, 0.004], [0.026, -0.05, 0.002]], 0.0005, 4, 4);
     kit.mesh("solder_spool", spool.geometry(), [s[0], s[1] - 0.0062, s[2]], f.gloss, board);
     const peg = hole(0, 2, 5), top = seat(peg, 0.012), bag = new Shape().ink("bone");
-    bag.add(roundedBox(0.078, 0.1, 0.007, 0.003, 2), [0, -0.064, 0]).ink("white").block([0, -0.066, 0.0005], [0.066, 0.05, 0.0068], 0.002).ink("red").block([0, -0.004, 0], [0.078, 0.024, 0.0016], 0.0004);
+    bag.add(roundedBox(0.078, 0.104, 0.0036, 0.0016, 2), [0, -0.066, 0]).ink("red").block([0, -0.004, 0], [0.078, 0.024, 0.0016], 0.0004);
+    // The ties show through the bag: a fanned bundle of black strips.
+    bag.ink("rubber");
+    for (let k = 0; k < 9; k++) bag.push([-0.02 + k * 0.005, -0.074, 0.0019 + (k % 3) * 0.0004], (k - 4) * 0.035 + (random() - 0.5) * 0.05).block([0, 0, 0], [0.0036, 0.074, 0.001], 0.0003).pop();
     const hung = kit.mesh("tie_bag", bag.geometry(), [top[0], top[1] - 0.001, top[2]], f.gloss, board);
     hung.rotation.z = 0.05;
-    kit.mesh("tie_bag", printed(0.05, 0.02, ATLAS.drawer(15)), [top[0] + 0.004, top[1] - 0.034, top[2] + 0.0038], f.print, board).rotation.z = 0.05;
+    kit.mesh("tie_bag", printed(0.05, 0.02, ATLAS.drawer(15)), [top[0] + 0.001, top[1] - 0.004, top[2] + 0.001], f.print, board).rotation.z = 0.05;
   }
   // The notice at the top left, and pegs waiting for what is out on the bench.
   kit.mesh("peg_label", printed(0.06, 0.03, ATLAS.notice), [hole(0, 5, 12)[0], hole(0, 5, 12)[1] + 0.034, 0.0002], f.print, board).rotation.z = -0.015;
@@ -616,7 +619,7 @@ function buildDrawerWall(kit: Kit, f: Finishes): Group {
   // The plinth, set back under the cabinets.
   kit.mesh("drawer_cabinet", new Shape().ink("plinth").block([0, D.plinth / 2, (D.lowerDepth - 0.025) / 2], [D.right - D.left - 0.01, D.plinth, D.lowerDepth - 0.025], 0.0015).geometry(), [0, 0, 0], f.satin, wall);
 
-  const carcass = (spec: typeof LOWER, ink: Ink, chamfer: number): BufferGeometry => {
+  const carcass = (spec: { columns: number; rows: number; t: number; depth: number; height: number }, ink: Ink, chamfer: number): BufferGeometry => {
     const s = new Shape().ink(ink), { t, depth, height } = spec;
     for (const side of [-1, 1]) s.block([side * (unitW / 2 - t / 2), height / 2, depth / 2], [t, height, depth], chamfer);
     for (const y of [t / 2, height - t / 2]) s.block([0, y, depth / 2], [unitW - 2 * t, t, depth], chamfer);
