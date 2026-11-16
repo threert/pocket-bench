@@ -51,7 +51,7 @@ function Radar(props: { cm: number | undefined; stop: boolean }) {
     })}
     {ARCS.map((arc, index) => {
       const r = FIRST + index * STEP;
-      return <Text class="absolute text-2xs" style={{ insetL: CX + r * Math.cos(slant) - 6, insetT: CY + r * Math.sin(slant) + 7, textColor: props.stop ? "#ffffffb0" : theme().faint }}>{arc.label}</Text>;
+      return <Text class="absolute text-xs" style={{ insetL: CX + r * Math.cos(slant) - 7, insetT: CY + r * Math.sin(slant) + 7, textColor: props.stop ? "#ffffffb0" : theme().faint }}>{arc.label}</Text>;
     })}
     {/* The car's tail from above: body, rear window, two tail lights that glow when it is time to brake. */}
     <View class="absolute" style={{ insetL: 0, insetT: CY - 58, width: 74, height: 116, radius: 26, bgColor: props.stop ? "#2a0d10" : theme().raised }} />

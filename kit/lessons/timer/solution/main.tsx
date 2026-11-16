@@ -12,6 +12,13 @@ import { Button, Card, Col, Field, Header, Label, Notice, Row, Screen, mix, send
 
 /** The ring's size and the width of its line. */
 const SIZE = 248, RING = 16;
+/** An arc is drawn with round ends that reach half its width past each end: this many degrees on this ring. */
+const CAP = RING / 2 / (SIZE / 2 - RING / 2) * 180 / Math.PI;
+/** The marks of the dial: one every five minutes, inside the ring. */
+const MARKS = Array.from({ length: 12 }, (_, index) => {
+  const turn = index / 12 * 2 * Math.PI, reach = SIZE / 2 - RING - 9, size = index % 3 === 0 ? 5 : 3;
+  return { size, left: SIZE / 2 + Math.sin(turn) * reach - size / 2, top: SIZE / 2 - Math.cos(turn) * reach - size / 2 };
+});
 
 /** Seconds as mm:ss. A second that has begun still shows: 04:59 is on from 299.99 s down to 299 s. */
 function clock(seconds: number): string {
@@ -25,7 +32,8 @@ function glow(r: number, g: number, b: number): string {
   const peak = Math.max(r, g, b);
   if (peak === 0) return theme().line;
   const hex = (value: number) => Math.round(value / peak * 255).toString(16).padStart(2, "0");
-  return mix(theme().line, `#${hex(r)}${hex(g)}${hex(b)}`, 0.35 + 0.65 * Math.min(1, peak / 200));
+  // A fifth of white takes the glare off a pure green or red.
+  return mix(theme().line, mix(`#${hex(r)}${hex(g)}${hex(b)}`, "#ffffff", 0.2), 0.35 + 0.65 * Math.min(1, peak / 200));
 }
 
 mount(() => {
@@ -33,7 +41,7 @@ mount(() => {
   const phase = () => state().phase;
   const colour = () => phase() === Phase.focus ? theme().good : phase() === Phase.paused ? theme().warn : phase() === Phase.done ? theme().bad : theme().accent;
   const word = () => phase() === Phase.focus ? "专注中" : phase() === Phase.paused ? "已暂停" : phase() === Phase.done ? "休息一下" : "准备";
-  const hint = () => phase() === Phase.focus ? `这一轮 ${state().minutes} 分钟` : phase() === Phase.paused ? "按一下旋钮继续" : phase() === Phase.done ? "时间到，按一下旋钮再来" : "转动旋钮设定时间";
+  const hint = () => phase() === Phase.focus ? "按一下旋钮暂停" : phase() === Phase.paused ? "按一下旋钮继续" : phase() === Phase.done ? "时间到，按一下旋钮再来" : "转动旋钮设定时间";
   const action = () => phase() === Phase.focus ? "暂停" : phase() === Phase.paused ? "继续" : phase() === Phase.done ? "再来一个" : "开始专注";
 
   // How full the ring is: the minutes on a 60-minute dial while the timer is
@@ -60,11 +68,15 @@ mount(() => {
           <Card grow align="center" justify="center" pad={10}>
             <View class="relative" style={{ width: SIZE, height: SIZE }}>
               <View class="absolute left-0 top-0" style={{ width: SIZE, height: SIZE, bgColor: theme().line, arcStart: 0, arcSweep: 360, arcWidth: RING }} />
-              {/* What is left starts where the elapsed part ends and reaches round to 12 o'clock. */}
+              {/* On the dial the arc grows clockwise from 12 o'clock. In a session what is left starts where the
+                  elapsed part ends and reaches round to 12 o'clock. Its round ends are taken off its length,
+                  so that the first seconds already open a gap; a full ring is drawn whole, without a seam. */}
               <View class={phase() === Phase.done ? "absolute left-0 top-0 animate-pulse" : "absolute left-0 top-0"} style={{
                 width: SIZE, height: SIZE, bgColor: colour(), arcWidth: RING, opacity: shown() > 0 ? 1 : 0,
-                arcStart: phase() === Phase.ready ? 0 : 360 * (1 - shown()), arcSweep: Math.max(0.01, 360 * shown()),
+                arcStart: shown() >= 0.999 ? 0 : (phase() === Phase.ready ? 0 : 360 * (1 - shown())) + CAP,
+                arcSweep: shown() >= 0.999 ? 360 : Math.max(0.01, 360 * shown() - 2 * CAP),
               }} />
+              {MARKS.map(mark => <View class="absolute" style={{ insetL: mark.left, insetT: mark.top, width: mark.size, height: mark.size, radius: mark.size / 2, bgColor: theme().faint, opacity: phase() === Phase.ready ? 1 : 0 }} />)}
               <View class="absolute left-0 top-0 flex-col items-center justify-center" style={{ width: SIZE, height: SIZE, gap: 2 }}>
                 <Label size="lg" bold color={colour()}>{word()}</Label>
                 <Label size="5xl" bold>{clock(state().remaining)}</Label>
@@ -73,11 +85,10 @@ mount(() => {
             </View>
           </Card>
           <Col w={220} gap={12}>
-            <Card title="旋钮" grow justify="between">
-              <Col gap={4}>
-                <Field label="转动" value="设定 1 到 60 分钟" />
-                <Field label="按下" value="开始 / 暂停" />
-              </Col>
+            <Card title="旋钮" grow gap={4}>
+              <Field label="转动" value="设定 1 到 60 分钟" />
+              <Field label="按下" value="开始 / 暂停" />
+              <Field label="这一轮" value={`${state().minutes} 分钟`} tone="accent" />
               <Field label="指示灯">
                 <Row gap={8}>
                   <View style={{ width: 28, height: 14, radius: 7, bgColor: glow(state().leds[0]!, state().leds[1]!, state().leds[2]!) }} />

@@ -2,7 +2,7 @@
 // while it waits, then a green 欢迎回来 or a red 未登记的卡 with the card's
 // number, and the two lights the relays switch. On the right the last five
 // swipes, the newest on top.
-import { createEffect, createSignal, Index, Match, Show, Switch } from "solid-js";
+import { createEffect, createMemo, createSignal, Index, Match, Show, Switch } from "solid-js";
 import { animate, jump } from "@pocketjs/framework/animation";
 import { View, type NodeMirror } from "@pocketjs/framework/components";
 import { onFrame } from "@pocketjs/framework/lifecycle";
@@ -58,10 +58,12 @@ mount(() => {
   /** How much of the light's time is left, 1..0: the bar under the verdict runs down with it. */
   const left = () => Math.max(0, 1 - (state().now - state().at) / (granted() ? SIGN_SECONDS : BEACON_SECONDS));
 
-  // Every new swipe makes the badge pop.
+  // Every new swipe makes the badge pop. (The memo changes only with the count: the record itself is
+  // new ten times a second.)
   let badge: NodeMirror | undefined;
+  const swipes = createMemo(() => state().swipes);
   createEffect(() => {
-    if (state().swipes === 0 || !badge) return;
+    if (swipes() === 0 || !badge) return;
     jump(badge, "scale", 0.5);
     animate(badge, "scale", 1, { dur: 260, easing: "out-back" });
   });
@@ -75,7 +77,7 @@ mount(() => {
     <Row gap={12} grow align="stretch">
       <Show when={state().reader} fallback={
         <Notice title="请插上 RFID 模块" lines={["把『RFID』模块接到 Port A（红色接口），", state().relay ? "四路继电器已经接好，就等读卡器了。" : "再把『四路继电器』也接上，刷卡才能亮灯。"]} />}>
-        <Card grow justify="between" align="center" pad={14}
+        <Card grow justify="between" pad={14}
           color={state().verdict === Verdict.none ? undefined : mix(theme().panel, toneColor(tone()), 0.14)}
           border={state().verdict === Verdict.none ? undefined : toneColor(tone())}>
           <Switch>

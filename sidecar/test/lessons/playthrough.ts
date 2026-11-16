@@ -105,7 +105,7 @@ export class Player {
         this.log(`${lesson.id}/${step.id}: ${JSON.stringify(action)}`);
         if (!("wait" in action) || during) { await this.act(action); continue; }
         for (const until = Date.now() + action.wait * 1000; Date.now() < until;) {
-          const completed = during ? undefined : await this.lessons.tick();
+          const completed: string | undefined = during ? undefined : await this.lessons.tick();
           if (completed && completed !== step.id) throw new Error(`the step ${completed} completed while ${step.id} was in turn`);
           during ||= completed === step.id;
           await sleep(Math.max(0, Math.min(250, until - Date.now())));

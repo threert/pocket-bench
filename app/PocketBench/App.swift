@@ -56,7 +56,7 @@ struct RootView: View {
                 .padding(.bottom, 14).padding(.leading, 318).padding(.trailing, 396)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             if let toast = model.toastMessage {
-                ToastView(toast: toast).padding(.top, 16).padding(.trailing, 384)
+                ToastView(toast: toast).padding(.top, 58).padding(.leading, 318).padding(.trailing, 396)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .transition(.move(edge: .top).combined(with: .opacity))
             }

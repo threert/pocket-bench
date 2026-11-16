@@ -95,7 +95,9 @@ export class World {
     this.cableKit = new Kit(parts.scene);
     for (const spec of UNIT_SPECS) {
       const model = parts.kit.units[spec.id]!;
-      this.units.set(spec.id, { model, where: "tray", pose: { at: [...model.home] as V3, tip: 0 }, pending: false, values: {}, sent: {}, rise: 0 });
+      // (The 8Angle's knobs rest at their middle, as the sidecar's model starts them.)
+      const values: Record<string, unknown> = spec.id === "angle8" ? { knobs: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], switch: 0 } : {};
+      this.units.set(spec.id, { model, where: "tray", pose: { at: [...model.home] as V3, tip: 0 }, pending: false, values, sent: {}, rise: 0 });
     }
     for (const prop of parts.props.props) this.propStates.push({ prop, at: [...prop.home] as V3, pose: { at: [...prop.home] as V3, tip: 0 }, sprayUntil: -1 });
     // The hub's cable to the Tab5's Port A is always there; its plug at the port moves with the device.
@@ -545,7 +547,7 @@ export class World {
     switch (control.kind) {
       case "knob": {
         const index = Number(control.id.slice(4));
-        const knobs = [...((unit.values.knobs as number[] | undefined) ?? [0, 0, 0, 0, 0, 0, 0, 0])];
+        const knobs = [...((unit.values.knobs as number[] | undefined) ?? [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5])];
         knobs[index] = clamp(value + (dx - dy) * 2.6, 0, 1);
         unit.values.knobs = knobs;
         break;

@@ -22,7 +22,7 @@ async function sense(): Promise<void> {
     try {
       sonic = await Sonic.open(bus);                 // rejects while the Unit is not on Port A
       console.log("Ultrasonic found on Port A");
-      // The last five echoes: their median drops a stray one and steadies the last digit.
+      // The last three echoes: their median drops a single stray one.
       const recent: number[] = [];
       // Where the target was over the last second, to tell how fast it moves.
       const trail: { millimetres: number; at: number }[] = [];
@@ -35,8 +35,11 @@ async function sense(): Promise<void> {
           recent.length = 0; trail.length = 0; state.speed = 0;
         } else {
           recent.push(millimetres);
-          if (recent.length > 5) recent.shift();
-          state.millimetres = median(recent);
+          if (recent.length > 3) recent.shift();
+          // An echo wobbles by a millimetre or so (more, far away). A real move is followed at
+          // once; a wobble is averaged away, so the last digit on the screen keeps still.
+          const steady = median(recent), moved = Math.abs(steady - state.millimetres) > Math.max(3, steady * 0.004);
+          state.millimetres = moved ? steady : state.millimetres + (steady - state.millimetres) * 0.2;
           trail.push({ millimetres: state.millimetres, at: now() });
           while (trail.length > 1 && now() - trail[0]!.at > 1_000_000) trail.shift();
           const seconds = (now() - trail[0]!.at) / 1e6;
