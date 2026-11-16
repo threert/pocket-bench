@@ -12,6 +12,19 @@ let UNIT_NAMES: [String: String] = [
     "relay4": "四路继电器", "scales": "电子秤", "ncir": "红外测温", "encoder": "旋转编码器",
 ]
 
+let UNIT_USES: [String: String] = [
+    "env3": "量温度、湿度和气压。做气象站、温室监控、舒适度提醒都靠它。",
+    "sonic": "用超声波量前方的距离，2 厘米到 4.5 米。倒车雷达、身高尺、挥手开关。",
+    "rfid2": "读写 13.56 MHz 的卡片和钥匙扣。门禁、打卡、给玩具认主人。",
+    "angle8": "八个旋钮、一个拨动开关、九颗彩灯。调色台、调音台、参数面板。",
+    "joystick2": "双轴摇杆带按键和彩灯。小游戏手柄、云台遥控。",
+    "dlight": "量环境有多亮（勒克斯）。天黑自动开灯、屏幕自动调光。",
+    "relay4": "四路开关，能通断真正的电器：这里接着台灯、风扇、灯牌和警示灯。",
+    "scales": "小电子秤，带去皮按键和彩灯。厨房秤、数零件、咖啡手冲计重。",
+    "ncir": "不接触就能量温度的红外传感器。测温枪、热饮提醒。",
+    "encoder": "能一直转的旋钮，带按键和两颗彩灯。音量、菜单、定时器。",
+]
+
 func describe(_ value: Any?, unit: String = "") -> String {
     switch value {
     case let n as NSNumber:
@@ -80,7 +93,14 @@ struct QuestCard: View {
                         .padding(.horizontal, 6).padding(.vertical, 2).background(RoundedRectangle(cornerRadius: 5).fill(Theme.accent))
                     Text(lesson.title).font(.system(size: 15, weight: .bold)).foregroundStyle(Theme.ink)
                     Spacer()
-                    Button { model.showLessons = true } label: { Image(systemName: "square.grid.2x2").font(.system(size: 11)) }.buttonStyle(.plain).foregroundStyle(Theme.dim).help("全部任务")
+                    Menu {
+                        Button("全部任务卡") { model.showLessons = true }
+                        Button("看参考答案") { model.send("lesson.solution") }
+                        Button("重新开始这一关") { model.send("lesson.reset") }
+                        Divider()
+                        Button("退出任务，自由创作") { model.send("lesson.stop") }
+                    } label: { Image(systemName: "ellipsis.circle").font(.system(size: 12)).foregroundStyle(Theme.dim) }
+                    .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                 }
                 Text(lesson.story).font(.system(size: 11.5)).foregroundStyle(Theme.dim).fixedSize(horizontal: false, vertical: true).lineSpacing(2)
                 VStack(alignment: .leading, spacing: 7) {
@@ -163,7 +183,7 @@ struct UnitCard: View {
                 ForEach(info?.addresses ?? [], id: \.self) { Chip(text: $0.hexAddress, mono: true) }
                 if let sku = info?.sku, !sku.isEmpty { Chip(text: sku, tint: Theme.faint, mono: true) }
             }
-            if let use = info?.use, !use.isEmpty { Text(use).font(.system(size: 11)).foregroundStyle(Theme.dim).fixedSize(horizontal: false, vertical: true) }
+            if let use = UNIT_USES[id] ?? info?.use, !use.isEmpty { Text(use).font(.system(size: 11)).foregroundStyle(Theme.dim).fixedSize(horizontal: false, vertical: true).lineSpacing(2) }
             if plugged && !values.isEmpty {
                 VStack(spacing: 4) {
                     ForEach(values.keys.sorted(), id: \.self) { key in

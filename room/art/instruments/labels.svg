@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="512" viewBox="0 0 1024 512" font-family="Helvetica Neue, Helvetica, Arial" text-anchor="middle">
-  <!-- Labels of the small things, one sheet. Left 512 x 512: the solder spool's flange (58 mm across).
-       Right top 512 x 256: the parts box's lid label (64 x 32 mm). Right bottom: the jumper-wire box (64 x 32 mm). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="640" viewBox="0 0 1024 640" font-family="Helvetica Neue, Helvetica, Arial" text-anchor="middle">
+  <!-- Labels of the small things, one sheet. Left 512 x 512: the solder spool's flange (54 mm across).
+       Right top 512 x 256: the parts box's lid label (64 x 32 mm). Right middle: the jumper-wire box (64 x 32 mm).
+       Bottom strip, four of 256 x 128: calibration sticker, asset tag, hot-surface caution, inspection mark (24 x 12 mm). -->
   <rect width="512" height="512" fill="#e9e7df"/>
   <circle cx="256" cy="256" r="250" fill="#f3f1ea"/>
   <circle cx="256" cy="256" r="238" fill="none" stroke="#1f6fb8" stroke-width="14"/>
@@ -29,4 +30,24 @@
     <text x="768" y="398" font-size="30">M-M · M-F · F-F     20 cm</text>
     <text x="768" y="460" font-size="34" font-weight="700" fill="#d8432f">120 PCS</text>
   </g>
+  <!-- stickers -->
+  <rect x="0" y="512" width="256" height="128" fill="#f4f4f0"/>
+  <rect x="0" y="512" width="256" height="40" fill="#1f8a4c"/>
+  <text x="128" y="542" font-size="30" font-weight="700" fill="#fff" letter-spacing="3">CALIBRATED</text>
+  <g font-size="22" font-family="Menlo, monospace" fill="#26282c" text-anchor="start">
+    <text x="14" y="582">ID   LAB-0417</text><text x="14" y="610">DUE  03 / 2027</text><text x="14" y="634" font-size="16" fill="#5c6066">BY   QA-2</text>
+  </g>
+  <rect x="256" y="512" width="256" height="128" fill="#c9ccd0"/>
+  <rect x="264" y="520" width="240" height="112" rx="8" fill="none" stroke="#26282c" stroke-width="3"/>
+  <text x="384" y="552" font-size="20" font-weight="700" fill="#26282c" letter-spacing="2">PROPERTY OF HW LAB</text>
+  <g fill="#26282c"><rect x="282" y="566" width="4" height="36"/><rect x="290" y="566" width="2" height="36"/><rect x="296" y="566" width="6" height="36"/><rect x="306" y="566" width="2" height="36"/><rect x="312" y="566" width="4" height="36"/><rect x="320" y="566" width="2" height="36"/><rect x="326" y="566" width="2" height="36"/><rect x="332" y="566" width="6" height="36"/><rect x="342" y="566" width="4" height="36"/><rect x="350" y="566" width="2" height="36"/><rect x="356" y="566" width="6" height="36"/><rect x="366" y="566" width="2" height="36"/><rect x="372" y="566" width="4" height="36"/><rect x="380" y="566" width="6" height="36"/><rect x="390" y="566" width="2" height="36"/><rect x="396" y="566" width="4" height="36"/><rect x="404" y="566" width="2" height="36"/><rect x="410" y="566" width="6" height="36"/><rect x="420" y="566" width="2" height="36"/><rect x="426" y="566" width="4" height="36"/><rect x="434" y="566" width="2" height="36"/><rect x="440" y="566" width="6" height="36"/><rect x="450" y="566" width="4" height="36"/><rect x="458" y="566" width="2" height="36"/><rect x="464" y="566" width="6" height="36"/><rect x="474" y="566" width="2" height="36"/><rect x="480" y="566" width="4" height="36"/></g>
+  <text x="384" y="626" font-size="19" font-family="Menlo, monospace" fill="#26282c">HW-000417</text>
+  <rect x="512" y="512" width="256" height="128" fill="#f2c21a"/>
+  <path d="M566,612L610,536L654,612Z" fill="none" stroke="#1d1f23" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M610,560V590M610,600V602" stroke="#1d1f23" stroke-width="8" stroke-linecap="round"/>
+  <g font-weight="700" fill="#1d1f23" text-anchor="start"><text x="668" y="570" font-size="34">HOT</text><text x="668" y="604" font-size="19">SURFACE</text></g>
+  <rect x="768" y="512" width="256" height="128" fill="#f4f4f0"/>
+  <rect x="780" y="524" width="232" height="104" rx="52" fill="none" stroke="#2a62c9" stroke-width="6"/>
+  <text x="896" y="572" font-size="30" font-weight="700" fill="#2a62c9" letter-spacing="2">QC PASSED</text>
+  <text x="896" y="606" font-size="20" font-family="Menlo, monospace" fill="#2a62c9">INSP 07</text>
 </svg>

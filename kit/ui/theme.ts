@@ -10,11 +10,6 @@ import { createSignal } from "solid-js";
  *  main.tsx (importing anything from ui/ does that). */
 export const GLYPHS = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~" +
   "°±×÷·•…–—←↑→↓≤≥≈µΩ✓✗";
-/** Chinese punctuation and the words a sensor app needs at run time (units,
- *  states). Chinese text written as a literal in the source is baked by
- *  itself; see ui/README.md, "Chinese text". */
-export const GLYPHS_ZH = "，。、：；！？（）《》“”‘’％℃…—·" + "一二三四五六七八九十百千万零年月日时分秒点度开关已未无有是否上下左右中高低大小多少好坏";
-
 export interface Palette {
   /** The screen behind everything. */
   bg: string;

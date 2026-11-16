@@ -166,20 +166,21 @@ export function Header(props: { title: string; subtitle?: string; status?: strin
   </View>;
 }
 
-/** A panel that groups one idea: a column of its children. `title` is a small
- *  caption above them. With `onPress` the whole card is a button. */
+/** A panel that groups one idea: a caption (`title`) and a column of
+ *  children, which `justify` and `align` place. With `onPress` the whole card
+ *  is a button. */
 export function Card(props: BoxProps & { title?: string; pad?: number; color?: string; border?: string; onPress?: () => void }) {
   const style = () => sized(props, {
-    bgColor: props.color ?? theme().panel, radius: radius.lg, gap: props.gap ?? space.sm,
+    bgColor: props.color ?? theme().panel, radius: radius.lg, gap: space.sm,
     paddingT: props.pad ?? space.md, paddingB: props.pad ?? space.md, paddingL: props.pad ?? 14, paddingR: props.pad ?? 14,
     borderColor: props.border ?? "#00000000", borderWidth: props.border ? 2 : 0,
   });
   const inner = () => <>
     <Show when={props.title}><Label size="xs" bold tone="muted">{props.title}</Label></Show>
-    {props.children}
+    <View class={colClass(props.justify ?? "start", props.align ?? "stretch", true)} style={{ gap: props.gap ?? space.sm }}>{props.children}</View>
   </>;
   return <Show when={props.onPress} fallback={
-    <View class={colClass(props.justify ?? "start", props.align ?? "stretch", props.grow ?? false)} style={style()}>{inner()}</View>}>
+    <View class={props.grow ? "flex-col flex-1" : "flex-col"} style={style()}>{inner()}</View>}>
     <View focusable onPress={props.onPress} class={props.grow ? "flex-col flex-1 active:opacity-70" : "flex-col active:opacity-70"} style={style()}>{inner()}</View>
   </Show>;
 }
@@ -230,7 +231,9 @@ export function Notice(props: { title: string; lines?: string[]; tone?: Tone; ch
   return <View class="flex-col flex-1 items-center justify-center" style={{ gap: space.sm, bgColor: theme().panel, radius: radius.lg, paddingL: space.xl, paddingR: space.xl }}>
     <Dot tone={props.tone ?? "warn"} size={12} pulse />
     <Label size="xl" bold>{props.title}</Label>
-    <Index each={props.lines ?? []}>{line => <Label size="sm" tone="muted">{line()}</Label>}</Index>
+    <View class="flex-col items-center" style={{ gap: 2 }}>
+      <Index each={props.lines ?? []}>{line => <Label size="sm" tone="muted">{line()}</Label>}</Index>
+    </View>
     {props.children}
   </View>;
 }
@@ -293,7 +296,7 @@ export function Slider(props: {
     // along the track it is, so the thumb jumps there and then follows.
     onDown(contact) {
       const cell = cells.findIndex(node => node.id === contact.hit);
-      base = cell >= 0 ? (cell + 0.5) / SLIDER_CELLS : fraction();
+      base = cell >= 0 ? ((cell + 0.5) / SLIDER_CELLS * width() - thumb / 2) / (width() - thumb) : fraction();
       if (cell >= 0) set(base);
     },
     onPanMove(contact) { set(base + contact.dx / (width() - thumb)); },
@@ -387,7 +390,7 @@ export function Sparkline(props: { values: readonly (number | undefined)[]; h?: 
 
 const [toastState, setToastState] = createSignal<{ text: string; tone: Tone; id: number } | undefined>();
 let toastId = 0;
-/** Shows a line at the bottom of the screen for a few seconds. */
+/** Shows a line at the top of the screen for a few seconds. A touch dismisses it. */
 export function toast(text: string, tone: Tone = "neutral", seconds = 2.5): void {
   const id = ++toastId;
   setToastState({ text, tone, id });
@@ -396,11 +399,11 @@ export function toast(text: string, tone: Tone = "neutral", seconds = 2.5): void
 /** Where toasts show. `Screen` holds one. */
 export function Toast() {
   const rise = (node: NodeMirror) => {
-    jump(node, "translateY", 24); jump(node, "opacity", 0);
+    jump(node, "translateY", -24); jump(node, "opacity", 0);
     animate(node, "translateY", 0, { dur: 220, easing: "out" }); animate(node, "opacity", 1, { dur: 160, easing: "out" });
   };
   return <Show when={toastState()} keyed>{state =>
-    <View class="absolute left-0 w-full flex-row justify-center" style={{ insetT: 360 - 60, hitPass: 1 }}>
+    <View class="absolute left-0 w-full flex-row justify-center" style={{ insetT: 8, hitPass: 1 }}>
       <View ref={rise} focusable onPress={() => setToastState(undefined)} class="flex-row items-center"
         style={{ height: 40, radius: 20, paddingL: space.lg, paddingR: space.lg, gap: space.sm, bgColor: theme().raised, borderColor: state.tone === "neutral" ? theme().line : toneColor(state.tone), borderWidth: 1 }}>
         <Show when={state.tone !== "neutral"}><Dot tone={state.tone} /></Show>

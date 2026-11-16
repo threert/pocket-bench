@@ -228,6 +228,8 @@ final class Model: ObservableObject {
             if message["path"] as? String == openFile { fileText = message["text"] as? String ?? "" }
         case "room.refused":
             break
+        case "lesson.step":
+            Sounds.play("done")
         case "error":
             toast(message["message"] as? String ?? "", tone: "warn")
         case "app.reload-room":
@@ -378,11 +380,11 @@ enum Shots {
 
 /// The room's small sounds: system sounds for now.
 enum Sounds {
-    private static let names: [String: String] = ["plug": "Pop", "lift": "Tink", "switch": "Tink", "tick": "Tink", "tap": "Pop", "relay": "Tink", "spray": "Blow"]
+    private static let names: [String: String] = ["plug": "Pop", "lift": "Tink", "switch": "Tink", "tick": "Tink", "tap": "Pop", "relay": "Tink", "spray": "Blow", "done": "Glass"]
     static var enabled = true
     static func play(_ name: String) {
         guard enabled, let system = names[name], let sound = NSSound(named: system) else { return }
-        sound.volume = name == "plug" ? 0.35 : 0.18
+        sound.volume = name == "plug" || name == "done" ? 0.35 : 0.18
         sound.stop()
         sound.play()
     }

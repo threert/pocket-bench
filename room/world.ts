@@ -86,6 +86,8 @@ export class World {
   private readonly trunk: Mesh;
   private lastClick = { at: -1, id: "" };
   private simPending: Record<string, unknown> | null = null;
+  // The Tab5 in the hand: how far it is leaned from its rest, and how fast that changes.
+  private lean = { pitch: 0, roll: 0, wantPitch: 0, wantRoll: 0, vPitch: 0, vRoll: 0, held: false, sent: "", cable: "" };
   private trace: string[] = [];
   private note(text: string): void { this.trace.push(`${this.time.toFixed(2)} ${text}`); if (this.trace.length > 12) this.trace.shift(); }
 
@@ -96,11 +98,12 @@ export class World {
       this.units.set(spec.id, { model, where: "tray", pose: { at: [...model.home] as V3, tip: 0 }, pending: false, values: {}, sent: {}, rise: 0 });
     }
     for (const prop of parts.props.props) this.propStates.push({ prop, at: [...prop.home] as V3, pose: { at: [...prop.home] as V3, tip: 0 }, sprayUntil: -1 });
-    // The hub's cable to the Tab5's Port A is always there.
-    const port = this.tab5Point(PORT_A);
+    // The hub's cable to the Tab5's Port A is always there; its plug at the port moves with the device.
+    this.trunk = this.cableKit.mesh("cable-trunk", tube(curve(this.trunkPath(), 10), 1.5 * mm, 7), [0, 0, 0], CABLE);
+    this.trunk.dynamicGeometry = true;
     const from = parts.kit.hubPorts[0]!;
-    const floor = TOP + 0.004;
-    this.trunk = this.cable("cable-trunk", [from, [from[0] + 0.03, floor, from[2] + 0.004], [from[0] + 0.07, floor, from[2] + 0.03], [port[0] - 0.045, floor + 0.012, port[2] + 0.012], [port[0] - 0.036, port[1] - 0.02, port[2]], [port[0] - 0.007, port[1], port[2]]], [[from[0] + 0.003, from[1], from[2]], [port[0] - 0.007, port[1], port[2]]]);
+    this.cableKit.soft("cable-trunk", [7 * mm, 4.6 * mm, 8.6 * mm], 1 * mm, [from[0] + 0.003, from[1], from[2]], PLUG);
+    this.cableKit.soft("cable-trunk", [7 * mm, 4.6 * mm, 8.6 * mm], 1 * mm, [PORT_A[0] - 0.0035, PORT_A[1], PORT_A[2]], PLUG, parts.tab5.root);
   }
 
   // ------------------------------------------------------------------------------------------- geometry
@@ -111,6 +114,14 @@ export class World {
     root.updateWorldMatrix(true, false);
     const p = new Vector3(...local).applyMatrix4(root.matrixWorld);
     return [p.x, p.y, p.z];
+  }
+
+  /** From the hub's first socket up to Port A, wherever the device leans. */
+  private trunkPath(): V3[] {
+    const port = this.tab5Point(PORT_A), out = this.tab5Point([PORT_A[0] - 0.03, PORT_A[1], PORT_A[2]]);
+    const from = this.parts.kit.hubPorts[0]!;
+    const floor = TOP + 0.004;
+    return [from, [from[0] + 0.03, floor, from[2] + 0.004], [from[0] + 0.075, floor, from[2] + 0.03], [(out[0] + from[0] + 0.075) / 2 - 0.01, (out[1] + floor) / 2 - 0.02, (out[2] + from[2] + 0.03) / 2 + 0.01], out, [port[0] + (out[0] - port[0]) * 0.25, port[1] + (out[1] - port[1]) * 0.25, port[2] + (out[2] - port[2]) * 0.25]];
   }
 
   /** A Grove cable along a path, with a plug at each end. */
@@ -398,7 +409,12 @@ export class World {
       if (this.touching) this.touch(u, v);
       else if (this.control) this.turn(u, v);
       else if (this.carried) this.carry(u, v);
-      else if (press.moved && (press.button !== 0 || !press.target || press.target.kind === "tab5" || press.target.kind === "tray" || press.target.kind === "load" || press.target.kind === "quest")) {
+      else if (press.moved && press.button === 0 && press.target?.kind === "tab5") {
+        // The device in the hand: it leans with the pointer.
+        this.lean.held = true;
+        this.lean.wantRoll = clamp(-(u - press.u) * 3.2, -1.0, 1.0);
+        this.lean.wantPitch = clamp((v - press.v) * 2.6, -0.7, 0.9);
+      } else if (press.moved && (press.button !== 0 || !press.target || press.target.kind === "tray" || press.target.kind === "load" || press.target.kind === "quest")) {
         if (press.button === 1 || input.down("Shift")) this.pan(du, dv);
         else this.orbit(du, dv);
       } else if (press.moved && press.button === 0 && press.target && !this.carried) {
@@ -422,6 +438,7 @@ export class World {
     }
 
     this.moveThings(dt);
+    this.leanTab5(dt);
     this.sense();
     this.applySim();
     this.light(dt);
@@ -440,7 +457,7 @@ export class World {
       case "prop": { const p = this.propStates.find(state => state.prop.id === target.id)!.prop; return { id: target.id, kind: "prop", title: p.title, subtitle: p.hint }; }
       case "load": { const load = this.parts.props.loads.find(item => item.id === target.id)!; return { id: target.id, kind: "load", title: load.title, subtitle: "点一下手动开关" }; }
       case "screen": return { id: target.id, kind: "screen", title: "Tab5 屏幕", subtitle: this.view === "screen" ? "点按就是触摸" : "点一下靠近" };
-      case "tab5": return { id: target.id, kind: "tab5", title: "M5Stack Tab5", subtitle: "ESP32-P4 · 5 英寸 1280×720 · Port A 在左侧" };
+      case "tab5": return { id: target.id, kind: "tab5", title: "M5Stack Tab5", subtitle: "ESP32-P4 · 5 英寸 · 拖动机身可以倾斜它（内置 IMU 会感觉到）" };
       case "switch": return { id: target.id, kind: "switch", title: "房间灯", subtitle: this.lightsOn ? "点一下关灯" : "点一下开灯" };
       case "quest": return { id: target.id, kind: "quest", title: "任务卡", subtitle: "点一下查看任务" };
       case "tray": return { id: target.id, kind: "tray", title: "模块盒", subtitle: "十个 Unit，都接 Port A" };
@@ -540,6 +557,7 @@ export class World {
 
   private end(u: number, v: number): void {
     const press = this.press!;
+    if (this.lean.held) { this.lean.held = false; this.lean.wantPitch = 0; this.lean.wantRoll = 0; return; }
     const quick = !press.moved && this.time - press.at < 0.45;
     if (this.touching) {
       this.touching = false;
@@ -687,6 +705,34 @@ export class World {
     camera.quaternion.setFromRotationMatrix(new Matrix4().lookAt(this.eye, this.look, UP));
   }
 
+  /** The Tab5 follows the hand, springs back when let go, and its motion sensor feels both. */
+  private leanTab5(dt: number): void {
+    const lean = this.lean;
+    const step = (value: number, want: number, velocity: number): [number, number] => {
+      // A spring: stiff in the hand, a little bouncy on the way back.
+      const k = lean.held ? 260 : 120, damping = lean.held ? 30 : 9;
+      const next = velocity + (k * (want - value) - damping * velocity) * dt;
+      return [value + next * dt, next];
+    };
+    const beforePitch = lean.pitch, beforeRoll = lean.roll;
+    [lean.pitch, lean.vPitch] = step(lean.pitch, lean.wantPitch, lean.vPitch);
+    [lean.roll, lean.vRoll] = step(lean.roll, lean.wantRoll, lean.vRoll);
+    if (!lean.held && Math.abs(lean.pitch) < 1e-4 && Math.abs(lean.roll) < 1e-4 && Math.abs(lean.vPitch) < 1e-3 && Math.abs(lean.vRoll) < 1e-3) { lean.pitch = 0; lean.roll = 0; lean.vPitch = 0; lean.vRoll = 0; }
+    this.parts.tab5.pose(lean.pitch, lean.roll);
+    const key = `${lean.pitch.toFixed(3)},${lean.roll.toFixed(3)}`;
+    if (key !== lean.cable) { lean.cable = key; this.trunk.geometry = tube(curve(this.trunkPath(), 10), 1.5 * mm, 7); }
+    // Gravity in the device's axes (x to the camera side, y to its top edge, z out of the screen), in g.
+    const a = -TAB5.tilt + lean.pitch, r = lean.roll;
+    const accel = [Math.cos(a) * Math.sin(r), Math.cos(a) * Math.cos(r), -Math.sin(a)].map(v => Math.round(v * 1000) / 1000);
+    const gyro = [(lean.pitch - beforePitch) / Math.max(dt, 1e-3), 0, (lean.roll - beforeRoll) / Math.max(dt, 1e-3)].map(v => Math.round((v * 180) / Math.PI));
+    const text = JSON.stringify([accel, gyro]);
+    if (text !== lean.sent) {
+      lean.sent = text;
+      this.post({ t: "room.set", uid: "tab5", key: "accel", value: accel });
+      this.post({ t: "room.set", uid: "tab5", key: "gyro", value: gyro });
+    }
+  }
+
   // --- things in flight, things turning
 
   private moveThings(dt: number): void {
@@ -772,7 +818,7 @@ export class World {
           break;
         }
         case "dlight": {
-          const head: V3 = [lamp.root.position.x - 0.165, lamp.root.position.y + 0.3, lamp.root.position.z + 0.275];
+          const head: V3 = [lamp.root.position.x - 0.165, lamp.root.position.y + 0.23, lamp.root.position.z + 0.275];
           const d = Math.hypot(head[0] - centre[0], head[1] - centre[1], head[2] - centre[2]);
           const lampLux = lamp.on ? 520 / Math.max(0.05, d * d) * 0.32 : 0;
           unit.values.lux = Math.round(6 + this.lightLevel * 540 + 120 + lampLux);

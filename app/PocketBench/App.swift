@@ -53,7 +53,7 @@ struct RootView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
             // Bottom: views.
             ViewBar()
-                .padding(.bottom, 14).padding(.trailing, 384)
+                .padding(.bottom, 14).padding(.leading, 318).padding(.trailing, 396)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
             if let toast = model.toastMessage {
                 ToastView(toast: toast).padding(.top, 16).padding(.trailing, 384)
@@ -64,6 +64,19 @@ struct RootView: View {
                 HoverTip(hover: hover)
                     .position(x: min(max(pointer.location.x + 18, 120), 1040), y: max(pointer.location.y - 30, 40))
                     .allowsHitTesting(false)
+            }
+            if !model.rendererReady && model.rendererError == nil {
+                ZStack {
+                    Color.black
+                    VStack(spacing: 14) {
+                        ProgressView().controlSize(.large)
+                        Text("正在布置工作室…").font(.system(size: 15, weight: .semibold)).foregroundStyle(Theme.ink)
+                        Text("摆好工作台、零件墙和一台 Tab5").font(.system(size: 12)).foregroundStyle(Theme.dim)
+                    }
+                }
+                .padding(.trailing, 0)
+                .allowsHitTesting(false)
+                .zIndex(-0.5)
             }
             if let error = model.rendererError {
                 Text(error).font(.system(size: 12)).foregroundStyle(Theme.bad).padding().glass()

@@ -27,6 +27,14 @@ export const STATION = {
   stripNits: 5200,
 } as const;
 
+/** Where the three chairs stand: floor position (x, z), the turn about Y (0 faces the back wall), the seat's
+ *  height and how far the back leans. The space in front of the main bench (|x| < 0.95) stays clear. */
+export const CHAIRS: { at: [number, number]; turn: number; seat: number; lean: number }[] = [
+  { at: [2.1, 0.45], turn: 0.35, seat: 0.46, lean: 0.16 },      // at the station
+  { at: [3.0, 1.2], turn: -2.2, seat: 0.44, lean: 0.2 },        // parked by the right wall
+  { at: [-1.32, 0.75], turn: -0.61, seat: 0.475, lean: 0.13 },  // pushed aside, left of the main bench
+];
+
 const TAU = Math.PI * 2;
 type Rect = [number, number, number, number];
 type Parent = Object3D;
@@ -308,9 +316,12 @@ function materials() {
   scopeMap.wrap = "clamp";
   const lcdMap = new Texture("room/assets/gen/station/lcd.png");
   lcdMap.wrap = "clamp";
+  const white = coated("station_white", 0xffffff, 0.45, 0.25), laminate = std("station_laminate", 0xffffff, 0.45);
+  white.map = noiseTexture(43, 128, [0.905, 0.905, 0.89], 0.008, 12);
+  laminate.map = noiseTexture(44, 128, [0.875, 0.875, 0.86], 0.008, 18, 3);
   return {
     frame: coated("station_frame", 0xe9e9e6, 0.4, 0.3),
-    laminate: std("station_laminate", 0xdfdfdb, 0.45),
+    laminate,
     dark: std("station_black", 0x242527, 0.46),
     rubber: std("station_rubber", 0x19191b, 0.9),
     mesh: chairMesh(),
@@ -321,7 +332,7 @@ function materials() {
     yellow: coated("station_yellow", 0xe5b21c, 0.45, 0.3),
     steel: std("station_steel", 0xc4c7cb, 0.28, 1),
     alu: std("station_alu", 0xa9adb2, 0.42, 0.85),
-    white: coated("station_white", 0xe7e7e3, 0.45, 0.25),
+    white,
     silicone: std("station_silicone", 0x55718b, 0.78),
     bottle: coated("station_bottle", 0x2f8fc4, 0.3, 0.5),
     amber: coated("station_amber", 0xb5701f, 0.3, 0.6),
@@ -332,7 +343,7 @@ function materials() {
     lens: new MeshPhysicalMaterial({ name: "station_lens", color: 0x08090c, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.03 }),
     screen: new MeshStandardMaterial({ name: "microscope_screen", color: 0x000000, roughness: 0.2, emissive: 0xffffff, emissiveIntensity: 160, emissiveMap: scopeMap }),
     lcd: new MeshStandardMaterial({ name: "station_lcd", color: 0x000000, roughness: 0.3, emissive: 0xffffff, emissiveIntensity: 190, emissiveMap: lcdMap }),
-    ring: glow("station_ring_light", 0xf2f6ff, 1400),
+    ring: glow("station_ring_light", 0xf2f6ff, 3000),
     strip: glow("station_strip_light", 0xf3f6ff, STATION.stripNits),
   };
 }
@@ -645,7 +656,7 @@ const BIN_SIDE = extrudeX([[0, 0], [0.092, 0], [0.1, 0.027], [0.05, 0.052], [0, 
 
 function buildMicroscope(shop: Shop): void {
   const { m } = shop;
-  const scope = shop.group("microscope", [1.5, S.top, -0.47]);
+  const scope = shop.group("microscope", [1.47, S.top, -0.47]);
   scope.rotation.y = 0.12;
   // The base: a white plate with a dark work pad, and the pillar at the back.
   shop.soft("microscope", [0.2, 0.014, 0.27], 0.004, [0, 0.007, 0], m.white, scope);
@@ -933,7 +944,7 @@ function buildCaddyAndLeads(shop: Shop): void {
     shop.soft("mains_plug", [0.038, 0.038, 0.028], 0.007, [x, y, socketZ + 0.014], m.dark);
     shop.cable("mains_lead", [[x, y - 0.012, socketZ + 0.026], [x + 0.002, y - 0.05, socketZ + 0.036], ...path], 0.003, m.rubber, undefined, 8, 6);
   };
-  lead(0, [[1.43, S.top + 0.012, -0.745], [1.455, S.top + 0.0035, -0.765], [1.483, S.top + 0.003, -0.776]]);
+  lead(0, [[1.425, S.top + 0.012, -0.745], [1.44, S.top + 0.0035, -0.765], [1.453, S.top + 0.003, -0.776]]);
   lead(3, [[2.3, S.top + 0.02, -0.735], [2.33, S.top + 0.02, -0.745], [2.35, S.top + 0.05, -0.742]]);
   lead(4, [[2.6, S.top + 0.012, -0.73], [2.66, S.top + 0.0035, -0.735], [2.72, S.top + 0.004, -0.74], [2.775, S.top + 0.02, -0.72]]);
 }
@@ -1151,11 +1162,7 @@ export function buildStation(scene: Scene): StationHandles {
   buildCaddyAndLeads(shop);
   buildDrawers(shop);
   buildFloorItems(shop);
-  const chairs = [
-    buildChair(shop, 0, [2.1, 0.45], 0.35, 0.46, 0.16),
-    buildChair(shop, 1, [3.0, 1.2], -2.2, 0.44, 0.2),
-    buildChair(shop, 2, [-1.32, 0.75], -0.61, 0.475, 0.13),
-  ];
+  const chairs = CHAIRS.map((chair, i) => buildChair(shop, i, chair.at, chair.turn, chair.seat, chair.lean));
   return { microscopeScreen: shop.m.screen, stripLight: shop.m.strip, chairs };
 }
 

@@ -64,6 +64,11 @@ function tint(geometry: BufferGeometry, tone: Tone): BufferGeometry {
 // ------------------------------------------------------------------------------------------- shapes
 
 type Rect = [u0: number, v0: number, u1: number, v1: number];
+/** Where things are on the label sheet (room/art/instruments/labels.svg). */
+const LABEL = {
+  solder: [6 / 1024, 1 - 506 / 640, 506 / 1024, 1 - 6 / 640], parts: [0.5, 0.6, 1, 1], jumpers: [0.5, 0.2, 1, 0.6],
+  calibrated: [0, 0, 0.25, 0.2], asset: [0.25, 0, 0.5, 0.2], hot: [0.5, 0, 0.75, 0.2], passed: [0.75, 0, 1, 0.2],
+} satisfies Record<string, Rect>;
 
 /** A rounded rectangle's outline, counter-clockwise, with the outward direction at each point. */
 function outline(width: number, height: number, r: number, segments: number): [number, number, number, number][] {
@@ -215,7 +220,7 @@ class Workshop {
   readonly metal = std("inst_metal", 0xc4c6c9, 0.3, 1);
   readonly brass = std("inst_brass", 0xc9a24a, 0.32, 1);
   readonly glass = new MeshPhysicalMaterial({ name: "inst_glass", color: 0x050506, roughness: 0.06, clearcoat: 1, clearcoatRoughness: 0.03 });
-  readonly led = glow("inst_led", 0x4dff86, 1400);
+  readonly led = glow("inst_led", 0x4dff86, 1000);
   readonly labels = new MeshStandardMaterial({ name: "inst_labels", map: new Texture(`${ART}labels.png`), roughness: 0.6 });
 
   constructor(scene: Scene) {
@@ -300,6 +305,12 @@ class Part {
   tube(points: V3[], radius: number, paint: Paint, o: Options = {}): Mesh {
     const path = curve(points.map(p => [p[0] * mm, p[1] * mm, p[2] * mm] as V3), o.steps ?? 5);
     return this.put(null, () => tube(path, radius * mm, o.sides ?? 6), paint, [0, 0, 0], o.parent);
+  }
+  /** A printed sticker from the label sheet, `rect` of it, lying on a surface that faces +Y (or +Z when `upright`). */
+  sticker(rect: Rect, w: number, h: number, at: V3, turn = 0, upright = false): Mesh {
+    const mesh = this.put(`sticker:${rect.join(":")}:${w}:${h}`, () => keycap(w * mm, h * mm, 0.12 * mm, Math.min(w, h) * 0.08 * mm, 0, rect, 2), this.shop.labels, at);
+    if (!upright) mesh.rotation.set(-Math.PI / 2, 0, turn);
+    return mesh;
   }
   /** Thin dark slots in a row: a vent. */
   slots(count: number, size: V3, first: V3, step: V3, paint: Paint = "black"): void {
@@ -402,6 +413,8 @@ function buildScope(shop: Workshop, at: V3): MeshStandardMaterial {
     p.slots(7, [0.8, 2.2, 44], [side * (W / 2 - 6.35), mid - 30, -80], [0, 9, 0]);
   }
 
+  p.sticker(LABEL.calibrated, 24, 12, [118, feet + H + 0.02, -15], 0.04);
+
   const panel = new Panel(p, shop.art("scope_panel", "scope-panel"), 306, 140, [0, mid], 4.5);
   const screen = shop.lit("scope_screen", "scope-screen", 180);
   panel.display(screen, 88, 57, [160, 98], [152, 91], shop.caseLight);
@@ -451,6 +464,16 @@ function buildScope(shop: Workshop, at: V3): MeshStandardMaterial {
   probe.cyl(5.95, 4, [64, 0, 0], "yellow", "x", { sides: 16 });
   probe.lathe([[3.25, 0], [3.25, 22], [2.95, 24.2]], [90, 0, 0], "black", "x", { sides: 16 });
   probe.cyl(0.55, 7, [117.5, 0, 0], shop.metal, "x", { sides: 8 });
+  // Its ground lead: a short wire from the probe's collar to a small clip.
+  probe.cyl(6.3, 3, [76, 0, 0], "black", "x", { sides: 16 });
+  probe.tube([[76, 3, 5], [78, 1.2, 12], [86, -4.6, 20], [100, -4.9, 24], [116, -4.9, 20], [128, -4.9, 21]], 0.9, { rubber: "black" }, { sides: 5, steps: 4 });
+  const clip = probe.group([128, -4.9, 21]);
+  clip.rotation.y = -0.05;
+  probe.soft([20, 5, 6], 2, [9, 1.6, 0], { rubber: "black" }, { parent: clip, seg: 2 });
+  for (const side of [-1, 1]) {
+    const jaw = probe.put("probe:jaw", () => taperBar(13 * mm, 4.4 * mm, 2 * mm, 0.6 * mm), shop.metal, [18, 1.6 + side * 1.1 - 0.3, 0], clip);
+    jaw.rotation.z = side * -0.09;
+  }
   return screen;
 }
 
@@ -468,6 +491,8 @@ function buildSupply(shop: Workshop, at: V3): MeshStandardMaterial {
     for (const z of [-30, -200]) p.cyl(2.2, 0.8, [side * (W / 2 + 0.2), mid + 62, z], shop.metal, "x", { sides: 10 });
   }
   for (const x of [-36, 0, 36]) p.slots(11, [28, 0.8, 2.4], [x, feet + H - 0.35, -70], [0, 0, -9]);
+  p.sticker(LABEL.asset, 24, 12, [-40, feet + H + 0.02, -32], -0.03);
+  p.sticker(LABEL.calibrated, 24, 12, [38, feet + H + 0.02, -30], 0.05);
 
   const panel = new Panel(p, shop.art("psu_panel", "psu-panel"), 124, 146, [0, mid], 2.5);
   const display = shop.lit("psu_display", "psu-display", 620);
@@ -518,6 +543,7 @@ function buildMeter(shop: Workshop, at: V3): MeshStandardMaterial {
     p.soft([8, H + 11, 30], 3.5, [side * (W / 2 + 1.5), mid, -9], bumper, { seg: 3 });
   }
   p.soft([W + 16, H + 11, 26], 8, [0, mid, -2 - D + 9], bumper, { seg: 3 });
+  p.sticker(LABEL.calibrated, 24, 12, [84, feet + H + 0.02, -48], -0.02);
 
   const panel = new Panel(p, shop.art("dmm_panel", "dmm-panel"), 213, 86, [0, mid], 1.5);
   const display = shop.lit("dmm_display", "dmm-display", 150);
@@ -548,6 +574,8 @@ function buildGenerator(shop: Workshop, at: V3): void {
   p.soft([W - 8, H - 7, D - 22], 3, [0, mid, -22 - (D - 22) / 2], shop.caseDark, { seg: 3 });
   for (const side of [-1, 1]) for (const z of [-110, -180]) p.slots(8, [0.8, 2.2, 44], [side * (W / 2 - 4.35), mid - 28, z], [0, 8, 0]);
   for (const x of [-72, 0, 72]) p.slots(9, [50, 0.8, 2.2], [x, mid + (H - 7) / 2 - 0.35, -120], [0, 0, -9]);
+  p.sticker(LABEL.calibrated, 24, 12, [-96, mid + (H - 7) / 2 + 0.02, -48], 0.03);
+  p.sticker(LABEL.passed, 24, 12, [-66, mid + (H - 7) / 2 + 0.02, -50], -0.06);
 
   const panel = new Panel(p, shop.art("awg_panel", "awg-panel"), 254, 97, [0, mid], 4);
   panel.display(shop.lit("awg_screen", "awg-screen", 170), 61, 38, [104, 62], [95, 54], shop.caseDark);
@@ -585,10 +613,10 @@ function buildSolder(shop: Workshop, at: V3): void {
   const rings: [number, number][] = [[23.6, 0]];
   for (let i = 0; i < 16; i++) rings.push([24.4, i * 1.74 + 0.5], [23.6, i * 1.74 + 1.4]);
   rings.push([23.6, 27.8]);
-  p.lathe(rings, [0, 43, -13.9], shop.metal, "z", { sides: 24 });
-  p.put("solder:label", () => keycap(54 * mm, 54 * mm, 0.15 * mm, 27 * mm, 0, [0.03, 0.03, 0.47, 0.97], 8), shop.labels, [0, 43, 16.15]);
+  p.lathe(rings, [0, 43, -13.9], "silver", "z", { sides: 24 });
+  p.put("solder:label", () => keycap(54 * mm, 54 * mm, 0.15 * mm, 27 * mm, 0, LABEL.solder, 8), shop.labels, [0, 43, 16.15]);
   // The free end, pulled up and over toward the front.
-  p.tube([[-22, 52, 6], [-16, 62, 7], [-2, 72, 9], [12, 74, 14], [22, 66, 24], [26, 52, 34], [25, 40, 40]], 0.45, shop.metal, { sides: 5, steps: 4 });
+  p.tube([[-22, 52, 6], [-16, 62, 7], [-2, 72, 9], [12, 74, 14], [22, 66, 24], [26, 52, 34], [25, 40, 40]], 0.45, "silver", { sides: 5, steps: 4 });
 }
 
 function buildJumpers(shop: Workshop, at: V3): void {
@@ -599,7 +627,7 @@ function buildJumpers(shop: Workshop, at: V3): void {
     p.box([W, H, 1.4], [0, H / 2, side * (D / 2 - 0.7)], card);
     p.box([1.4, H, D], [side * (W / 2 - 0.7), H / 2, 0], card);
   }
-  p.put("jumpers:label", () => keycap(64 * mm, 30 * mm, 0.15 * mm, 1 * mm, 0, [0.5, 0, 1, 0.5], 2), shop.labels, [0, H / 2, D / 2 + 0.02]);
+  p.sticker(LABEL.jumpers, 60, 30, [0, H / 2, D / 2 + 0.02], 0, true);
   // A loose hank of wires in the box, a few hanging over the front wall.
   const random = rng(505), tones: Tone[] = ["red", "orange", "yellow", "green", "blue", "violet", "grey", "white", "black", "brown"];
   for (let i = 0; i < 30; i++) {
@@ -635,8 +663,7 @@ function buildPartsBox(shop: Workshop, at: V3): void {
   // The compartments show through the lid as a faint grid.
   for (let i = 1; i < 6; i++) p.box([0.8, 0.2, 86], [-66 + i * 22, 26.05, 0], "silver");
   for (const z of [-15, 15]) p.box([126, 0.2, 0.8], [0, 26.05, z], "silver");
-  const label = p.put("parts:label", () => keycap(64 * mm, 32 * mm, 0.15 * mm, 1.5 * mm, 0, [0.5, 0.5, 1, 1], 2), shop.labels, [-20, 26.1, 10]);
-  label.rotation.x = -Math.PI / 2;
+  p.sticker(LABEL.parts, 64, 32, [-20, 26.1, 10]);
 }
 
 // ------------------------------------------------------------------------------------------- the soldering corner
@@ -648,6 +675,7 @@ function buildStation(shop: Workshop, at: V3, holderAt: V3): MeshStandardMateria
   p.soft([W, H, D - 4], 9, [0, mid, -4 - (D - 4) / 2], "blue", { seg: 4 });
   p.slab(W - 3, H - 3, 8, 7, 1.5, [0, mid, 0], "graphite");
   for (const x of [-30, 30]) p.slots(7, [34, 0.8, 2.2], [x, feet + H - 0.35, -40], [0, 0, -9]);
+  p.sticker(LABEL.hot, 24, 12, [0, feet + H + 0.02, -20]);
   const panel = new Panel(p, shop.art("station_panel", "station-panel"), 107, 84, [0, mid], 4);
   const display = shop.lit("station_display", "station-display", 520);
   panel.display(display, 28, 20, [40, 22], [30, 13]);

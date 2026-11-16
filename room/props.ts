@@ -1,7 +1,7 @@
 // What acts on the sensors, and what the relays switch. Props are loose things on the bench the user carries
 // about: warm air for the ENV Unit, a target for the ultrasonic one, cards for the reader, weights for the scale,
 // a hot mug for the thermometer. Loads are fixed: a desk lamp, a fan, a lit sign and a beacon, one per relay.
-import { CylinderGeometry, Group, LatheGeometry, Mesh, MeshPhysicalMaterial, MeshStandardMaterial, PlaneGeometry, Texture, Vector2, type Scene } from "@threert/scene";
+import { CylinderGeometry, Group, LatheGeometry, Mesh, TorusGeometry, MeshPhysicalMaterial, MeshStandardMaterial, PlaneGeometry, Texture, Vector2, type Scene } from "@threert/scene";
 import { Kit, coated, glow, mm, movable, roundedPlate, std, type V3 } from "./lib.ts";
 import { BENCH, PROP_HOMES, RISER, ROOM } from "./layout.ts";
 
@@ -102,10 +102,8 @@ export function buildProps(scene: Scene): PropKit {
     const outer = [[0.001, 0], [36, 0], [39, 4], [41, 92], [39.5, 95], [37.5, 92], [36, 8], [0.001, 6]].map(([r, y]) => new Vector2(r! * mm, y! * mm));
     kit.mesh("prop-mug", new LatheGeometry(outer, 32), [0, 0, 0], ceramic, p.root);
     kit.drum("prop-mug", 36.5 * mm, 1 * mm, [0, 80 * mm, 0], std("mug_coffee", 0x2a1509, 0.15), p.root);
-    for (let i = 0; i < 9; i++) {
-      const a = -Math.PI / 2 + (i / 8) * Math.PI;
-      kit.ball("prop-mug", 5.2 * mm, [(41 + Math.cos(a) * 20) * mm, (48 + Math.sin(a) * 26) * mm, 0], ceramic, p.root);
-    }
+    const handle = kit.add(new Mesh(new TorusGeometry(25 * mm, 5.2 * mm, 12, 28, Math.PI), ceramic), "prop-mug", [39 * mm, 48 * mm, 0], p.root);
+    handle.rotation.z = -Math.PI / 2;
   }
   // ---- cards for the reader
   const cardArt = (id: string, title: string, home: V3, color: number, stripe: number, uid: number[], kind: "classic1k" | "ultralight") => {
@@ -146,19 +144,19 @@ export function buildProps(scene: Scene): PropKit {
   const shelf = TOP + RISER.height;
   // CH1: a desk lamp on the riser, its head over the right of the bench.
   {
-    const root = kit.group("load-lamp", [0.84, shelf, -0.66]);
+    const root = kit.group("load-lamp", [0.87, shelf, -0.66]);
     const paint = coated("lamp_paint", 0x1f2328, 0.4, 0.5);
     kit.drum("load-lamp", 62 * mm, 14 * mm, [0, 7 * mm, 0], paint, root, 58 * mm, 32);
-    kit.rod("load-lamp", [0, 14 * mm, 0], [-30 * mm, 250 * mm, 60 * mm], 5 * mm, steel, root);
-    kit.rod("load-lamp", [-30 * mm, 250 * mm, 60 * mm], [-150 * mm, 330 * mm, 250 * mm], 5 * mm, steel, root);
-    kit.ball("load-lamp", 9 * mm, [-30 * mm, 250 * mm, 60 * mm], paint, root);
-    const head = kit.group(null, [-165 * mm, 318 * mm, 275 * mm], root);
+    kit.rod("load-lamp", [0, 14 * mm, 0], [-20 * mm, 210 * mm, 40 * mm], 5 * mm, steel, root);
+    kit.rod("load-lamp", [-20 * mm, 210 * mm, 40 * mm], [-150 * mm, 262 * mm, 250 * mm], 5 * mm, steel, root);
+    kit.ball("load-lamp", 9 * mm, [-20 * mm, 210 * mm, 40 * mm], paint, root);
+    const head = kit.group(null, [-165 * mm, 250 * mm, 275 * mm], root);
     head.rotation.x = 0.35;
     kit.drum("load-lamp", 60 * mm, 46 * mm, [0, 0, 0], paint, head, 34 * mm, 32);
     const bulb = new MeshStandardMaterial({ name: "lamp_bulb", color: 0x8a8a86, roughness: 0.4, emissive: 0xffd9a8, emissiveIntensity: 0 });
     const disc = kit.drum("load-lamp", 52 * mm, 2 * mm, [0, -23.5 * mm, 0], bulb, head, 52 * mm, 32);
     disc.castShadow = false;
-    loads.push({ id: "lamp", title: "台灯 · 继电器 CH1", channel: 0, root, center: [0.84 - 0.1, shelf + 0.2, -0.66 + 0.16], half: [0.14, 0.2, 0.19], manual: false, on: false, emitters: [{ material: bulb, nits: 24000 }] });
+    loads.push({ id: "lamp", title: "台灯 · 继电器 CH1", channel: 0, root, center: [0.87 - 0.09, shelf + 0.15, -0.66 + 0.15], half: [0.13, 0.16, 0.19], manual: false, on: false, emitters: [{ material: bulb, nits: 24000 }] });
   }
   // CH2: a desk fan.
   {
@@ -187,11 +185,11 @@ export function buildProps(scene: Scene): PropKit {
   }
   // CH3: a lit sign on the pegboard.
   {
-    const root = kit.group("load-sign", [0.71, 1.37, ROOM.back + 0.03]);
+    const root = kit.group("load-sign", [0.71, 1.41, ROOM.back + 0.03]);
     kit.soft("load-sign", [300 * mm, 104 * mm, 34 * mm], 6 * mm, [0, 0, 0], std("sign_case", 0x16171a, 0.45), root);
     const face = new MeshStandardMaterial({ name: "sign_face", color: 0x1a0505, roughness: 0.35, emissive: 0xffffff, emissiveMap: new Texture("room/assets/gen/props/sign.png"), emissiveIntensity: 0 });
     kit.add(new Mesh(new PlaneGeometry(284 * mm, 88 * mm), face), "load-sign", [0, 0, 17.3 * mm], root).castShadow = false;
-    loads.push({ id: "sign", title: "灯牌 · 继电器 CH3", channel: 2, root, center: [0.71, 1.37, ROOM.back + 0.03], half: [0.15, 0.052, 0.02], manual: false, on: false, emitters: [{ material: face, nits: 900 }] });
+    loads.push({ id: "sign", title: "灯牌 · 继电器 CH3", channel: 2, root, center: [0.71, 1.41, ROOM.back + 0.03], half: [0.15, 0.052, 0.02], manual: false, on: false, emitters: [{ material: face, nits: 900 }] });
   }
   // CH4: an amber beacon beside it.
   {

@@ -9,6 +9,8 @@ import { TAB5 } from "./layout.ts";
 export const SCREEN_PX = { width: 640, height: 360 } as const;
 /** The panel's lit area, metres, and its centre in device space (the bezel is wider on the camera side). */
 export const PANEL = { width: 110.0 * mm, height: 62.0 * mm, at: [-3.0 * mm, 0, 5.62 * mm] as V3 };
+/** The ball head's centre in device space: 60 mm under the device's middle. */
+export const PIVOT: V3 = [0, -60 * mm, 0];
 /** Port A in device space: the middle of the red socket's mouth on the left edge. */
 export const PORT_A: V3 = [-64.2 * mm, -26.0 * mm, -0.6 * mm];
 
@@ -33,6 +35,9 @@ export interface Tab5Parts {
   panel: Mesh;
   panelMaterial: MeshStandardMaterial;
   picture: StreamTexture;
+  /** The ball head's centre in the room: what the device turns about. */
+  pivot: V3;
+  pose(pitch: number, roll: number): void;
   setBacklight(level: number): void;
 }
 
@@ -83,30 +88,35 @@ export function buildTab5(scene: Scene): Tab5Parts {
     kit.drum("tab5_antenna", 1.9 * mm, 4 * mm, [ax * mm, 38.2 * mm, -1.1 * mm], brass, body);
   }
 
-  // The tripod: a ball head on three short legs, screwed into the nut in the bottom edge. It stays upright under
-  // the leaning device, so it hangs from the root and undoes the tilt.
-  const stand = kit.group("tab5_stand", [0, 0, 0], root);
+  // The tripod: a ball head on three short legs, screwed into the nut in the bottom edge. The device, the screw
+  // and the ball turn together about the ball's centre (PIVOT, in the device's space); the legs stand still.
   const anodised = std("tripod_black", 0x17181a, 0.38, 0.7), rubber = std("tripod_rubber", 0x0e0e0e, 0.8);
   const down = -40 * mm;
-  kit.drum("tab5_stand", 4.5 * mm, 8 * mm, [0, down - 4 * mm, 0], brass, stand);
-  kit.drum("tab5_stand", 9 * mm, 5 * mm, [0, down - 10 * mm, 0], anodised, stand);
-  kit.ball("tab5_stand", 8.5 * mm, [0, down - 20 * mm, 0], std("tripod_ball", 0x9a9da1, 0.25, 1), stand);
-  const hub = kit.group(null, [0, down - 30 * mm, 0], stand);
-  hub.rotation.x = TAB5.tilt;
-  kit.drum("tab5_stand", 11 * mm, 14 * mm, [0, -2 * mm, 0], anodised, hub);
-  // (The device's centre is 118 mm above the bench: the legs reach down what is left.)
-  const floorY = -(TAB5.at[1] - 0.76) / Math.cos(0) + 0;
+  kit.drum("tab5_stand", 4.5 * mm, 8 * mm, [0, down - 4 * mm, 0], brass, root);
+  kit.drum("tab5_stand", 9 * mm, 5 * mm, [0, down - 10 * mm, 0], anodised, root);
+  kit.ball("tab5_stand", 8.5 * mm, [0, PIVOT[1], 0], std("tripod_ball", 0x9a9da1, 0.25, 1), root);
+  const c = Math.cos(-TAB5.tilt), sn = Math.sin(-TAB5.tilt);
+  const pivot: V3 = [TAB5.at[0], TAB5.at[1] + PIVOT[1] * c, TAB5.at[2] + PIVOT[1] * sn];
+  const legs = kit.group("tab5_legs", [pivot[0], pivot[1] - 10 * mm, pivot[2]]);
+  kit.drum("tab5_legs", 11 * mm, 14 * mm, [0, -2 * mm, 0], anodised, legs);
+  const drop = pivot[1] - 10 * mm - 0.76 - 5 * mm;
   for (let i = 0; i < 3; i++) {
     const a = (i / 3) * Math.PI * 2 + Math.PI / 6;
-    const reach = 62 * mm, drop = 48 * mm;
+    const reach = 62 * mm;
     const from: V3 = [Math.sin(a) * 6 * mm, -6 * mm, Math.cos(a) * 6 * mm], to: V3 = [Math.sin(a) * reach, -drop + 5 * mm, Math.cos(a) * reach];
-    kit.rod("tab5_stand", from, to, 4.2 * mm, anodised, hub, 12);
-    kit.ball("tab5_stand", 5.2 * mm, [to[0], to[1] - 1.5 * mm, to[2]], rubber, hub);
+    kit.rod("tab5_legs", from, to, 4.2 * mm, anodised, legs, 12);
+    kit.ball("tab5_legs", 5.2 * mm, [to[0], to[1] - 1.5 * mm, to[2]], rubber, legs);
   }
-  void floorY;
 
   return {
-    root, panel, panelMaterial, picture,
+    root, panel, panelMaterial, picture, pivot,
+    /** Leans the device: `pitch` on top of its resting lean (positive: toward the viewer), `roll` about the screen's normal. */
+    pose(pitch: number, roll: number) {
+      const a = -TAB5.tilt + pitch;
+      const h = -PIVOT[1];
+      root.position.set(pivot[0] - h * Math.sin(roll), pivot[1] + h * Math.cos(roll) * Math.cos(a), pivot[2] + h * Math.cos(roll) * Math.sin(a));
+      root.rotation.set(a, 0, roll);
+    },
     setBacklight(level) { panelMaterial.shader = PANEL_FN.with({ Backlight: level }, { Picture: picture }); },
   };
 }
