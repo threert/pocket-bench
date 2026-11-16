@@ -21,7 +21,8 @@ let cached: Uint8Array | undefined;
 export async function idleFrame(): Promise<Uint8Array | undefined> {
   if (cached) return cached;
   try {
-    const sharp = createRequire(join(ROOT, "engine/package.json"))("sharp") as typeof import("sharp");
+    // (No types here: the rasteriser is the engine checkout's, not a dependency of the sidecar.)
+    const sharp = createRequire(join(ROOT, "engine/package.json"))("sharp") as (input: Buffer) => { ensureAlpha(): { raw(): { toBuffer(options: { resolveWithObject: true }): Promise<{ data: Buffer }> } } };
     const { data } = await sharp(Buffer.from(SVG)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
     cached = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
     return cached;

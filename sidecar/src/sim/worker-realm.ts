@@ -53,7 +53,9 @@ export interface WorkerRealmOptions {
   log(entry: WorkerLog): void;
 }
 
-const immediate = () => new Promise<void>(resolve => setImmediate(resolve));
+// (Kept from the host's realm at load: the thread that runs an app hides the host's timers and network from it.)
+const hostImmediate = setImmediate, hostFetch = fetch, hostSetTimeout = setTimeout, hostClearTimeout = clearTimeout;
+const immediate = () => new Promise<void>(resolve => hostImmediate(resolve));
 
 export class WorkerRealm {
   now = 0;
@@ -216,9 +218,9 @@ export class WorkerRealm {
     if (this.options.network === false) { this.push(this.now, fact({ kind: FactKind.error, handle, status: Status.failed, data: new TextEncoder().encode("network is off") })); done(Status.failed); return; }
     const abort = new AbortController();
     resource.http!.abort = abort;
-    const timeout = setTimeout(() => abort.abort(), options.timeoutMs ?? 30_000);
+    const timeout = hostSetTimeout(() => abort.abort(), options.timeoutMs ?? 30_000);
     try {
-      const response = await fetch(options.url, { method: options.method ?? "GET", headers: options.headers, body: options.body, signal: abort.signal });
+      const response = await hostFetch(options.url, { method: options.method ?? "GET", headers: options.headers, body: options.body, signal: abort.signal });
       const head = { status: response.status, headers: Object.fromEntries([...response.headers].map(([key, value]) => [key.toLowerCase(), value])) };
       this.push(this.now, fact({ kind: FactKind.headers, handle, status: response.status, data: new TextEncoder().encode(JSON.stringify(head)).slice(0, LIMITS.payloadBytes) }));
       const body = new Uint8Array(await response.arrayBuffer());
@@ -232,7 +234,7 @@ export class WorkerRealm {
       this.push(this.now, fact({ kind: FactKind.error, handle, status: Status.failed, data: new TextEncoder().encode(String(error)).slice(0, 200) }));
       done(Status.failed);
     } finally {
-      clearTimeout(timeout);
+      hostClearTimeout(timeout);
     }
   }
 

@@ -10,6 +10,39 @@ import { boardChips } from "../chips/board.ts";
 declare const self: Worker;
 const post = (message: FromSim, transfer: ArrayBuffer[] = []) => (self as unknown as { postMessage(m: unknown, t: unknown[]): void }).postMessage(message, transfer);
 
+// The host's own timers, kept before the app's realm loses them (`deviceGlobals`).
+const hostSetTimeout = setTimeout, hostBuffer = Buffer;
+
+/** A Tab5 has no browser and no Node: what an app must not find in its realm is taken out of this thread's. */
+function deviceGlobals(): void {
+  const g = globalThis as Record<string, unknown>;
+  for (const name of ["fetch", "setTimeout", "setInterval", "clearTimeout", "clearInterval", "setImmediate", "clearImmediate", "XMLHttpRequest", "WebSocket",
+    "EventSource", "localStorage", "sessionStorage", "navigator", "require", "Bun", "process", "Buffer"]) {
+    try { g[name] = undefined; } catch { /* a read-only global of the host: it stays */ }
+  }
+}
+
+/** A fault as a person reads it: its message, and the frames of the app's own bundles. */
+function describeFault(reason: unknown): { message: string; stack: string } {
+  const error = reason as { name?: string; message?: string; stack?: string } | undefined;
+  const message = error && typeof error === "object" && "message" in error ? `${error.name ?? "Error"}: ${String(error.message).slice(0, 600)}` : String(reason).slice(0, 600);
+  const frames = String(error?.stack ?? "").split("\n").filter(line => /\.worker\.js|\.js:\d+/.test(line) && !/node:|bun:|\/sidecar\/src\//.test(line)).slice(0, 6);
+  return { message, stack: frames.map(line => line.trim().slice(0, 200)).join("\n") };
+}
+let faulted = false;
+function workerFault(reason: unknown): void {
+  if (faulted) return;
+  faulted = true;
+  paused = true;
+  const fault = describeFault(reason);
+  logs.push({ at: now(), domain: "worker", level: "error", text: `fault: ${fault.message}` });
+  post({ t: "logs", lines: logs.splice(0) });
+  // A promise nobody awaited that rejected: on the device the worker faults and the app returns to the launcher.
+  post({ t: "failure", domain: "worker", message: fault.message, stack: fault.stack });
+}
+process.on("unhandledRejection", workerFault);
+process.on("uncaughtException", workerFault);
+
 const buses = { sys: boardBus(), porta: portABus() };
 const board = new Board();
 const onBoard = boardChips(buses.sys);
@@ -63,7 +96,7 @@ async function run(): Promise<void> {
       const alive = await tab5.frame();
       const rgba = tab5.pixels();
       ++sinceKey;
-      if (!last || sinceKey >= FRAME_HZ || Buffer.compare(rgba, last) !== 0) {
+      if (!last || sinceKey >= FRAME_HZ || hostBuffer.compare(rgba, last) !== 0) {
         sinceKey = 0;
         last = rgba;
         const copy = rgba.slice();
@@ -83,7 +116,7 @@ async function run(): Promise<void> {
     next += period;
     const wait = next - performance.now();
     if (wait < -200) next = performance.now(); // fell behind (a debugger, a sleep): do not catch up
-    await new Promise(resolve => setTimeout(resolve, Math.max(0, wait)));
+    await new Promise(resolve => hostSetTimeout(resolve, Math.max(0, wait)));
   }
 }
 
@@ -106,6 +139,7 @@ self.onmessage = async (event: MessageEvent<ToSim>) => {
         return;
       }
       tab5 = candidate;
+      deviceGlobals();
       post({ t: "ready", title: message.build.manifest.title });
       if (tab5.failure) { post({ t: "logs", lines: logs.splice(0) }); post({ t: "failure", domain: tab5.failure.domain, message: tab5.failure.message, stack: tab5.failure.stack }); }
       void run();

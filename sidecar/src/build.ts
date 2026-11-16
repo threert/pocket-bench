@@ -59,7 +59,12 @@ export async function buildProject(project: string): Promise<BuildResult> {
   const ms = performance.now() - started;
   if (code !== 0) {
     const problems = parseProblems(text);
-    return { ok: false, ms, output: text, problems: problems.length ? problems : [{ message: text.trim().split("\n").slice(-6).join("\n") || `the compiler exited with ${code}` }] };
+    // An error without a place (the JSX transform's, a manifest's) is in the compiler's last lines: say them.
+    if (!problems.some(problem => problem.file)) {
+      const tail = text.split("\n").map(line => line.trimEnd()).filter(line => line.trim() && !/^\s*at /.test(line) && !/exited with code/.test(line)).slice(-14).join("\n");
+      return { ok: false, ms, output: text, problems: [{ message: tail.slice(-1600) || `the compiler exited with ${code}` }] };
+    }
+    return { ok: false, ms, output: text, problems };
   }
   const js = join(outdir, `${output}.js`), pak = join(outdir, `${output}.pak`), workerJs = join(outdir, `${output}.worker.js`);
   // The plan carries the worker declaration with the host's channel sizes resolved.

@@ -99,6 +99,8 @@ export function parseCommand(line: string): string[][] | null {
     const c = text[i]!;
     if (quote) {
       if (c === quote) { quote = ""; continue; }
+      // (`$?`, the last command's status, expands to a number: agents print it after `bench check`.)
+      if (quote === '"' && c === "$" && text[i + 1] === "?") { word += "$?"; i++; continue; }
       if (quote === '"' && (c === "$" || c === "`" || c === "\\")) return null;
       word += c;
       continue;
@@ -112,6 +114,7 @@ export function parseCommand(line: string): string[][] | null {
       if (!endSegment()) return null;
       continue;
     }
+    if (c === "$" && text[i + 1] === "?") { word += "$?"; open = true; i++; continue; }
     if ("$`<>(){}\\\n\r#!".includes(c)) return null;
     word += c; open = true;
   }
