@@ -3,6 +3,7 @@
 // linked once at the workspace root, where every project resolves them.
 import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { ensureFonts } from "./lessons/fonts.ts";
 import { KIT, M5, POCKETJS, ROOT, WORKSPACE } from "./paths.ts";
 
 export interface ProjectInfo {
@@ -43,6 +44,8 @@ export function ensureWorkspace(): void {
     }
   }
   if (existsSync(join(KIT, "docs"))) cpSync(join(KIT, "docs"), join(WORKSPACE, "docs"), { recursive: true });
+  // The face Chinese text is baked from: the blank template's fonts.json names it.
+  ensureFonts(WORKSPACE, join(POCKETJS, "assets/fonts/NotoSansCJK-Demo.otf"));
 }
 
 export function projectPath(name: string): string {

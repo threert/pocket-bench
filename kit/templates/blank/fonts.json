@@ -1,4 +1,4 @@
 {
-  "fallback": ["/System/Library/Fonts/Supplemental/Arial Unicode.ttf"],
+  "fallback": ["../.bench/fonts/cjk.otf"],
   "characters": ""
 }

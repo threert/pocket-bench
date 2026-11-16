@@ -122,6 +122,7 @@ export class Lessons {
   private recent: BenchView["recent"] = [];
   private lastSample: unknown;
   private timers: ReturnType<typeof setInterval>[] = [];
+  private finishedLessons: Record<string, { done?: boolean; at?: string }> | undefined;
   private checking = false;
 
   constructor(private readonly host: LessonHost, options: LessonOptions = {}) {
@@ -150,8 +151,12 @@ export class Lessons {
 
   // ----- what the app shows -----
 
+  /** Which lessons were finished: read once, the state asks for it on every change. */
   private progress(): Record<string, { done?: boolean; at?: string }> {
-    try { return JSON.parse(readFileSync(join(this.workspace, ".bench", "progress.json"), "utf8")).lessons ?? {}; } catch { return {}; }
+    if (!this.finishedLessons) {
+      try { this.finishedLessons = JSON.parse(readFileSync(join(this.workspace, ".bench", "progress.json"), "utf8")).lessons ?? {}; } catch { this.finishedLessons = {}; }
+    }
+    return this.finishedLessons!;
   }
   private finished(id: string): void {
     const lessons = this.progress();

@@ -74,6 +74,14 @@ export function alpha(color: string, amount: number): string {
   return `${hex}${Math.round(Math.max(0, Math.min(1, amount)) * 255).toString(16).padStart(2, "0")}`;
 }
 
+/** Two colours blended: `mix(theme().panel, theme().bad, 0.15)` is a panel with a red tint.
+ *  Use it for a tinted card: a see-through fill on a node that also has a border shows the border's colour. */
+export function mix(from: string, to: string, amount: number): string {
+  const parse = (color: string) => { const hex = color.length === 4 ? [...color.slice(1)].map(c => c + c).join("") : color.slice(1, 7); return [0, 2, 4].map(at => parseInt(hex.slice(at, at + 2), 16)); };
+  const a = parse(from), b = parse(to), t = Math.max(0, Math.min(1, amount));
+  return `#${a.map((channel, index) => Math.round(channel + (b[index]! - channel) * t).toString(16).padStart(2, "0")).join("")}`;
+}
+
 /** The screen is 640 x 360 logical pixels, shown at 1280 x 720. */
 export const SCREEN = { w: 640, h: 360 } as const;
 /** Steps of 4 px. `space.md` is the gap between cards and the padding of a screen. */

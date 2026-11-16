@@ -42,6 +42,8 @@ function layout(schema: Schema): { slots: Slot[]; bytes: number } {
 }
 
 function put(view: DataView, kind: Scalar, at: number, value: number | boolean): void {
+  // An f32 carries NaN as it is: a gap in a chart's history. A whole number that is not finite is written as 0.
+  if (kind === "f32") { view.setFloat32(at, Number(value), true); return; }
   const n = typeof value === "boolean" ? (value ? 1 : 0) : Number.isFinite(value) ? value : 0;
   switch (kind) {
     case "u8": view.setUint8(at, clamp(n, 0, 0xff)); break;
@@ -50,7 +52,6 @@ function put(view: DataView, kind: Scalar, at: number, value: number | boolean):
     case "i16": view.setInt16(at, clamp(n, -0x8000, 0x7fff), true); break;
     case "u32": view.setUint32(at, clamp(n, 0, 0xffffffff), true); break;
     case "i32": view.setInt32(at, clamp(n, -0x80000000, 0x7fffffff), true); break;
-    case "f32": view.setFloat32(at, n, true); break;
     case "bool": view.setUint8(at, n ? 1 : 0); break;
   }
 }
@@ -101,7 +102,9 @@ export interface RecordCodec<S extends Schema> {
   readonly bytes: number;
   /** A record with every field at zero, false, "" or a list of zeros. */
   empty(): Values<S>;
-  /** Missing fields are written as zero. A list shorter than its field is padded with zeros at the end. */
+  /** Missing fields are written as zero. A list shorter than its field is padded with zeros at the end.
+   *  An "f32" keeps NaN (use it for "no reading": `Chart` draws a gap); whole numbers are rounded and
+   *  kept inside their type's range. */
   encode(value: Partial<Values<S>>, into?: Uint8Array): Uint8Array;
   decode(bytes: Uint8Array): Values<S>;
 }
@@ -166,6 +169,8 @@ export interface CommandCodec<C extends CommandSet> {
 export function commands<const C extends CommandSet>(set: C): CommandCodec<C> {
   const names = Object.keys(set);
   if (names.length > 255) throw new Error("channel: at most 255 commands");
+  // `name` is where decode() says which command it is.
+  for (const name of names) if ("name" in set[name]!) throw new Error(`channel: the command ${name} cannot have a field called "name"`);
   const codecs = names.map(name => record(set[name]!));
   const bytes = 1 + Math.max(0, ...codecs.map(codec => codec.bytes));
   return {
@@ -186,7 +191,8 @@ export function commands<const C extends CommandSet>(set: C): CommandCodec<C> {
   };
 }
 
-/** The last `count` values of a growing list, oldest first, for a chart field ("f32[60]"). */
+/** The last `count` values of a growing list, oldest first, for a chart field ("f32[60]"): a list that is
+ *  still short is filled with NaN at the front, which `Chart` leaves empty. */
 export function tail(values: readonly number[], count: number, fill = Number.NaN): number[] {
   const out = values.slice(-count);
   while (out.length < count) out.unshift(fill);

@@ -18,7 +18,7 @@ import { deviceStatus, setSwitch } from "@pocketjs/framework/device";
 import { createGesture } from "@pocketjs/framework/gesture";
 import { onFrame } from "@pocketjs/framework/lifecycle";
 import { worker } from "@pocketjs/framework/worker/channels";
-import { alpha, FONT, radius, space, theme, toneColor, TOUCH, type Size, type Tone } from "./theme";
+import { alpha, radius, space, theme, toneColor, TOUCH, type Size, type Tone } from "./theme";
 
 export * from "./theme";
 export { commands, record, tail, type CommandCodec, type RecordCodec } from "./channel";
@@ -337,10 +337,14 @@ export function Gauge(props: { value: number; size?: number; thickness?: number;
 
 /** The history of a value, oldest at the left: one column for each entry of
  *  `values`. NaN or undefined is a gap. The range follows the data unless
- *  `min` and `max` are given. `mark` draws a line at a level (a limit). */
+ *  `min` and `max` are given; `minSpan` is the least range it stands for, so
+ *  that a steady value draws flat instead of magnifying its noise. `mark`
+ *  draws a line at a level (a limit) while that level is inside the range.
+ *  It is `h` pixels high (72) and as wide as its column. `grow` takes the
+ *  room that is left: the width in a Row, the height in a Col or a Card. */
 export function Chart(props: {
   values: readonly (number | undefined)[]; h?: number; w?: number; grow?: boolean; tone?: Tone; color?: string;
-  min?: number; max?: number; kind?: "area" | "bars" | "line"; labels?: boolean; digits?: number; unit?: string;
+  min?: number; max?: number; minSpan?: number; kind?: "area" | "bars" | "line"; labels?: boolean; digits?: number; unit?: string;
   mark?: number; markColor?: string;
 }) {
   const h = () => props.h ?? 72;
@@ -348,35 +352,43 @@ export function Chart(props: {
   const real = () => props.values.filter((value): value is number => value !== undefined && Number.isFinite(value));
   const range = () => {
     const values = real();
-    let low = props.min ?? (values.length ? Math.min(...values) : 0), high = props.max ?? (values.length ? Math.max(...values) : 1);
-    if (props.mark !== undefined && props.min === undefined && props.max === undefined) { low = Math.min(low, props.mark); high = Math.max(high, props.mark); }
-    if (high - low < 1e-9) { low -= 0.5; high += 0.5; }
+    let low = values.length ? Math.min(...values) : 0, high = values.length ? Math.max(...values) : 1;
+    const span = Math.max(high - low, props.minSpan ?? 0, 1e-6), middle = (low + high) / 2;
     // A little air above and below a range that follows the data.
-    const air = (high - low) * 0.12;
-    return { low: props.min ?? low - air, high: props.max ?? high + air };
+    low = middle - span / 2 - span * 0.12; high = middle + span / 2 + span * 0.12;
+    return { low: props.min ?? low, high: props.max ?? high };
   };
-  const level = (value: number) => { const { low, high } = range(); return Math.max(0, Math.min(1, (value - low) / (high - low))); };
-  const inner = () => h() - 8;
+  const level = (value: number) => { const { low, high } = range(); return Math.max(0, Math.min(1, (value - low) / (high - low || 1))); };
   const text = (value: number) => `${value.toFixed(props.digits ?? 1)}${props.unit ?? ""}`;
   const kind = () => props.kind ?? "area";
-  return <View class={props.grow ? "relative overflow-hidden flex-1" : "relative overflow-hidden"} style={sized({ w: props.w }, { height: h(), radius: radius.sm, bgColor: theme().bg })}>
-    <View class="absolute left-0 top-0 w-full h-full flex-row items-end" style={{ paddingT: 4, paddingB: 4, gap: kind() === "bars" ? 2 : 0 }}>
+  // The mark shows while it is inside the range: it does not stretch a range that follows the data.
+  const marked = () => props.mark !== undefined && props.mark >= range().low && props.mark <= range().high;
+  // Heights are shares of the chart's own height (`grow` and `basis`), so it draws right at any size.
+  return <View class={props.grow ? "relative overflow-hidden flex-1" : "relative overflow-hidden"}
+    style={sized({ w: props.w }, props.grow ? { minH: h(), radius: radius.sm, bgColor: theme().bg } : { height: h(), radius: radius.sm, bgColor: theme().bg })}>
+    <View class="absolute left-0 top-0 w-full h-full flex-row" style={{ paddingT: 4, paddingB: 4, gap: kind() === "bars" ? 2 : 0 }}>
       <Index each={props.values}>{value => {
         const on = () => value() !== undefined && Number.isFinite(value()!);
-        const top = () => on() ? Math.max(2, Math.round(level(value()!) * inner())) : 0;
-        return <View class="flex-1 h-full flex-col justify-end">
-          <View style={{ height: on() ? (kind() === "bars" ? top() : 2) : 0, bgColor: color(), radius: kind() === "bars" ? 2 : 0 }} />
-          <View style={{ height: on() && kind() === "area" ? Math.max(0, top() - 2) : 0, bgColor: alpha(color(), 0.22) }} />
-          <View style={{ height: on() && kind() === "line" ? Math.max(0, top() - 2) : 0 }} />
+        const share = () => on() ? level(value()!) : 0;
+        return <View class="flex-1 h-full flex-col">
+          <View style={{ grow: 1 - share(), basis: 0 }} />
+          <View style={{ height: on() ? 2 : 0, bgColor: color() }} />
+          <View style={{ grow: share(), basis: 0, bgColor: kind() === "bars" ? color() : kind() === "area" ? alpha(color(), 0.22) : "#00000000" }} />
         </View>;
       }}</Index>
     </View>
-    <Show when={props.mark !== undefined}>
-      <View class="absolute left-0 w-full" style={{ insetT: 4 + Math.round((1 - level(props.mark ?? 0)) * inner()), height: 1, bgColor: props.markColor ?? theme().warn, opacity: 0.8 }} />
+    <Show when={marked()}>
+      <View class="absolute left-0 top-0 w-full h-full flex-col" style={{ paddingT: 4, paddingB: 4, hitPass: 1 }}>
+        <View class="flex-col justify-end" style={{ grow: 1 - level(props.mark ?? 0), basis: 0, paddingL: 48 }}>
+          <Text class="text-2xs" style={{ textColor: props.markColor ?? theme().warn }}>{text(props.mark ?? 0)}</Text>
+        </View>
+        <View style={{ height: 1, bgColor: props.markColor ?? theme().warn, opacity: 0.8 }} />
+        <View style={{ grow: level(props.mark ?? 0), basis: 0 }} />
+      </View>
     </Show>
     <Show when={(props.labels ?? true) && real().length > 0}>
       <Text class="absolute text-2xs" style={{ insetL: 6, insetT: 3, textColor: theme().faint }}>{text(Math.max(...real()))}</Text>
-      <Text class="absolute text-2xs" style={{ insetL: 6, insetT: h() - FONT["2xs"].line - 3, textColor: theme().faint }}>{text(Math.min(...real()))}</Text>
+      <Text class="absolute text-2xs" style={{ insetL: 6, insetB: 3, textColor: theme().faint }}>{text(Math.min(...real()))}</Text>
     </Show>
   </View>;
 }
