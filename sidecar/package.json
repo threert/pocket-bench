@@ -4,5 +4,8 @@
   "type": "module",
   "scripts": {
     "smoke": "bun src/smoke.ts"
+  },
+  "dependencies": {
+    "@agentclientprotocol/sdk": "2.7.0"
   }
 }

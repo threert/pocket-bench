@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384">
+  <rect width="512" height="384" fill="#f4f4f2"/>
+  <rect x="24" y="24" width="464" height="110" rx="14" fill="#1463c4"/>
+  <text x="256" y="100" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="72" fill="#fff">ENV III</text>
+  <text x="256" y="200" text-anchor="middle" font-family="PingFang SC, Helvetica" font-size="40" fill="#222">温湿度 · 气压</text>
+  <text x="256" y="270" text-anchor="middle" font-family="Menlo, monospace" font-size="34" fill="#555">I2C 0x44 0x70</text>
+</svg>
