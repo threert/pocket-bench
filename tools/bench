@@ -1,0 +1,17 @@
+#!/bin/zsh
+# Talks to the running sidecar. For development and tests.
+#   tools/bench get <path>            GET /api/<path>
+#   tools/bench send '<json>'         a message for the sidecar
+#   tools/bench app '<json>'          a request for the app (answers)
+#   tools/bench shot <file.png>       the window
+#   tools/bench screen <file.png>     the Tab5's screen
+HOME_DIR=${POCKET_BENCH_HOME:-/tmp/pb-home}
+PORT=$(python3 -I -c "import json;print(json.load(open('$HOME_DIR/.bench/server.json'))['port'])")
+case $1 in
+  get) curl -s -m 30 "localhost:$PORT/api/$2" ;;
+  send) curl -s -m 30 -X POST "localhost:$PORT/api/send" -d "$2" ;;
+  app) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "$2" ;;
+  shot) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.shot\",\"path\":\"$2\"${3:+,\"panels\":false}}" ;;
+  screen) curl -s -m 30 -o "$2" "localhost:$PORT/api/shot.png?scale=2" ;;
+  room) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.room\",\"message\":$2}" ;;
+esac

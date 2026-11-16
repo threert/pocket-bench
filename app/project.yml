@@ -1,0 +1,52 @@
+# Pocket Bench for macOS: xcodegen spec (`bun tools/app.ts` generates the project and builds it). The app is SwiftUI;
+# the room is the Rust static library core/ (libbench_core.a).
+name: PocketBench
+options:
+  bundleIdPrefix: nexus.pocket
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+targets:
+  PocketBench:
+    type: application
+    platform: macOS
+    sources:
+      - path: PocketBench
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: nexus.pocket.bench
+        PRODUCT_NAME: Pocket Bench
+        EXECUTABLE_NAME: pocket-bench
+        INFOPLIST_FILE: PocketBench/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_OBJC_BRIDGING_HEADER: PocketBench/Bridge.h
+        LIBRARY_SEARCH_PATHS: $(PROJECT_DIR)/../core/target/release
+        OTHER_LDFLAGS: ["-lbench_core", "-lc++", "-lresolv"]
+        ARCHS: arm64
+        ONLY_ACTIVE_ARCH: YES
+        DEAD_CODE_STRIPPING: YES
+        ENABLE_HARDENED_RUNTIME: NO
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        DEVELOPMENT_TEAM: ""
+        ENABLE_APP_SANDBOX: NO
+        ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: NO
+        # Where the repository is, for a build run from it (the sidecar's sources, the room's bundle, the engine).
+        BENCH_ROOT: $(PROJECT_DIR)/..
+    dependencies:
+      - sdk: Metal.framework
+      - sdk: QuartzCore.framework
+      - sdk: AppKit.framework
+      - sdk: CoreGraphics.framework
+      - sdk: CoreText.framework
+      - sdk: Security.framework
+      - sdk: SystemConfiguration.framework
+      - sdk: IOKit.framework
+      - sdk: IOSurface.framework
+      - sdk: AudioToolbox.framework
+      - sdk: CoreAudio.framework

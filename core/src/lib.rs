@@ -269,23 +269,29 @@ fn frame(s: &mut State, shared: &Shared) -> Result<()> {
         eprintln!("bench-core: audio: {level}: {text}");
     }
 
-    let Some(tex) = acquire(s)? else {
-        std::thread::sleep(Duration::from_millis(8));
-        return Ok(());
-    };
-    let view = tex.texture.create_view(&Default::default());
+    // Nothing to draw on (the window is covered, the display sleeps): the room is traced all the same, at half the
+    // rate, so a snapshot of it is still taken and the game's clock runs.
+    let tex = acquire(s)?;
+    if tex.is_none() {
+        std::thread::sleep(Duration::from_millis(16));
+    }
+    let view = tex.as_ref().map(|t| t.texture.create_view(&Default::default()));
     let (blit, bg) = (&s.blit, &s.blit_bg);
     let snap = s.snapshot.take().map(|p| {
         let buf = s.core.g.device.create_buffer(&wgpu::BufferDescriptor { label: None, size: (s.core.w * s.core.h * 4) as u64, usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
         (p, buf)
     });
     s.core.render(s.spp, |e, out| {
-        pass(e, &view, blit, bg);
+        if let Some(view) = &view {
+            pass(e, view, blit, bg);
+        }
         if let Some((_, buf)) = &snap {
             e.copy_buffer_to_buffer(out, 0, buf, 0, buf.size());
         }
     });
-    s.core.g.queue.present(tex);
+    if let Some(tex) = tex {
+        s.core.g.queue.present(tex);
+    }
     if let Some((path, buf)) = snap {
         buf.slice(..).map_async(wgpu::MapMode::Read, |_| {});
         s.core.g.device.poll(wgpu::PollType::wait_indefinitely())?;
@@ -312,7 +318,7 @@ fn frame(s: &mut State, shared: &Shared) -> Result<()> {
         s.stats_t = Instant::now();
         shared.post(serde_json::json!({
             "t": "bench.stats", "fps": fps, "gpuMs": s.core.gpu_ms, "scale": s.core.render_scale, "spp": s.spp, "bounces": s.core.bounces,
-            "scriptMs": s.game.frame_ms, "width": s.core.w, "height": s.core.h, "history": s.core.history_len,
+            "scriptMs": s.game.frame_ms, "shown": s.shown, "width": s.core.w, "height": s.core.h, "history": s.core.history_len,
         }));
     }
     Ok(())
