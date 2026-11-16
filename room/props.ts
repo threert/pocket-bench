@@ -70,7 +70,7 @@ export function buildProps(scene: Scene): PropKit {
     const nozzle = kit.drum("prop-dryer", 11 * mm, 34 * mm, [-55 * mm, 96 * mm, 0], steel, p.root, 13 * mm, 20);
     nozzle.rotation.z = Math.PI / 2;
     p.indicator = new MeshStandardMaterial({ name: "dryer_coil", color: 0x1a1a1a, roughness: 0.6, emissive: 0xff5a18, emissiveIntensity: 0 });
-    const coil = kit.drum("prop-dryer", 9 * mm, 1 * mm, [-72.2 * mm, 96 * mm, 0], p.indicator, p.root, 9 * mm, 20);
+    const coil = kit.drum("prop-dryer", 11.5 * mm, 1.2 * mm, [-72.4 * mm, 96 * mm, 0], p.indicator, p.root, 11.5 * mm, 20);
     coil.rotation.z = Math.PI / 2;
     coil.castShadow = false;
     kit.soft("prop-dryer", [30 * mm, 78 * mm, 26 * mm], 6 * mm, [30 * mm, 46 * mm, 0], std("dryer_grip", 0x2b2c30, 0.6), p.root).rotation.z = -0.12;

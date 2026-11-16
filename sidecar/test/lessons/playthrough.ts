@@ -97,10 +97,23 @@ export class Player {
         const early = await this.lessons.tick();
         if (early) throw new Error(`the step ${early} completed before its actions: its check is too easy`);
       }
-      for (const action of entry.do) { this.log(`${lesson.id}/${step.id}: ${JSON.stringify(action)}`); await this.act(action); }
+      // While a player waits the engine goes on checking, as it does once a second in the app: a `then`
+      // check ("the switch was thrown, then thrown back") has to see the moment in between. A step that
+      // completes during one of its own waits is done; the waits after it only let the bench run.
+      let during = false;
+      for (const action of entry.do) {
+        this.log(`${lesson.id}/${step.id}: ${JSON.stringify(action)}`);
+        if (!("wait" in action) || during) { await this.act(action); continue; }
+        for (const until = Date.now() + action.wait * 1000; Date.now() < until;) {
+          const completed = during ? undefined : await this.lessons.tick();
+          if (completed && completed !== step.id) throw new Error(`the step ${completed} completed while ${step.id} was in turn`);
+          during ||= completed === step.id;
+          await sleep(Math.max(0, Math.min(250, until - Date.now())));
+        }
+      }
       const started = Date.now(), limit = (this.options.stepSeconds ?? 60) * 1000;
       for (;;) {
-        const completed = await this.lessons.tick();
+        const completed = during ? step.id : await this.lessons.tick();
         if (completed && completed !== step.id) throw new Error(`the step ${completed} completed while ${step.id} was in turn`);
         if (completed === step.id) break;
         if (Date.now() - started > limit) {

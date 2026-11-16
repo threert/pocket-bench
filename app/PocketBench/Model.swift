@@ -262,6 +262,9 @@ final class Model: ObservableObject {
             break
         case "lesson.step":
             Sounds.play("done")
+            toast("这一步完成了 ✓")
+        case "lesson.done":
+            toast("任务完成！可以接着改，也可以换一张任务卡 ★")
         case "error":
             toast(message["message"] as? String ?? "", tone: "warn")
         case "app.reload-room":
@@ -374,15 +377,19 @@ final class Model: ObservableObject {
         let path = request["path"] as? String ?? Paths.scratch + "/shot.png"
         let roomPath = Paths.scratch + "/room-\(UUID().uuidString.prefix(8)).png"
         let overlay = request["panels"] as? Bool ?? true
+        let note = { (text: String) in FileHandle.standardError.write("shot: \(text)\n".data(using: .utf8)!) }
+        note("asked \(path)")
         snapshotWaiters[roomPath] = { [weak self] in
             guard let self else { return }
+            note("room traced")
             let ok = Shots.compose(room: roomPath, view: self.room, panels: overlay, to: path)
+            note("composed \(ok)")
             try? FileManager.default.removeItem(atPath: roomPath)
             self.answer(request, ["ok": ok, "path": path])
         }
         room.snapshot(to: roomPath)
         DispatchQueue.main.asyncAfter(deadline: .now() + 6) { [weak self] in
-            if self?.snapshotWaiters.removeValue(forKey: roomPath) != nil { self?.answer(request, ["ok": false, "error": "the renderer drew no frame"]) }
+            if self?.snapshotWaiters.removeValue(forKey: roomPath) != nil { note("no frame in 6 s"); self?.answer(request, ["ok": false, "error": "the renderer drew no frame"]) }
         }
     }
 }
@@ -403,13 +410,17 @@ enum Shots {
         let y = content.isFlipped ? size.height - frame.maxY : frame.minY
         ctx.interpolationQuality = .high
         ctx.draw(roomCG, in: CGRect(x: frame.minX, y: y, width: frame.width, height: frame.height))
-        if panels {
+        if panels, let layer = content.layer {
+            // The panels are layers; the room's own layer would draw as a black rectangle, so it is out for the moment.
             view.isHidden = true
-            if let rep = content.bitmapImageRepForCachingDisplay(in: content.bounds) {
-                content.cacheDisplay(in: content.bounds, to: rep)
-                if let cg = rep.cgImage { ctx.draw(cg, in: CGRect(origin: .zero, size: size)) }
+            defer { view.isHidden = false }
+            ctx.saveGState()
+            if !layer.isGeometryFlipped && content.isFlipped || layer.contentsAreFlipped() {
+                ctx.translateBy(x: 0, y: size.height)
+                ctx.scaleBy(x: 1, y: -1)
             }
-            view.isHidden = false
+            layer.render(in: ctx)
+            ctx.restoreGState()
         }
         guard let out = ctx.makeImage() else { return false }
         let rep = NSBitmapImageRep(cgImage: out)

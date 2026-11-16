@@ -21,21 +21,21 @@ export const PADS: { id: string; at: V3 }[] = [
 export const HUB: V3 = [-0.2, BENCH.top, -0.375];
 
 /** The foam tray the Units live in, left of the pads. */
-export const TRAY = { at: [-0.415, BENCH.top, -0.215] as V3 };
+export const TRAY = { at: [-0.385, BENCH.top, -0.215] as V3 };
 /** Where the props rest, right of the pads: a grid of places from the back row to the front. */
 export const PROP_HOMES: Record<string, V3> = {
-  dryer: [0.335, BENCH.top, -0.335], mister: [0.455, BENCH.top, -0.34], mug: [0.545, BENCH.top, -0.33],
-  block: [0.33, BENCH.top, -0.215], "weight-200": [0.43, BENCH.top, -0.215], "weight-100": [0.49, BENCH.top, -0.215], "weight-50": [0.545, BENCH.top, -0.215],
-  "card-a": [0.335, BENCH.top, -0.115], "card-b": [0.435, BENCH.top, -0.11], tag: [0.525, BENCH.top, -0.115],
+  dryer: [0.30, BENCH.top, -0.335], mister: [0.415, BENCH.top, -0.34], mug: [0.50, BENCH.top, -0.33],
+  block: [0.295, BENCH.top, -0.215], "weight-200": [0.39, BENCH.top, -0.215], "weight-100": [0.45, BENCH.top, -0.215], "weight-50": [0.505, BENCH.top, -0.215],
+  "card-a": [0.30, BENCH.top, -0.115], "card-b": [0.40, BENCH.top, -0.11], tag: [0.49, BENCH.top, -0.115],
 };
 
 /** Camera views. The app's chat panel covers the right quarter of the window, so each view looks a little to the
  *  right of its subject: the subject sits in the middle of what is left. */
 export const VIEWS: Record<string, { position: V3; target: V3; fov: number }> = {
   room: { position: [0.62, 1.58, 3.0], target: [0.32, 1.14, -0.5], fov: 42 },
-  bench: { position: [0.25, 1.38, 0.62], target: [0.25, 0.80, -0.22], fov: 50 },
+  bench: { position: [0.2, 1.40, 0.64], target: [0.2, 0.80, -0.22], fov: 52 },
   work: { position: [0.09, 1.10, 0.24], target: [0.09, 0.83, -0.29], fov: 40 },
   screen: { position: [0.043, 1.0, 0.0], target: [0.043, 0.868, -0.37], fov: 30 },
-  parts: { position: [-0.27, 1.12, 0.2], target: [-0.27, 0.77, -0.2], fov: 42 },
+  parts: { position: [-0.24, 1.12, 0.2], target: [-0.24, 0.77, -0.2], fov: 42 },
   wall: { position: [-1.2, 1.5, 1.7], target: [-1.5, 1.3, -0.8], fov: 42 },
 };
