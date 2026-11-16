@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="432" viewBox="0 0 760 432" font-family="Helvetica Neue, Helvetica, Arial">
+  <!-- The waveform generator's 4.3-inch LCD (95 x 54 mm lit). -->
+  <rect width="760" height="432" fill="#050b12"/>
+  <!-- channel tabs -->
+  <rect x="0" y="0" width="380" height="44" fill="#ffd92e"/>
+  <text x="16" y="31" font-size="24" font-weight="700" fill="#141000">CH1</text>
+  <text x="84" y="31" font-size="21" fill="#141000">Sine · ON · HighZ</text>
+  <rect x="380" y="0" width="380" height="44" fill="#0e1a24"/>
+  <text x="396" y="31" font-size="24" font-weight="700" fill="#3f93a8">CH2</text>
+  <text x="464" y="31" font-size="21" fill="#4f6675">Square · OFF</text>
+  <!-- parameters -->
+  <rect x="12" y="58" width="352" height="76" rx="6" fill="#12314a" stroke="#58b6ff" stroke-width="2"/>
+  <g font-size="19" fill="#8fa3b3">
+    <text x="26" y="82">Frequency</text><text x="26" y="162">Amplitude</text><text x="26" y="242">Offset</text><text x="26" y="322">Phase</text>
+  </g>
+  <g font-size="31" font-family="Menlo, monospace" fill="#f2f6f9">
+    <text x="26" y="121">1.000 000 kHz</text><text x="26" y="201">2.000 Vpp</text><text x="26" y="281">0.000 Vdc</text><text x="26" y="361">0.0 °</text>
+  </g>
+  <!-- the waveform picture -->
+  <rect x="388" y="58" width="360" height="312" rx="6" fill="#02060a" stroke="#2c4152" stroke-width="2"/>
+  <path d="M408,214H728M568,78V350" stroke="#2c4152" stroke-width="1.5" stroke-dasharray="4 6"/>
+  <path d="M418,214C472.6,74 513.4,74 568,214S663.4,354 718,214" fill="none" stroke="#ffd92e" stroke-opacity="0.3" stroke-width="10"/>
+  <path d="M418,214C472.6,74 513.4,74 568,214S663.4,354 718,214" fill="none" stroke="#ffe45a" stroke-width="4"/>
+  <path d="M418,366V378M718,366V378M418,372H718" stroke="#8fa3b3" stroke-width="1.5" fill="none" transform="translate(0,-24)"/>
+  <text x="568" y="340" text-anchor="middle" font-size="16" fill="#8fa3b3" transform="translate(0,-4)">1.000 ms</text>
+  <!-- soft-key tabs -->
+  <g fill="#0e1a24" stroke="#2c4152" stroke-width="1.5">
+    <rect x="2" y="386" width="123" height="44" rx="5" fill="#12314a" stroke="#58b6ff"/><rect x="128.7" y="386" width="123" height="44" rx="5"/><rect x="255.3" y="386" width="123" height="44" rx="5"/>
+    <rect x="382" y="386" width="123" height="44" rx="5"/><rect x="508.7" y="386" width="123" height="44" rx="5"/><rect x="635.3" y="386" width="123" height="44" rx="5"/>
+  </g>
+  <g font-size="21" text-anchor="middle" fill="#e6edf2">
+    <text x="63.5" y="415">Freq</text><text x="190" y="415">Ampl</text><text x="317" y="415">Offset</text><text x="443.5" y="415">Phase</text><text x="570" y="415">Harm</text><text x="697" y="415">1 / 2</text>
+  </g>
+</svg>

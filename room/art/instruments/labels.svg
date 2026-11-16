@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="512" viewBox="0 0 1024 512" font-family="Helvetica Neue, Helvetica, Arial" text-anchor="middle">
+  <!-- Labels of the small things, one sheet. Left 512 x 512: the solder spool's flange (58 mm across).
+       Right top 512 x 256: the parts box's lid label (64 x 32 mm). Right bottom: the jumper-wire box (64 x 32 mm). -->
+  <rect width="512" height="512" fill="#e9e7df"/>
+  <circle cx="256" cy="256" r="250" fill="#f3f1ea"/>
+  <circle cx="256" cy="256" r="238" fill="none" stroke="#1f6fb8" stroke-width="14"/>
+  <circle cx="256" cy="256" r="84" fill="#dedcd4" stroke="#b9b7af" stroke-width="3"/>
+  <g fill="#1d2f44">
+    <text x="256" y="92" font-size="40" font-weight="700" letter-spacing="2">SOLDER WIRE</text>
+    <text x="256" y="134" font-size="27" font-weight="500">Sn99.3 / Cu0.7</text>
+    <text x="256" y="398" font-size="34" font-weight="700">Ø 0.8 mm · 250 g</text>
+    <text x="256" y="436" font-size="23">LEAD-FREE · FLUX 2.2 %</text>
+  </g>
+  <g font-size="22" font-weight="700" fill="#1f6fb8"><text x="88" y="264">227 °C</text><text x="424" y="264">RoHS</text></g>
+  <!-- parts box -->
+  <rect x="512" y="0" width="512" height="256" fill="#f6f5f0"/>
+  <rect x="512" y="0" width="512" height="70" fill="#d8432f"/>
+  <text x="768" y="50" font-size="40" font-weight="700" fill="#fff" letter-spacing="2">RESISTOR KIT</text>
+  <g fill="#26282c">
+    <text x="768" y="128" font-size="40" font-weight="700">0603 · 1 % · E24</text>
+    <text x="768" y="174" font-size="26">10 Ω – 1 MΩ   ·   61 values × 50</text>
+    <text x="768" y="226" font-size="24" font-family="Menlo, monospace" fill="#5c6066">BIN A-12  ·  ESD SAFE</text>
+  </g>
+  <!-- jumper-wire box -->
+  <rect x="512" y="256" width="512" height="256" fill="#f1ede2"/>
+  <rect x="530" y="274" width="476" height="220" rx="10" fill="none" stroke="#26282c" stroke-width="5"/>
+  <g fill="#26282c">
+    <text x="768" y="344" font-size="50" font-weight="700" letter-spacing="2">JUMPER WIRES</text>
+    <text x="768" y="398" font-size="30">M-M · M-F · F-F     20 cm</text>
+    <text x="768" y="460" font-size="34" font-weight="700" fill="#d8432f">120 PCS</text>
+  </g>
+</svg>

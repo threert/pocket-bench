@@ -1,0 +1,317 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<rect width="1024" height="1024" fill="#f6f5f0"/>
+<g transform="translate(0 0)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">R 0603</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">A-01</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">10k 1%</text>
+  <rect x="12" y="86" width="90" height="5" fill="#8b8e94"/>
+  <rect x="190" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M198 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(256 0)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">R 0603</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">A-02</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">4.7k 1%</text>
+  <rect x="12" y="86" width="127" height="5" fill="#8b8e94"/>
+  <rect x="203" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M211 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(512 0)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">R 0805</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">A-07</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">220R 5%</text>
+  <rect x="12" y="86" width="164" height="5" fill="#8b8e94"/>
+  <rect x="216" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M224 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(768 0)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">R 1206</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">A-11</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">0R1 1W</text>
+  <rect x="12" y="86" width="121" height="5" fill="#8b8e94"/>
+  <rect x="199" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M207 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(0 102)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">C 0603</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">B-01</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">100nF X7R</text>
+  <rect x="12" y="86" width="158" height="5" fill="#8b8e94"/>
+  <rect x="212" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M220 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(256 102)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">C 0805</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">B-04</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">10uF 25V</text>
+  <rect x="12" y="86" width="115" height="5" fill="#8b8e94"/>
+  <rect x="195" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M203 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(512 102)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#1d5fc2"/>
+  <rect y="36" width="256" height="3" fill="#1d5fc2" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">C 1206</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">B-09</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">22uF 16V</text>
+  <rect x="12" y="86" width="152" height="5" fill="#8b8e94"/>
+  <rect x="208" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M216 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(768 102)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">L 0630</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">B-14</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">4.7uH 5A</text>
+  <rect x="12" y="86" width="109" height="5" fill="#8b8e94"/>
+  <rect x="191" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M199 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(0 204)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">D SOD-123</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">C-02</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">1N4148W</text>
+  <rect x="12" y="86" width="146" height="5" fill="#8b8e94"/>
+  <rect x="204" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M212 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(256 204)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">D SMA</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">C-03</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">SS34</text>
+  <rect x="12" y="86" width="103" height="5" fill="#8b8e94"/>
+  <rect x="217" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M225 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(512 204)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#1f8f4e"/>
+  <rect y="36" width="256" height="3" fill="#1f8f4e" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">LED 0603</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">C-08</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">GREEN</text>
+  <rect x="12" y="86" width="140" height="5" fill="#8b8e94"/>
+  <rect x="200" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M208 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(768 204)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">Q SOT-23</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">C-12</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">2N7002</text>
+  <rect x="12" y="86" width="97" height="5" fill="#8b8e94"/>
+  <rect x="213" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M221 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(0 306)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">U SOP-8</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">D-01</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">LM358</text>
+  <rect x="12" y="86" width="134" height="5" fill="#8b8e94"/>
+  <rect x="196" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M204 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(256 306)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#1d5fc2"/>
+  <rect y="36" width="256" height="3" fill="#1d5fc2" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">MCU QFN56</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">D-05</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">S3 N16R8</text>
+  <rect x="12" y="86" width="91" height="5" fill="#8b8e94"/>
+  <rect x="209" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M217 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(512 306)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#1f8f4e"/>
+  <rect y="36" width="256" height="3" fill="#1f8f4e" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">CONN</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">E-01</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">GROVE 4P</text>
+  <rect x="12" y="86" width="128" height="5" fill="#8b8e94"/>
+  <rect x="192" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M200 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(768 306)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">CONN</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">E-02</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">PH2.0 2P</text>
+  <rect x="12" y="86" width="165" height="5" fill="#8b8e94"/>
+  <rect x="205" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M213 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(0 408)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">CONN</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">E-06</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">USB-C 16P</text>
+  <rect x="12" y="86" width="122" height="5" fill="#8b8e94"/>
+  <rect x="218" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M226 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(256 408)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">SW</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">F-03</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">TACT 6x6</text>
+  <rect x="12" y="86" width="159" height="5" fill="#8b8e94"/>
+  <rect x="201" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M209 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(512 408)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#e09a12"/>
+  <rect y="36" width="256" height="3" fill="#e09a12" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">M3</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">G-04</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">SPACER 10</text>
+  <rect x="12" y="86" width="116" height="5" fill="#8b8e94"/>
+  <rect x="214" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M222 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(768 408)">
+  <rect width="256" height="102" fill="#f6f5f0"/>
+  <rect width="256" height="36" fill="#d4222b"/>
+  <rect y="36" width="256" height="3" fill="#d4222b" opacity="0.35"/>
+  <text x="12" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="25" fill="#fff">HDR 2.54</text>
+  <text x="244" y="26" text-anchor="end" font-family="Menlo, monospace" font-size="17" fill="#fff" opacity="0.9">E-10</text>
+  <text x="12" y="74" font-family="Helvetica Neue, Arial" font-weight="700" font-size="32" fill="#16171a">1x40 PIN</text>
+  <rect x="12" y="86" width="153" height="5" fill="#8b8e94"/>
+  <rect x="197" y="52" width="38" height="38" fill="none" stroke="#2a2b2e" stroke-width="2"/>
+  <path d="M205 60h8v8h-8zm14 0h8v8h-8zm-14 14h8v8h-8zm11 3h4v4h-4zm7 -5h4v4h-4z" fill="#2a2b2e"/>
+</g>
+<g transform="translate(0 512)">
+  <rect width="256" height="96" fill="#fbfbf8"/>
+  <rect x="5" y="5" width="246" height="86" rx="7" fill="none" stroke="#25262a" stroke-width="3"/>
+  <text x="128" y="50" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="38" fill="#141518">压线钳</text>
+  <text x="128" y="78" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#3a3c40">CRIMP SN-28B</text>
+</g>
+<g transform="translate(256 512)">
+  <rect width="256" height="96" fill="#fbfbf8"/>
+  <rect x="5" y="5" width="246" height="86" rx="7" fill="none" stroke="#25262a" stroke-width="3"/>
+  <text x="128" y="50" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="38" fill="#141518">剥线钳</text>
+  <text x="128" y="78" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#3a3c40">STRIP 0.2-6</text>
+</g>
+<g transform="translate(512 512)">
+  <rect width="256" height="96" fill="#fbfbf8"/>
+  <rect x="5" y="5" width="246" height="86" rx="7" fill="none" stroke="#25262a" stroke-width="3"/>
+  <text x="128" y="50" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="38" fill="#141518">端子钳</text>
+  <text x="128" y="78" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#3a3c40">CRIMP JST/PH</text>
+</g>
+<g transform="translate(768 512)">
+  <rect width="256" height="96" fill="#fbfbf8"/>
+  <rect x="5" y="5" width="246" height="86" rx="7" fill="none" stroke="#25262a" stroke-width="3"/>
+  <text x="128" y="50" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="38" fill="#141518">尖嘴钳</text>
+  <text x="128" y="78" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#3a3c40">LONG NOSE</text>
+</g>
+<g transform="translate(0 608)">
+  <rect width="256" height="96" fill="#fbfbf8"/>
+  <rect x="5" y="5" width="246" height="86" rx="7" fill="none" stroke="#25262a" stroke-width="3"/>
+  <text x="128" y="50" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="38" fill="#141518">斜口钳</text>
+  <text x="128" y="78" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#3a3c40">FLUSH CUT</text>
+</g>
+<g transform="translate(256 608)">
+  <rect width="256" height="96" fill="#fbfbf8"/>
+  <rect x="5" y="5" width="246" height="86" rx="7" fill="none" stroke="#25262a" stroke-width="3"/>
+  <text x="128" y="50" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="38" fill="#141518">棘轮钳</text>
+  <text x="128" y="78" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#3a3c40">FERRULE 0.25-6</text>
+</g>
+<g transform="translate(512 608)">
+  <rect width="256" height="96" fill="#fbfbf8"/>
+  <rect x="5" y="5" width="246" height="86" rx="7" fill="none" stroke="#25262a" stroke-width="3"/>
+  <text x="128" y="50" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="38" fill="#141518">胶带</text>
+  <text x="128" y="78" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#3a3c40">TAPE</text>
+</g>
+<g transform="translate(768 608)">
+  <rect width="256" height="96" fill="#fbfbf8"/>
+  <rect x="5" y="5" width="246" height="86" rx="7" fill="none" stroke="#25262a" stroke-width="3"/>
+  <text x="128" y="50" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="38" fill="#141518">线材</text>
+  <text x="128" y="78" text-anchor="middle" font-family="Menlo, monospace" font-size="19" fill="#3a3c40">WIRE AWG22-28</text>
+</g>
+<g transform="translate(0 704)">
+  <rect width="128" height="128" fill="#f2c319"/>
+  <rect x="6" y="6" width="116" height="116" fill="none" stroke="#1c1c1c" stroke-width="3"/>
+  <text x="64" y="38" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="22" fill="#1c1c1c">LAB-03</text>
+  <text x="64" y="64" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="21" fill="#1c1c1c">元件柜</text>
+  <path d="M16 78v30M22 78v30M28 78v30M34 78v30M40 78v30M46 78v30M52 78v30M58 78v30M64 78v30M70 78v30M76 78v30M82 78v30M88 78v30M94 78v30M100 78v30M106 78v30M112 78v30" stroke="#1c1c1c" stroke-width="2" stroke-dasharray="30 0"/>
+  <path d="M19 78v30M31 78v30M43 78v30M55 78v30M67 78v30M79 78v30M91 78v30M103 78v30" stroke="#1c1c1c" stroke-width="1"/>
+</g>
+<g transform="translate(128 704)">
+  <rect width="128" height="128" fill="#f2c319"/>
+  <rect x="6" y="6" width="116" height="116" fill="none" stroke="#1c1c1c" stroke-width="3"/>
+  <text x="64" y="38" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="22" fill="#1c1c1c">LAB-04</text>
+  <text x="64" y="64" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="21" fill="#1c1c1c">元件柜</text>
+  <path d="M16 78v30M22 78v30M28 78v30M34 78v30M40 78v30M46 78v30M52 78v30M58 78v30M64 78v30M70 78v30M76 78v30M82 78v30M88 78v30M94 78v30M100 78v30M106 78v30M112 78v30" stroke="#1c1c1c" stroke-width="3" stroke-dasharray="30 0"/>
+  <path d="M19 78v30M32 78v30M45 78v30M55 78v30M68 78v30M81 78v30M91 78v30M104 78v30" stroke="#1c1c1c" stroke-width="1"/>
+</g>
+<g transform="translate(256 704)">
+  <rect width="128" height="128" fill="#f2c319"/>
+  <rect x="6" y="6" width="116" height="116" fill="none" stroke="#1c1c1c" stroke-width="3"/>
+  <text x="64" y="38" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="22" fill="#1c1c1c">LAB-05</text>
+  <text x="64" y="64" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="21" fill="#1c1c1c">工具墙</text>
+  <path d="M16 78v30M22 78v30M28 78v30M34 78v30M40 78v30M46 78v30M52 78v30M58 78v30M64 78v30M70 78v30M76 78v30M82 78v30M88 78v30M94 78v30M100 78v30M106 78v30M112 78v30" stroke="#1c1c1c" stroke-width="2" stroke-dasharray="30 0"/>
+  <path d="M19 78v30M33 78v30M44 78v30M55 78v30M69 78v30M80 78v30M91 78v30M105 78v30" stroke="#1c1c1c" stroke-width="1"/>
+</g>
+<g transform="translate(384 704)">
+  <rect width="128" height="128" fill="#f2c319"/>
+  <rect x="6" y="6" width="116" height="116" fill="none" stroke="#1c1c1c" stroke-width="3"/>
+  <text x="64" y="38" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="22" fill="#1c1c1c">LAB-06</text>
+  <text x="64" y="64" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="21" fill="#1c1c1c">白板</text>
+  <path d="M16 78v30M22 78v30M28 78v30M34 78v30M40 78v30M46 78v30M52 78v30M58 78v30M64 78v30M70 78v30M76 78v30M82 78v30M88 78v30M94 78v30M100 78v30M106 78v30M112 78v30" stroke="#1c1c1c" stroke-width="3" stroke-dasharray="30 0"/>
+  <path d="M19 78v30M31 78v30M43 78v30M55 78v30M67 78v30M79 78v30M91 78v30M103 78v30" stroke="#1c1c1c" stroke-width="1"/>
+</g>
+<g transform="translate(512 704)">
+  <rect width="256" height="128" fill="#fafaf7"/>
+  <rect x="0" y="0" width="256" height="34" fill="#20242b"/>
+  <text x="12" y="25" font-family="Helvetica Neue, Arial" font-weight="700" font-size="22" fill="#fff">LED STRIP 5 m</text>
+  <text x="12" y="66" font-family="Menlo, monospace" font-size="20" fill="#16171a">SK6812 60/m 5V</text>
+  <text x="12" y="94" font-family="Menlo, monospace" font-size="18" fill="#55585e">IP30 10 mm RGBW</text>
+  <text x="12" y="118" font-family="PingFang SC, Helvetica Neue" font-size="17" fill="#55585e">灯带 · 请勿带电插拔</text>
+</g>
+<g transform="translate(768 704)">
+  <rect width="256" height="128" fill="#fafaf7"/>
+  <rect x="0" y="0" width="256" height="128" fill="none" stroke="#c22" stroke-width="10"/>
+  <text x="128" y="52" text-anchor="middle" font-family="PingFang SC, Helvetica Neue" font-weight="600" font-size="34" fill="#c22">用后归位</text>
+  <text x="128" y="92" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="24" fill="#16171a">RETURN TOOLS</text>
+</g>
+</svg>

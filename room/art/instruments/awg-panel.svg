@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1792" height="684" viewBox="0 0 2540 970" font-family="Helvetica Neue, Helvetica, Arial" text-anchor="middle">
+  <!-- The waveform generator's front, 254 x 97 mm; one unit is 0.1 mm. -->
+  <defs>
+    <rect id="soft" x="-63" y="-35.5" width="126" height="71" rx="12"/>
+    <rect id="w" x="-65.5" y="-38" width="131" height="76" rx="12"/>
+    <rect id="n" x="-60.5" y="-50.5" width="121" height="101" rx="13"/>
+    <rect id="o" x="-68" y="-38" width="136" height="76" rx="12"/>
+  </defs>
+  <rect width="2540" height="970" fill="#2d3035"/>
+  <rect x="90" y="70" width="1040" height="620" rx="26" fill="#060708"/>
+  <g fill="#c9cbcf">
+    <use xlink:href="#soft" x="214" y="755"/><use xlink:href="#soft" x="372" y="755"/><use xlink:href="#soft" x="531" y="755"/><use xlink:href="#soft" x="689" y="755"/><use xlink:href="#soft" x="847" y="755"/><use xlink:href="#soft" x="1006" y="755"/>
+  </g>
+  <!-- power and the name -->
+  <circle cx="140" cy="885" r="50" fill="#c9cbcf"/>
+  <g fill="none" stroke="#2a2c30" stroke-width="6" stroke-linecap="round"><path d="M125,871A23,23 0 1 0 155,871M140,859V885"/></g>
+  <g text-anchor="start">
+    <text x="250" y="899" font-size="40" font-weight="700" fill="#eceded" letter-spacing="1">FG-2062</text>
+    <text x="462" y="899" font-size="21" fill="#a9aeb5" letter-spacing="1">Arbitrary Waveform Generator · 60 MHz · 200 MSa/s</text>
+  </g>
+  <!-- waveform keys with their shapes -->
+  <g fill="#c9cbcf">
+    <use xlink:href="#w" x="1260" y="150"/><use xlink:href="#w" x="1410" y="150"/><use xlink:href="#w" x="1260" y="280"/><use xlink:href="#w" x="1410" y="280"/><use xlink:href="#w" x="1260" y="410"/><use xlink:href="#w" x="1410" y="410"/>
+    <use xlink:href="#w" x="1260" y="560"/><use xlink:href="#w" x="1410" y="560"/><use xlink:href="#w" x="1260" y="690"/><use xlink:href="#w" x="1410" y="690"/><use xlink:href="#w" x="1260" y="820"/><use xlink:href="#w" x="1410" y="820"/>
+  </g>
+  <g fill="none" stroke="#1d1f23" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M1224,150C1237,116 1247,116 1260,150S1283,184 1296,150"/>
+    <path d="M1374,166V134H1410V166H1446V134"/>
+    <path d="M1224,296L1260,264V296L1296,264"/>
+    <path d="M1374,296H1398V264H1414V296H1446"/>
+    <path d="M1224,410l8,-16l7,28l8,-22l7,26l8,-30l7,22l8,-12l7,18l12,-14"/>
+    <path d="M1374,418c10,-30 18,-30 24,-8s14,10 20,-12s16,-8 28,20"/>
+  </g>
+  <g font-size="16" font-weight="500" fill="#c2c6cc" letter-spacing="0.5">
+    <text x="1260" y="98">Sine</text><text x="1410" y="98">Square</text><text x="1260" y="228">Ramp</text><text x="1410" y="228">Pulse</text><text x="1260" y="358">Noise</text><text x="1410" y="358">Arb</text>
+  </g>
+  <g font-size="23" font-weight="500" fill="#1d1f23">
+    <text x="1260" y="568">Mod</text><text x="1410" y="568">Sweep</text><text x="1260" y="698">Burst</text><text x="1410" y="698">Trigger</text><text x="1260" y="828">Store</text><text x="1410" y="828">Utility</text>
+  </g>
+  <path d="M1505,60V910" stroke="#454a52" stroke-width="3"/>
+  <!-- the number pad -->
+  <g fill="#e4e5e7">
+    <use xlink:href="#n" x="1610" y="300"/><use xlink:href="#n" x="1750" y="300"/><use xlink:href="#n" x="1890" y="300"/>
+    <use xlink:href="#n" x="1610" y="430"/><use xlink:href="#n" x="1750" y="430"/><use xlink:href="#n" x="1890" y="430"/>
+    <use xlink:href="#n" x="1610" y="560"/><use xlink:href="#n" x="1750" y="560"/><use xlink:href="#n" x="1890" y="560"/>
+    <use xlink:href="#n" x="1610" y="690"/><use xlink:href="#n" x="1750" y="690"/><use xlink:href="#n" x="1890" y="690"/>
+  </g>
+  <g fill="#c9cbcf">
+    <use xlink:href="#w" x="1610" y="150"/><use xlink:href="#w" x="1750" y="150"/><use xlink:href="#w" x="1890" y="150"/>
+    <use xlink:href="#w" x="1610" y="820"/><rect x="1684.500" y="782" width="271" height="76" rx="12"/>
+  </g>
+  <g font-size="46" font-weight="500" fill="#1d1f23">
+    <text x="1610" y="317">7</text><text x="1750" y="317">8</text><text x="1890" y="317">9</text>
+    <text x="1610" y="447">4</text><text x="1750" y="447">5</text><text x="1890" y="447">6</text>
+    <text x="1610" y="577">1</text><text x="1750" y="577">2</text><text x="1890" y="577">3</text>
+    <text x="1610" y="707">0</text><text x="1750" y="700">.</text><text x="1890" y="705" font-size="40">±</text>
+  </g>
+  <g font-size="23" font-weight="500" fill="#1d1f23">
+    <text x="1610" y="158">CH1/2</text><text x="1750" y="158">Units</text><text x="1890" y="158">Help</text>
+    <text x="1610" y="828">Del</text><text x="1820" y="828">Enter</text>
+  </g>
+  <!-- arrows under the knob -->
+  <g fill="#c9cbcf"><use xlink:href="#w" x="2160" y="540"/><use xlink:href="#w" x="2360" y="540"/></g>
+  <g fill="#1d1f23"><path d="M2144,540L2172,522V558Z"/><path d="M2376,540L2348,522V558Z"/></g>
+  <!-- outputs -->
+  <use xlink:href="#o" x="2120" y="665" fill="#7be08f"/><use xlink:href="#o" x="2400" y="665" fill="#c9cbcf"/>
+  <g font-size="22" font-weight="700" fill="#1d1f23"><text x="2120" y="673">Output</text><text x="2400" y="673">Output</text></g>
+  <g fill="none" stroke-width="13"><circle cx="2120" cy="830" r="98" stroke="#e3b70e"/><circle cx="2400" cy="830" r="98" stroke="#18b1d0"/></g>
+  <g font-size="24" font-weight="700"><text x="2260" y="818" fill="#f0c61c">CH1</text><text x="2260" y="858" fill="#27c3e2">CH2</text></g>
+  <g font-size="15" fill="#a9aeb5"><text x="2260" y="895">50 Ω</text></g>
+  <g fill="#f0c61c"><path d="M2228,810L2214,802V818Z"/></g><g fill="#27c3e2"><path d="M2292,850L2306,842V858Z"/></g>
+</svg>

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="870" height="1024" viewBox="0 0 1240 1460" font-family="Helvetica Neue, Helvetica, Arial" text-anchor="middle">
+  <!-- The bench supply's front, 124 x 146 mm; one unit is 0.1 mm. -->
+  <rect width="1240" height="1460" fill="#2a2f37"/>
+  <rect x="80" y="70" width="1080" height="520" rx="26" fill="#060607"/>
+  <g font-size="24" font-weight="500" fill="#d9dbde" text-anchor="start" letter-spacing="1">
+    <text x="166" y="653">C.V.</text><text x="366" y="653">C.C.</text>
+  </g>
+  <text x="1150" y="658" font-size="38" font-weight="700" fill="#eceded" text-anchor="end" letter-spacing="1">PS-3005</text>
+  <g font-size="23" font-weight="700" fill="#eceded" letter-spacing="3">
+    <text x="340" y="728">VOLTAGE</text><text x="900" y="728">CURRENT</text>
+  </g>
+  <g stroke="#8d939b" stroke-width="3" fill="none">
+    <path d="M110,740V722H240M440,722H570V740M670,740V722H800M1000,722H1130V740"/>
+  </g>
+  <!-- tick marks around the coarse knobs: 11 over 270 degrees -->
+  <g stroke="#d9dbde" stroke-width="4" stroke-linecap="round">
+    <g transform="translate(220,860)">
+      <path id="tk" d="M0,-112V-126"/>
+      <use xlink:href="#tk" transform="rotate(-135)"/><use xlink:href="#tk" transform="rotate(-108)"/><use xlink:href="#tk" transform="rotate(-81)"/><use xlink:href="#tk" transform="rotate(-54)"/><use xlink:href="#tk" transform="rotate(-27)"/>
+      <use xlink:href="#tk" transform="rotate(27)"/><use xlink:href="#tk" transform="rotate(54)"/><use xlink:href="#tk" transform="rotate(81)"/><use xlink:href="#tk" transform="rotate(108)"/><use xlink:href="#tk" transform="rotate(135)"/>
+    </g>
+    <g transform="translate(780,860)">
+      <use xlink:href="#tk"/>
+      <use xlink:href="#tk" transform="rotate(-135)"/><use xlink:href="#tk" transform="rotate(-108)"/><use xlink:href="#tk" transform="rotate(-81)"/><use xlink:href="#tk" transform="rotate(-54)"/><use xlink:href="#tk" transform="rotate(-27)"/>
+      <use xlink:href="#tk" transform="rotate(27)"/><use xlink:href="#tk" transform="rotate(54)"/><use xlink:href="#tk" transform="rotate(81)"/><use xlink:href="#tk" transform="rotate(108)"/><use xlink:href="#tk" transform="rotate(135)"/>
+    </g>
+  </g>
+  <g font-size="16" font-weight="500" fill="#a9aeb5" letter-spacing="1.5">
+    <text x="220" y="1008">COARSE</text><text x="460" y="968">FINE</text><text x="780" y="1008">COARSE</text><text x="1020" y="968">FINE</text>
+  </g>
+  <path d="M60,1050H1180" stroke="#4a515b" stroke-width="3"/>
+  <g font-size="19" font-weight="700" fill="#d9dbde" letter-spacing="2">
+    <text x="170" y="1096">POWER</text><text x="420" y="1096">OUTPUT</text>
+  </g>
+  <!-- the output key -->
+  <rect x="347" y="1162" width="146" height="106" rx="14" fill="#c9cbcf"/>
+  <text x="420" y="1223" font-size="24" font-weight="700" fill="#1d1f23">ON/OFF</text>
+  <!-- terminals -->
+  <g font-weight="700" fill="#eceded">
+    <text x="680" y="1108" font-size="50">−</text><text x="1060" y="1108" font-size="50" fill="#ff5a4d">+</text>
+  </g>
+  <g stroke="#58c46f" stroke-width="5" fill="none" stroke-linecap="round"><path d="M870,1066V1088M846,1088H894M854,1099H886M863,1110H877"/></g>
+  <g fill="none" stroke-width="6">
+    <circle cx="680" cy="1220" r="86" stroke="#7d838c"/><circle cx="870" cy="1220" r="86" stroke="#3a8d4d"/><circle cx="1060" cy="1220" r="86" stroke="#c9382e"/>
+  </g>
+  <g font-size="19" font-weight="500" fill="#a9aeb5" letter-spacing="1.5"><text x="775" y="1366">0 – 30 V</text><text x="965" y="1366">0 – 5 A</text></g>
+  <g text-anchor="start" font-size="17" fill="#8d939b" letter-spacing="1"><text x="70" y="1410">DC POWER SUPPLY</text><text x="70" y="1366">LINEAR</text></g>
+</svg>

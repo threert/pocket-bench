@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="784" height="352" viewBox="0 0 980 440" font-family="Helvetica Neue, Helvetica, Arial">
+  <!-- The supply's two 4-digit LED displays behind one window (98 x 44 mm): volts in red, amperes in green. -->
+  <defs>
+    <polygon id="h" points="7,0 43,0 48,5 43,10 7,10 2,5"/>
+    <polygon id="v" points="0,7 5,2 10,7 10,43 5,48 0,43"/>
+    <use id="A" xlink:href="#h" x="5"/><use id="G" xlink:href="#h" x="5" y="45"/><use id="D" xlink:href="#h" x="5" y="90"/>
+    <use id="F" xlink:href="#v" y="5"/><use id="B" xlink:href="#v" x="50" y="5"/><use id="E" xlink:href="#v" y="50"/><use id="C" xlink:href="#v" x="50" y="50"/>
+    <g id="n8"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#C"/><use xlink:href="#D"/><use xlink:href="#E"/><use xlink:href="#F"/><use xlink:href="#G"/><circle cx="68" cy="95" r="6"/></g>
+    <g id="n0"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#C"/><use xlink:href="#D"/><use xlink:href="#E"/><use xlink:href="#F"/></g>
+    <g id="n2"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#G"/><use xlink:href="#E"/><use xlink:href="#D"/></g>
+    <g id="n4"><use xlink:href="#F"/><use xlink:href="#G"/><use xlink:href="#B"/><use xlink:href="#C"/></g>
+    <g id="n5"><use xlink:href="#A"/><use xlink:href="#F"/><use xlink:href="#G"/><use xlink:href="#C"/><use xlink:href="#D"/></g>
+    <circle id="dp" cx="68" cy="95" r="6"/>
+  </defs>
+  <rect width="980" height="440" fill="#040303"/>
+  <!-- 15 mm digits: unit 100 -> 150, pitch 125 -->
+  <g transform="translate(118,36) skewX(-7) scale(1.5)">
+    <g fill="#2a0705"><use xlink:href="#n8"/><use xlink:href="#n8" x="83.3"/><use xlink:href="#n8" x="166.7"/><use xlink:href="#n8" x="250"/></g>
+    <g fill="#ff3018"><use xlink:href="#n0"/><use xlink:href="#n5" x="83.3"/><use xlink:href="#dp" x="83.3"/><use xlink:href="#n0" x="166.7"/><use xlink:href="#n0" x="250"/></g>
+  </g>
+  <g transform="translate(118,254) skewX(-7) scale(1.5)">
+    <g fill="#06250c"><use xlink:href="#n8"/><use xlink:href="#n8" x="83.3"/><use xlink:href="#n8" x="166.7"/><use xlink:href="#n8" x="250"/></g>
+    <g fill="#2dff62"><use xlink:href="#n0"/><use xlink:href="#dp"/><use xlink:href="#n4" x="83.3"/><use xlink:href="#n2" x="166.7"/><use xlink:href="#n0" x="250"/></g>
+  </g>
+  <text x="716" y="184" font-size="120" font-weight="500" fill="#ff3018">V</text>
+  <text x="716" y="402" font-size="120" font-weight="500" fill="#2dff62">A</text>
+  <g font-size="34" font-weight="700" text-anchor="middle">
+    <rect x="852" y="52" width="92" height="50" rx="8" fill="#2dff62"/>
+    <text x="898" y="89" fill="#041406">C.V</text>
+    <rect x="852" y="126" width="92" height="50" rx="8" fill="none" stroke="#3a1210" stroke-width="3"/>
+    <text x="898" y="163" fill="#3a1210">C.C</text>
+    <rect x="852" y="318" width="92" height="50" rx="8" fill="#ffb224"/>
+    <text x="898" y="355" fill="#1a0f00">OUT</text>
+  </g>
+</svg>

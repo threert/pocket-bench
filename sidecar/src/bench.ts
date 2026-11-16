@@ -72,7 +72,7 @@ export class Bench {
       if (!file || file.startsWith(".build") || file.startsWith(".") || file.includes("node_modules")) return;
       if (!/\.(tsx?|json|png)$/.test(file)) return;
       clearTimeout(this.timer);
-      this.timer = setTimeout(() => void this.build(`${file} changed`), 250);
+      this.timer = setTimeout(() => { this.timer = undefined; void this.build(`${file} changed`); }, 250);
     });
     await this.build("opened");
   }

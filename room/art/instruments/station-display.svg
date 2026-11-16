@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="480" height="208" viewBox="0 0 300 130" font-family="Helvetica Neue, Helvetica, Arial">
+  <!-- The soldering station's 3-digit LED display (30 x 13 mm): the set temperature. -->
+  <defs>
+    <polygon id="h" points="7,0 43,0 48,5 43,10 7,10 2,5"/>
+    <polygon id="v" points="0,7 5,2 10,7 10,43 5,48 0,43"/>
+    <use id="A" xlink:href="#h" x="5"/><use id="G" xlink:href="#h" x="5" y="45"/><use id="D" xlink:href="#h" x="5" y="90"/>
+    <use id="F" xlink:href="#v" y="5"/><use id="B" xlink:href="#v" x="50" y="5"/><use id="E" xlink:href="#v" y="50"/><use id="C" xlink:href="#v" x="50" y="50"/>
+    <g id="n8"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#C"/><use xlink:href="#D"/><use xlink:href="#E"/><use xlink:href="#F"/><use xlink:href="#G"/></g>
+    <g id="n0"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#C"/><use xlink:href="#D"/><use xlink:href="#E"/><use xlink:href="#F"/></g>
+    <g id="n3"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#G"/><use xlink:href="#C"/><use xlink:href="#D"/></g>
+    <g id="n5"><use xlink:href="#A"/><use xlink:href="#F"/><use xlink:href="#G"/><use xlink:href="#C"/><use xlink:href="#D"/></g>
+  </defs>
+  <rect width="300" height="130" fill="#040303"/>
+  <g transform="translate(34,16) skewX(-7) scale(0.98)">
+    <g fill="#2a0705"><use xlink:href="#n8"/><use xlink:href="#n8" x="80"/><use xlink:href="#n8" x="160"/></g>
+    <g fill="#ff3018"><use xlink:href="#n3"/><use xlink:href="#n5" x="80"/><use xlink:href="#n0" x="160"/></g>
+  </g>
+  <text x="252" y="52" font-size="34" font-weight="700" fill="#ff3018">°C</text>
+</svg>

@@ -71,7 +71,7 @@ export function describeTool(record: ToolRecord, project: string): { title: stri
       // The working directory and the stream merge say nothing about what runs.
       const line = command.replace(/^\s*cd\s+\S+\s*&&\s*/, "").replace(/\s+2>&1/g, "");
       title = `Running ${oneLine(line, 60)}`;
-    } else if (!title) title = "Running a command";
+    } else if (!title || title === "Terminal") title = "Running a command";
   } else if (name && (record.kind === "read" || record.kind === "edit" || record.kind === "delete" || record.kind === "move")) {
     title = `${{ read: "Reading", edit: "Editing", delete: "Deleting", move: "Moving" }[record.kind]} ${name}`;
   } else if (record.kind === "search") {

@@ -1,0 +1,194 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- One sheet for all the station's print (room/decor/station.ts cuts it up by these rectangles, in texels):
+       rework front 0,0 456x312 | extractor front 460,0 400x480 | tool labels 868,4 150x56 (8, every 60 down)
+       shipping label 0,320 300x450 | pcb 310,490 480x330 | ipa label 0,780 240x160 | fragile 800,490 200x100
+       this-side-up 800,600 200x200 | power strip 310,830 600x100 | reel label 0,946 240x74 -->
+  <defs>
+    <pattern id="bars" width="23" height="10" patternUnits="userSpaceOnUse">
+      <rect x="0" width="2" height="10"/><rect x="3" width="1" height="10"/><rect x="6" width="3" height="10"/>
+      <rect x="10" width="1" height="10"/><rect x="12" width="2" height="10"/><rect x="16" width="1" height="10"/>
+      <rect x="18" width="3" height="10"/>
+    </pattern>
+    <pattern id="grille" width="200" height="11" patternUnits="userSpaceOnUse">
+      <rect x="0" y="2" width="200" height="6" rx="3" fill="#050506"/>
+      <rect x="0" y="8" width="200" height="1" fill="#3a3c40"/>
+    </pattern>
+    <pattern id="qr" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="4" height="4"/><rect x="4" y="4" width="2" height="4"/><rect x="6" y="0" width="2" height="2"/>
+    </pattern>
+  </defs>
+  <rect width="1024" height="1024" fill="#ffffff"/>
+
+  <!-- Rework station front, 190 x 130 mm. -->
+  <svg x="0" y="0" width="456" height="312" viewBox="0 0 190 130">
+    <rect width="190" height="130" fill="#d6d8d9"/>
+    <rect x="5" y="5" width="180" height="120" rx="5" fill="#e4e5e5" stroke="#b9bcbe" stroke-width="0.6"/>
+    <rect x="50" y="12" width="90" height="38" rx="3" fill="#1b1d20"/>
+    <rect x="54" y="16" width="82" height="30" rx="1.5" fill="#06080c"/>
+    <text x="12" y="22" font-family="Helvetica Neue, Arial" font-weight="700" font-size="9" fill="#1f5fae">RW-860D</text>
+    <text x="12" y="30" font-family="Helvetica Neue, Arial" font-size="4.2" fill="#4a4d52">HOT AIR REWORK</text>
+    <text x="12" y="36" font-family="PingFang SC, Helvetica" font-size="4.6" fill="#4a4d52">热风拆焊台</text>
+    <text x="178" y="20" text-anchor="end" font-family="Helvetica Neue, Arial" font-size="4.2" fill="#4a4d52">100–480 °C</text>
+    <text x="178" y="27" text-anchor="end" font-family="Helvetica Neue, Arial" font-size="4.2" fill="#4a4d52">120 L/min</text>
+    <g fill="none" stroke="#3b3e43" stroke-width="0.9" stroke-linecap="round">
+      <path d="M26.4 98.6 A20 20 0 1 1 63.6 98.6"/>
+      <path d="M126.4 98.6 A20 20 0 1 1 163.6 98.6"/>
+    </g>
+    <g fill="#3b3e43">
+      <circle cx="25" cy="88" r="1"/><circle cx="29" cy="74" r="1"/><circle cx="45" cy="66.5" r="1"/><circle cx="61" cy="74" r="1"/><circle cx="65" cy="88" r="1"/>
+      <circle cx="125" cy="88" r="1"/><circle cx="129" cy="74" r="1"/><circle cx="145" cy="66.5" r="1"/><circle cx="161" cy="74" r="1"/><circle cx="165" cy="88" r="1"/>
+    </g>
+    <g font-family="Helvetica Neue, Arial" font-size="5.2" font-weight="700" fill="#2b2e33" text-anchor="middle">
+      <text x="45" y="118">TEMP</text><text x="145" y="118">AIR</text>
+      <text x="95" y="62" font-size="4.2" font-weight="400">SET</text>
+    </g>
+    <g font-family="Helvetica Neue, Arial" font-size="3.6" fill="#55585d" text-anchor="middle">
+      <text x="20" y="102">MIN</text><text x="70" y="102">MAX</text><text x="120" y="102">MIN</text><text x="170" y="102">MAX</text>
+    </g>
+    <rect x="83" y="66" width="24" height="15" rx="2.5" fill="#c9cbcd" stroke="#9c9fa3" stroke-width="0.5"/>
+    <rect x="83" y="86" width="24" height="15" rx="2.5" fill="#c9cbcd" stroke="#9c9fa3" stroke-width="0.5"/>
+    <path d="M95 69.5 L100 77.5 H90 Z M95 97.5 L100 89.5 H90 Z" fill="#3b3e43"/>
+    <text x="95" y="112" text-anchor="middle" font-family="Helvetica Neue, Arial" font-size="3.6" fill="#55585d">ESD SAFE</text>
+  </svg>
+
+  <!-- Fume extractor front, 200 x 240 mm. -->
+  <svg x="460" y="0" width="400" height="480" viewBox="0 0 200 240">
+    <rect width="200" height="240" fill="#ecedeb"/>
+    <rect x="14" y="16" width="172" height="150" rx="10" fill="#17181a"/>
+    <rect x="24" y="26" width="152" height="130" rx="5" fill="#232528"/>
+    <rect x="28" y="30" width="144" height="121" fill="url(#grille)"/>
+    <text x="16" y="190" font-family="Helvetica Neue, Arial" font-weight="700" font-size="15" fill="#22262b">FX-150</text>
+    <text x="16" y="203" font-family="Helvetica Neue, Arial" font-size="7" fill="#5a5e63">FUME EXTRACTOR · HEPA + CARBON</text>
+    <text x="16" y="214" font-family="PingFang SC, Helvetica" font-size="7.5" fill="#5a5e63">焊烟净化器</text>
+    <g fill="none" stroke="#3b3e43" stroke-width="1.2" stroke-linecap="round"><path d="M141 214 A19 19 0 1 1 177 214"/></g>
+    <text x="159" y="231" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="7" fill="#2b2e33">FLOW</text>
+    <rect x="16" y="222" width="34" height="9" rx="2" fill="#dfe7df" stroke="#9aa39a" stroke-width="0.5"/>
+    <text x="33" y="229" text-anchor="middle" font-family="Helvetica Neue, Arial" font-size="5.5" fill="#2d6a3e">FILTER OK</text>
+  </svg>
+
+  <!-- Tool labels, 30 x 11 mm each. -->
+  <g font-family="PingFang SC, Helvetica" font-size="27" font-weight="600" fill="#1b1b1b" text-anchor="middle">
+    <g transform="translate(868,4)"><rect width="150" height="56" fill="#fdfdfb" stroke="#b9b9b6" stroke-width="2"/><text x="75" y="38">斜口钳</text></g>
+    <g transform="translate(868,64)"><rect width="150" height="56" fill="#fdfdfb" stroke="#b9b9b6" stroke-width="2"/><text x="75" y="38">尖嘴钳</text></g>
+    <g transform="translate(868,124)"><rect width="150" height="56" fill="#fdfdfb" stroke="#b9b9b6" stroke-width="2"/><text x="75" y="38">剥线钳</text></g>
+    <g transform="translate(868,184)"><rect width="150" height="56" fill="#fdfdfb" stroke="#b9b9b6" stroke-width="2"/><text x="75" y="38">螺丝刀</text></g>
+    <g transform="translate(868,244)"><rect width="150" height="56" fill="#fdfdfb" stroke="#b9b9b6" stroke-width="2"/><text x="75" y="38">镊子</text></g>
+    <g transform="translate(868,304)"><rect width="150" height="56" fill="#fff3a8" stroke="#b9b08a" stroke-width="2"/><text x="75" y="38">0603 电阻</text></g>
+    <g transform="translate(868,364)"><rect width="150" height="56" fill="#fff3a8" stroke="#b9b08a" stroke-width="2"/><text x="75" y="38">M2 螺丝</text></g>
+    <g transform="translate(868,424)"><rect width="150" height="56" fill="#fff3a8" stroke="#b9b08a" stroke-width="2"/><text x="75" y="38">排针 2.54</text></g>
+  </g>
+
+  <!-- Shipping label, 100 x 150 mm. -->
+  <svg x="0" y="320" width="300" height="450" viewBox="0 0 100 150">
+    <rect width="100" height="150" fill="#fbfbf8"/>
+    <rect x="2" y="2" width="96" height="146" fill="none" stroke="#111" stroke-width="0.7"/>
+    <rect x="2" y="2" width="96" height="17" fill="#111"/>
+    <text x="6" y="14.5" font-family="Helvetica Neue, Arial" font-weight="700" font-size="11" fill="#fff">EXPRESS</text>
+    <text x="94" y="14" text-anchor="end" font-family="Menlo, monospace" font-size="7" fill="#fff">1 / 2</text>
+    <text x="6" y="27" font-family="Helvetica Neue, Arial" font-weight="700" font-size="4.6" fill="#111">SHIP TO 收件</text>
+    <text x="6" y="36" font-family="PingFang SC, Helvetica" font-weight="600" font-size="7" fill="#111">硬件实验室 · 2 号工作台</text>
+    <text x="6" y="44" font-family="Helvetica Neue, Arial" font-size="5" fill="#111">Hardware Studio, Bench 2</text>
+    <text x="6" y="51" font-family="Helvetica Neue, Arial" font-size="5" fill="#111">Building C, Floor 4 · Shenzhen</text>
+    <path d="M2 56 H98 M2 92 H98 M60 56 V92" stroke="#111" stroke-width="0.7"/>
+    <text x="6" y="80" font-family="Helvetica Neue, Arial" font-weight="700" font-size="24" fill="#111">SZ-07</text>
+    <rect x="65" y="60" width="28" height="28" fill="url(#qr)"/>
+    <rect x="65" y="60" width="8" height="8" fill="#111"/><rect x="85" y="60" width="8" height="8" fill="#111"/><rect x="65" y="80" width="8" height="8" fill="#111"/>
+    <rect x="67" y="62" width="4" height="4" fill="#fbfbf8"/><rect x="87" y="62" width="4" height="4" fill="#fbfbf8"/><rect x="67" y="82" width="4" height="4" fill="#fbfbf8"/>
+    <rect x="8" y="98" width="84" height="26" fill="url(#bars)"/>
+    <text x="50" y="131" text-anchor="middle" font-family="Menlo, monospace" font-size="5.4" fill="#111">PB 7731 0420 8816 53</text>
+    <text x="6" y="142" font-family="Helvetica Neue, Arial" font-size="4.6" fill="#111">12.4 kg · 50 × 36 × 40 cm</text>
+    <text x="94" y="142" text-anchor="end" font-family="PingFang SC, Helvetica" font-size="4.6" fill="#111">电子元件</text>
+  </svg>
+
+  <!-- A small sensor board, 80 x 55 mm. -->
+  <svg x="310" y="490" width="480" height="330" viewBox="0 0 80 55">
+    <rect width="80" height="55" fill="#0e6a43"/>
+    <g fill="none" stroke="#1c8a59" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 14 H22 L27 19 H33"/><path d="M10 17 H20 L25 22 H33"/><path d="M10 20 H18 L23 25 H33"/>
+      <path d="M47 19 H58 L62 15 H70"/><path d="M47 22 H60 L64 18 H70"/><path d="M47 25 H62 L66 29 V40"/>
+      <path d="M36 30 V38 L30 44 H14"/><path d="M40 30 V40 L44 44 H60"/><path d="M44 30 V36 L50 42 H58"/>
+      <path d="M14 30 V40"/><path d="M18 30 V36 L22 40 V47"/><path d="M56 8 H44 L40 12 V15"/>
+    </g>
+    <path d="M60 32 H74 V48 H60 Z" fill="#157a4e"/>
+    <g fill="#d8b455">
+      <circle cx="4.5" cy="4.5" r="2.4"/><circle cx="75.5" cy="4.5" r="2.4"/><circle cx="4.5" cy="50.5" r="2.4"/><circle cx="75.5" cy="50.5" r="2.4"/>
+      <rect x="8" y="12.8" width="2.4" height="2.4" rx="0.4"/><rect x="8" y="15.8" width="2.4" height="2.4" rx="0.4"/><rect x="8" y="18.8" width="2.4" height="2.4" rx="0.4"/><rect x="8" y="21.8" width="2.4" height="2.4" rx="0.4"/>
+      <circle cx="14" cy="49" r="1.3"/><circle cx="18" cy="49" r="1.3"/><circle cx="22" cy="49" r="1.3"/><circle cx="26" cy="49" r="1.3"/><circle cx="30" cy="49" r="1.3"/><circle cx="34" cy="49" r="1.3"/><circle cx="38" cy="49" r="1.3"/><circle cx="42" cy="49" r="1.3"/>
+      <circle cx="24" cy="33" r="0.8"/><circle cx="52" cy="12" r="0.8"/><circle cx="64" cy="26" r="0.8"/><circle cx="30" cy="10" r="0.8"/>
+    </g>
+    <g fill="#0b2b1c">
+      <circle cx="4.5" cy="4.5" r="1.5"/><circle cx="75.5" cy="4.5" r="1.5"/><circle cx="4.5" cy="50.5" r="1.5"/><circle cx="75.5" cy="50.5" r="1.5"/>
+      <circle cx="14" cy="49" r="0.55"/><circle cx="18" cy="49" r="0.55"/><circle cx="22" cy="49" r="0.55"/><circle cx="26" cy="49" r="0.55"/><circle cx="30" cy="49" r="0.55"/><circle cx="34" cy="49" r="0.55"/><circle cx="38" cy="49" r="0.55"/><circle cx="42" cy="49" r="0.55"/>
+    </g>
+    <g fill="#c9ccd0">
+      <rect x="32" y="13.5" width="1.6" height="0.9"/><rect x="32" y="16" width="1.6" height="0.9"/><rect x="32" y="18.5" width="1.6" height="0.9"/><rect x="32" y="21" width="1.6" height="0.9"/><rect x="32" y="23.5" width="1.6" height="0.9"/><rect x="32" y="26" width="1.6" height="0.9"/>
+      <rect x="46.4" y="13.5" width="1.6" height="0.9"/><rect x="46.4" y="16" width="1.6" height="0.9"/><rect x="46.4" y="18.5" width="1.6" height="0.9"/><rect x="46.4" y="21" width="1.6" height="0.9"/><rect x="46.4" y="23.5" width="1.6" height="0.9"/><rect x="46.4" y="26" width="1.6" height="0.9"/>
+      <rect x="12.4" y="26" width="1.4" height="2.2"/><rect x="16.2" y="26" width="1.4" height="2.2"/><rect x="50" y="30" width="2.2" height="1.4"/><rect x="50" y="34" width="2.2" height="1.4"/>
+    </g>
+    <g font-family="Helvetica Neue, Arial" fill="#e8efe9">
+      <text x="9" y="9.5" font-size="3.6" font-weight="700">ENV-IO</text>
+      <text x="23.5" y="9.5" font-size="2.6">v1.2</text>
+      <text x="33.6" y="12.2" font-size="2.2">U1</text>
+      <text x="61" y="31" font-size="2.2">ANT</text>
+      <text x="14" y="46.2" font-size="2">3V3 GND SDA SCL  A0  A1  D2  D3</text>
+      <text x="71.5" y="13.4" font-size="2.2" text-anchor="end">J2</text>
+      <text x="8" y="28.8" font-size="2.2">J1</text>
+    </g>
+    <path d="M62 34 H72 V37 H65 V40 H72 V43 H65 V46 H72" fill="none" stroke="#d8b455" stroke-width="0.9"/>
+  </svg>
+
+  <!-- Solvent bottle label, 60 x 40 mm. -->
+  <svg x="0" y="780" width="240" height="160" viewBox="0 0 60 40">
+    <rect width="60" height="40" fill="#fbfbf6"/>
+    <rect width="60" height="9" fill="#f2c200"/>
+    <text x="3" y="6.8" font-family="Helvetica Neue, Arial" font-weight="700" font-size="6" fill="#111">IPA 99.9%</text>
+    <text x="3" y="17" font-family="PingFang SC, Helvetica" font-weight="600" font-size="6" fill="#111">异丙醇</text>
+    <text x="3" y="23" font-family="Helvetica Neue, Arial" font-size="3.4" fill="#111">Isopropyl alcohol</text>
+    <text x="3" y="28" font-family="Helvetica Neue, Arial" font-size="3" fill="#333">Electronics cleaning</text>
+    <text x="3" y="36" font-family="Helvetica Neue, Arial" font-weight="700" font-size="3.4" fill="#c21f1f">FLAMMABLE 易燃</text>
+    <path d="M47 13 L57 23 L47 33 L37 23 Z" fill="#fff" stroke="#d21f1f" stroke-width="1.6"/>
+    <path d="M47 28 C42.5 28 42 23.5 45 20.5 C45.2 22.5 46 23 46.6 22.2 C46 19.8 47.4 17.6 49 17 C48.6 19.6 52 21.4 51.4 24.6 C51 27 49.4 28 47 28 Z" fill="#111"/>
+  </svg>
+
+  <!-- Stickers on the shipping boxes. -->
+  <svg x="800" y="490" width="200" height="100" viewBox="0 0 100 50">
+    <rect width="100" height="50" fill="#d6231f"/>
+    <rect x="2" y="2" width="96" height="46" fill="none" stroke="#fff" stroke-width="1.2"/>
+    <text x="60" y="24" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="17" fill="#fff">FRAGILE</text>
+    <text x="60" y="41" text-anchor="middle" font-family="PingFang SC, Helvetica" font-weight="600" font-size="12" fill="#fff">易碎物品</text>
+    <path d="M10 10 H24 C24 19 21 23 18.2 24 V36 H22 V39 H12 V36 H15.8 V24 C13 23 10 19 10 10 Z" fill="#fff"/>
+  </svg>
+  <svg x="800" y="600" width="200" height="200" viewBox="0 0 100 100">
+    <rect width="100" height="100" fill="#fbfbf8"/>
+    <rect x="3" y="3" width="94" height="94" fill="none" stroke="#111" stroke-width="2"/>
+    <path d="M30 14 L46 36 H36 V62 H24 V36 H14 Z M70 14 L86 36 H76 V62 H64 V36 H54 Z" fill="#111"/>
+    <rect x="14" y="66" width="72" height="3.5" fill="#111"/>
+    <text x="50" y="81" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="9.5" fill="#111">THIS SIDE UP</text>
+    <text x="50" y="92" text-anchor="middle" font-family="PingFang SC, Helvetica" font-weight="600" font-size="8.5" fill="#111">此面向上</text>
+  </svg>
+
+  <!-- Power strip top, 300 x 50 mm: four 5-hole sockets and the switch end. -->
+  <svg x="310" y="830" width="600" height="100" viewBox="0 0 300 50">
+    <rect width="300" height="50" fill="#f1f1ee"/>
+    <g id="socket">
+      <rect x="62" y="5" width="52" height="40" rx="5" fill="#e6e6e2" stroke="#c4c4bf" stroke-width="0.6"/>
+      <rect x="77" y="11" width="2.6" height="8" rx="0.6" fill="#15161a"/><rect x="96.4" y="11" width="2.6" height="8" rx="0.6" fill="#15161a"/>
+      <rect x="86.7" y="27" width="2.6" height="8.5" rx="0.6" fill="#15161a"/>
+      <rect x="76" y="31.5" width="2.6" height="8.5" rx="0.6" fill="#15161a" transform="rotate(-30 77.3 35.7)"/>
+      <rect x="97.4" y="31.5" width="2.6" height="8.5" rx="0.6" fill="#15161a" transform="rotate(30 98.7 35.7)"/>
+    </g>
+    <use href="#socket" x="58"/><use href="#socket" x="116"/><use href="#socket" x="174"/>
+    <text x="8" y="12" font-family="Helvetica Neue, Arial" font-weight="700" font-size="5" fill="#55585d">10A 250V~</text>
+    <text x="8" y="44" font-family="Helvetica Neue, Arial" font-size="4.4" fill="#7a7d82">MAX 2500W</text>
+  </svg>
+
+  <!-- Reel / parts-box label, 60 x 18.5 mm. -->
+  <svg x="0" y="946" width="240" height="74" viewBox="0 0 60 18.5">
+    <rect width="60" height="18.5" fill="#fbfbf8"/>
+    <rect x="0.4" y="0.4" width="59.2" height="17.7" fill="none" stroke="#b5b5b0" stroke-width="0.5"/>
+    <text x="3" y="7" font-family="Helvetica Neue, Arial" font-weight="700" font-size="5" fill="#111">RC0603 10k 1%</text>
+    <text x="3" y="12.5" font-family="Menlo, monospace" font-size="3.2" fill="#333">QTY 5000  LOT 2531</text>
+    <rect x="3" y="14" width="40" height="3" fill="url(#bars)"/>
+    <rect x="47" y="4" width="10" height="10" fill="url(#qr)"/>
+  </svg>
+</svg>

@@ -3,14 +3,29 @@
 // over it, a turned knob) and reports what it does to the room (`state`:
 // LEDs, relays, and the true values its sensors are looking at).
 import type { I2CChip } from "../sim/i2c.ts";
+import type { Lagged } from "../chips/util.ts";
 
 export interface UnitInput {
   key: string;
   label: string;
   unit: string;
+  /** The range of the number, or of each number of a list. */
   min: number;
   max: number;
-  default: number;
+  /** What a newly plugged unit is given. */
+  default: number | number[] | null;
+  /** What the room sets: one number (when absent), a level that is 0 or 1,
+   *  a list of numbers, or a card (`CardSpec` of chips/picc.ts, or null). */
+  kind?: "number" | "switch" | "numbers" | "card";
+  /** Whole numbers only. */
+  integer?: boolean;
+}
+
+/** Gives a lagged quantity its input. The first value of a key is where the
+ *  world already was when the unit appeared, so it takes it at once. */
+export function follow(seen: Set<string>, key: string, quantity: Lagged, value: number, now: number): void {
+  if (seen.has(key)) quantity.set(value, now);
+  else { seen.add(key); quantity.jump(value, now); }
 }
 
 export interface UnitInstance {

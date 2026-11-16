@@ -67,18 +67,22 @@ export function access(scope: Scope, path: string, cwd = scope.project): Access 
 
 // ----- commands -----
 
-const SHELLS = new Set(["sh", "bash", "zsh", "/bin/sh", "/bin/bash", "/bin/zsh", "/usr/bin/env"]);
+const SHELLS = new Set(["sh", "bash", "zsh", "/bin/sh", "/bin/bash", "/bin/zsh"]);
 
 /** The command line of an execute tool call, from the raw input the agents send. */
 export function commandOf(rawInput: unknown): string | null {
   if (!rawInput || typeof rawInput !== "object") return null;
   const input = rawInput as Record<string, unknown>;
   const value = input.command ?? input.cmd;
-  if (typeof value === "string") return value;
+  // Codex wraps some command lines in a shell: ["/bin/zsh", "-lc", "<line>"], or the same as one string.
+  const wrapped = (parts: string[]) => parts.length === 3 && SHELLS.has(parts[0]!) && /^-l?c$/.test(parts[1]!);
+  if (typeof value === "string") {
+    const words = /^\S*sh -l?c /.test(value) ? parseCommand(value) : null;
+    return words?.length === 1 && wrapped(words[0]!) ? words[0]![2]! : value;
+  }
   if (Array.isArray(value) && value.length && value.every(part => typeof part === "string")) {
     const parts = value as string[];
-    // Codex wraps a command line as ["/bin/zsh", "-lc", "<line>"].
-    if (parts.length === 3 && SHELLS.has(parts[0]!) && /^-l?c$/.test(parts[1]!)) return parts[2]!;
+    if (wrapped(parts)) return parts[2]!;
     return parts.every(part => /^[\w@%+=:,./-]+$/.test(part)) ? parts.join(" ") : null;
   }
   return null;

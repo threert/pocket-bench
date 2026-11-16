@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1008" viewBox="0 0 720 1008">
+<rect width="720" height="1008" fill="#fbfaf5"/>
+<rect x="0" y="0" width="720" height="18" fill="#1f9d55"/>
+<circle cx="112" cy="140" r="58" fill="#1f9d55"/>
+<text x="112" y="164" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="70" fill="#fff">3</text>
+<text x="196" y="130" font-family="Helvetica Neue, Arial" font-weight="700" font-size="54" fill="#17181b">Light it up</text>
+<text x="198" y="176" font-family="Helvetica Neue, Arial" font-size="27" fill="#5c5f66">Drive an RGB LED strip</text>
+<rect x="56" y="244" width="608" height="290" rx="18" fill="#f0efe8" stroke="#d6d5cc" stroke-width="3"/>
+<g transform="translate(60 254)"><rect x="60" y="110" width="480" height="50" rx="8" fill="#f0f0ea" stroke="#999" stroke-width="3"/><rect x="86" y="120" width="30" height="30" rx="5" fill="#ff3b30"/><rect x="150" y="120" width="30" height="30" rx="5" fill="#ff9500"/><rect x="214" y="120" width="30" height="30" rx="5" fill="#ffcc00"/><rect x="278" y="120" width="30" height="30" rx="5" fill="#34c759"/><rect x="342" y="120" width="30" height="30" rx="5" fill="#00c7be"/><rect x="406" y="120" width="30" height="30" rx="5" fill="#007aff"/><rect x="470" y="120" width="30" height="30" rx="5" fill="#af52de"/><path d="M60 135h-40" stroke="#222" stroke-width="7"/><path d="M300 60v40M240 70l14 34M360 70l-14 34" stroke="#e0a800" stroke-width="6" stroke-linecap="round"/></g>
+<text x="64" y="582" font-family="Helvetica Neue, Arial" font-weight="700" font-size="24" letter-spacing="3" fill="#1f9d55">CHECKLIST</text>
+  <rect x="64" y="604" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  <path d="M72 626l12 14l24 -32" fill="none" stroke="#1f9d55" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="130" y="637" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Connect the RGB Unit to the hub</text>
+  <path d="M130 660h526" stroke="#c9c9c2" stroke-width="2"/>
+  <rect x="64" y="700" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  <path d="M72 722l12 14l24 -32" fill="none" stroke="#1f9d55" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="130" y="733" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Set one pixel, then all of them</text>
+  <path d="M130 756h526" stroke="#c9c9c2" stroke-width="2"/>
+  <rect x="64" y="796" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  
+  <text x="130" y="829" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Make a rainbow that moves</text>
+  <path d="M130 852h526" stroke="#c9c9c2" stroke-width="2"/>
+<path d="M56 910h608" stroke="#23262b" stroke-width="3"/>
+<text x="64" y="952" font-family="Menlo, monospace" font-size="22" fill="#5c5f66">POCKET BENCH · QUEST 3/6</text>
+<text x="656" y="952" text-anchor="end" font-family="Menlo, monospace" font-size="22" fill="#5c5f66">15 min</text>
+</svg>

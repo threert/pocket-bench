@@ -1,0 +1,15 @@
+{
+  // Typecheck of the kit's drivers (and the tests' worker) against the pinned PocketJS:
+  //   vendor/pocket-m5/third_party/pocketjs/node_modules/.bin/tsc --noEmit -p sidecar/tsconfig.kit.json
+  "compilerOptions": {
+    "target": "ESNext", "module": "ESNext", "moduleResolution": "bundler", "lib": ["ESNext"], "types": [],
+    "strict": true, "noEmit": true, "allowImportingTsExtensions": true, "verbatimModuleSyntax": true, "skipLibCheck": true,
+    "baseUrl": "..",
+    "paths": {
+      "@pocketjs/framework/io": ["vendor/pocket-m5/third_party/pocketjs/framework/src/io.ts"],
+      "@pocketjs/framework/io/i2c": ["vendor/pocket-m5/third_party/pocketjs/framework/src/io/i2c.ts"],
+      "@pocketjs/framework/worker": ["vendor/pocket-m5/third_party/pocketjs/framework/src/worker.ts"]
+    }
+  },
+  "include": ["../kit/drivers/*.ts", "test/units/worker.ts", "test/units/worker-env.d.ts"]
+}

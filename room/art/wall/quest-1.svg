@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1008" viewBox="0 0 720 1008">
+<rect width="720" height="1008" fill="#fbfaf5"/>
+<rect x="0" y="0" width="720" height="18" fill="#1d6fd1"/>
+<circle cx="112" cy="140" r="58" fill="#1d6fd1"/>
+<text x="112" y="164" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="70" fill="#fff">2</text>
+<text x="196" y="130" font-family="Helvetica Neue, Arial" font-weight="700" font-size="54" fill="#17181b">Read a sensor</text>
+<text x="198" y="176" font-family="Helvetica Neue, Arial" font-size="27" fill="#5c5f66">Temperature and humidity over I2C</text>
+<rect x="56" y="244" width="608" height="290" rx="18" fill="#f0efe8" stroke="#d6d5cc" stroke-width="3"/>
+<g transform="translate(60 254)"><rect x="70" y="80" width="150" height="110" rx="12" fill="#1d6fd1"/><text x="145" y="145" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="30" fill="#fff">ENV</text><path d="M220 135c60 0 60 -40 130 -40" fill="none" stroke="#c22" stroke-width="7"/><path d="M220 147c60 0 60 -40 130 -40" fill="none" stroke="#222" stroke-width="7"/><path d="M220 159c60 0 60 -40 130 -40" fill="none" stroke="#e3b800" stroke-width="7"/><path d="M220 171c60 0 60 -40 130 -40" fill="none" stroke="#eee" stroke-width="7"/><rect x="350" y="60" width="190" height="130" rx="12" fill="#23262b"/><text x="445" y="120" text-anchor="middle" font-family="Menlo, monospace" font-size="30" fill="#7dffb2">23.4 C</text><text x="445" y="160" text-anchor="middle" font-family="Menlo, monospace" font-size="30" fill="#7dc8ff">48 %</text></g>
+<text x="64" y="582" font-family="Helvetica Neue, Arial" font-weight="700" font-size="24" letter-spacing="3" fill="#1d6fd1">CHECKLIST</text>
+  <rect x="64" y="604" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  <path d="M72 626l12 14l24 -32" fill="none" stroke="#1d6fd1" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="130" y="637" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Connect the ENV Unit to Port A</text>
+  <path d="M130 660h526" stroke="#c9c9c2" stroke-width="2"/>
+  <rect x="64" y="700" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  
+  <text x="130" y="733" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Scan the bus: find 0x44</text>
+  <path d="M130 756h526" stroke="#c9c9c2" stroke-width="2"/>
+  <rect x="64" y="796" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  
+  <text x="130" y="829" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Show the reading on the screen</text>
+  <path d="M130 852h526" stroke="#c9c9c2" stroke-width="2"/>
+<path d="M56 910h608" stroke="#23262b" stroke-width="3"/>
+<text x="64" y="952" font-family="Menlo, monospace" font-size="22" fill="#5c5f66">POCKET BENCH · QUEST 2/6</text>
+<text x="656" y="952" text-anchor="end" font-family="Menlo, monospace" font-size="22" fill="#5c5f66">15 min</text>
+</svg>

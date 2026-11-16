@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1008" viewBox="0 0 720 1008">
+<rect width="720" height="1008" fill="#fbfaf5"/>
+<rect x="0" y="0" width="720" height="18" fill="#e4572e"/>
+<circle cx="112" cy="140" r="58" fill="#e4572e"/>
+<text x="112" y="164" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="70" fill="#fff">1</text>
+<text x="196" y="130" font-family="Helvetica Neue, Arial" font-weight="700" font-size="54" fill="#17181b">Hello, Tab5</text>
+<text x="198" y="176" font-family="Helvetica Neue, Arial" font-size="27" fill="#5c5f66">Power up and draw on the screen</text>
+<rect x="56" y="244" width="608" height="290" rx="18" fill="#f0efe8" stroke="#d6d5cc" stroke-width="3"/>
+<g transform="translate(60 254)"><rect x="150" y="40" width="300" height="190" rx="16" fill="#23262b"/><rect x="170" y="58" width="246" height="154" rx="4" fill="#bfe3ff"/><circle cx="434" cy="135" r="6" fill="#4a4f57"/><text x="293" y="146" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="34" fill="#16406b">Hello!</text><path d="M150 180h-60v60" fill="none" stroke="#23262b" stroke-width="8" stroke-linecap="round"/></g>
+<text x="64" y="582" font-family="Helvetica Neue, Arial" font-weight="700" font-size="24" letter-spacing="3" fill="#e4572e">CHECKLIST</text>
+  <rect x="64" y="604" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  
+  <text x="130" y="637" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Plug the USB-C cable into the Tab5</text>
+  <path d="M130 660h526" stroke="#c9c9c2" stroke-width="2"/>
+  <rect x="64" y="700" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  
+  <text x="130" y="733" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Run hello.py from the editor</text>
+  <path d="M130 756h526" stroke="#c9c9c2" stroke-width="2"/>
+  <rect x="64" y="796" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  
+  <text x="130" y="829" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Change the text and the colour</text>
+  <path d="M130 852h526" stroke="#c9c9c2" stroke-width="2"/>
+<path d="M56 910h608" stroke="#23262b" stroke-width="3"/>
+<text x="64" y="952" font-family="Menlo, monospace" font-size="22" fill="#5c5f66">POCKET BENCH · QUEST 1/6</text>
+<text x="656" y="952" text-anchor="end" font-family="Menlo, monospace" font-size="22" fill="#5c5f66">10 min</text>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="1008" viewBox="0 0 720 1008">
+<rect width="720" height="1008" fill="#fbfaf5"/>
+<rect x="0" y="0" width="720" height="18" fill="#c0392b"/>
+<circle cx="112" cy="140" r="58" fill="#c0392b"/>
+<text x="112" y="164" text-anchor="middle" font-family="Helvetica Neue, Arial" font-weight="700" font-size="70" fill="#fff">6</text>
+<text x="196" y="130" font-family="Helvetica Neue, Arial" font-weight="700" font-size="54" fill="#17181b">Log and plot</text>
+<text x="198" y="176" font-family="Helvetica Neue, Arial" font-size="27" fill="#5c5f66">Draw a live chart of a reading</text>
+<rect x="56" y="244" width="608" height="290" rx="18" fill="#f0efe8" stroke="#d6d5cc" stroke-width="3"/>
+<g transform="translate(60 254)"><path d="M80 40v190h460" fill="none" stroke="#23262b" stroke-width="6"/><path d="M80 180l50 -20l50 10l50 -60l50 20l50 -70l50 40l50 -30l50 -40l50 20" fill="none" stroke="#c0392b" stroke-width="7" stroke-linejoin="round"/><path d="M130 230v12" stroke="#23262b" stroke-width="4"/><path d="M230 230v12" stroke="#23262b" stroke-width="4"/><path d="M330 230v12" stroke="#23262b" stroke-width="4"/><path d="M430 230v12" stroke="#23262b" stroke-width="4"/><path d="M530 230v12" stroke="#23262b" stroke-width="4"/><path d="M80 105h460" stroke="#999" stroke-width="2" stroke-dasharray="8 8"/></g>
+<text x="64" y="582" font-family="Helvetica Neue, Arial" font-weight="700" font-size="24" letter-spacing="3" fill="#c0392b">CHECKLIST</text>
+  <rect x="64" y="604" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  <path d="M72 626l12 14l24 -32" fill="none" stroke="#c0392b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="130" y="637" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Sample the sensor every second</text>
+  <path d="M130 660h526" stroke="#c9c9c2" stroke-width="2"/>
+  <rect x="64" y="700" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  <path d="M72 722l12 14l24 -32" fill="none" stroke="#c0392b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="130" y="733" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Keep the last sixty values</text>
+  <path d="M130 756h526" stroke="#c9c9c2" stroke-width="2"/>
+  <rect x="64" y="796" width="44" height="44" rx="8" fill="none" stroke="#23262b" stroke-width="5"/>
+  
+  <text x="130" y="829" font-family="Helvetica Neue, Arial" font-size="29" fill="#23262b">Plot them as a line on the screen</text>
+  <path d="M130 852h526" stroke="#c9c9c2" stroke-width="2"/>
+<path d="M56 910h608" stroke="#23262b" stroke-width="3"/>
+<text x="64" y="952" font-family="Menlo, monospace" font-size="22" fill="#5c5f66">POCKET BENCH · QUEST 6/6</text>
+<text x="656" y="952" text-anchor="end" font-family="Menlo, monospace" font-size="22" fill="#5c5f66">25 min</text>
+</svg>

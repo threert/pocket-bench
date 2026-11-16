@@ -1,0 +1,12 @@
+{
+  // Typecheck of the unit models and their tests:
+  //   vendor/pocket-m5/third_party/pocketjs/node_modules/.bin/tsc --noEmit -p sidecar/tsconfig.units.json
+  "compilerOptions": {
+    "target": "ESNext", "module": "ESNext", "moduleResolution": "bundler", "lib": ["ESNext"],
+    "typeRoots": ["../vendor/pocket-m5/third_party/pocketjs/node_modules/@types"], "types": ["bun"],
+    "strict": true, "noEmit": true, "allowImportingTsExtensions": true, "verbatimModuleSyntax": true, "skipLibCheck": true,
+    "noImplicitOverride": true
+  },
+  "include": ["src/chips", "src/units", "src/sim/i2c.ts", "test/units"],
+  "exclude": ["test/units/worker.ts", "test/units/worker-env.d.ts"]
+}

@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="614" viewBox="0 0 1024 614" font-family="Helvetica Neue, Helvetica, Arial">
+  <!-- The oscilloscope's 7-inch screen (152 x 91 mm lit): a 12 x 8 graticule, CH1 a sine, CH2 a square wave. -->
+  <rect width="1024" height="614" fill="#05080b"/>
+  <!-- status bar -->
+  <rect x="8" y="7" width="62" height="28" rx="5" fill="#1fc457"/>
+  <text x="39" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#03140a">RUN</text>
+  <g font-size="19" fill="#dfe6ea">
+    <text x="84" y="28"><tspan fill="#8fa0aa">H</tspan> 200us</text>
+    <text x="196" y="28">1GSa/s</text>
+    <text x="282" y="28" fill="#8fa0aa">12M pts</text>
+    <text x="648" y="28"><tspan fill="#ff9a2e">D</tspan> 0.000s</text>
+    <text x="772" y="28"><tspan fill="#ff9a2e">T</tspan></text>
+    <text x="872" y="28" fill="#ffe23a">1</text>
+    <text x="892" y="28">0.00V</text>
+  </g>
+  <path d="M800,27 h8 v-14 h8" fill="none" stroke="#dfe6ea" stroke-width="2"/>
+  <!-- memory bar -->
+  <rect x="384" y="12" width="230" height="18" rx="3" fill="none" stroke="#4d5a63" stroke-width="1.5"/>
+  <rect x="452" y="12" width="94" height="18" fill="#1b2a33" stroke="#9fb2bd" stroke-width="1.5"/>
+  <path d="M390,21 q7,-12 14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0 t14,0" fill="none" stroke="#ffe23a" stroke-width="1.4"/>
+  <!-- graticule: 12 x 8 divisions of 64 px from (60,46) -->
+  <rect x="60" y="46" width="768" height="512" fill="#020405" stroke="#6f7f89" stroke-width="1.6"/>
+  <g stroke="#62717b" stroke-width="1.7" stroke-dasharray="1.7 11.1" fill="none">
+    <path d="M124,46V558M188,46V558M252,46V558M316,46V558M380,46V558M508,46V558M572,46V558M636,46V558M700,46V558M764,46V558"/>
+    <path d="M60,110H828M60,174H828M60,238H828M60,366H828M60,430H828M60,494H828"/>
+  </g>
+  <g stroke="#7d8d97" fill="none">
+    <path d="M444,46V558M60,302H828" stroke-width="1.3"/>
+    <path d="M444,46V558M60,302H828" stroke-width="8" stroke-dasharray="1.4 11.4"/>
+  </g>
+  <!-- CH2: square wave, 2 V/div -->
+  <g fill="none" stroke-linejoin="round">
+    <path d="M60,478H188V350H316V478H444V350H572V478H700V350H828" stroke="#35e6ff" stroke-opacity="0.28" stroke-width="9"/>
+    <path d="M60,478H188V350H316V478H444V350H572V478H700V350H828" stroke="#5cecff" stroke-width="3.2"/>
+    <!-- CH1: sine, 1 V/div -->
+    <path d="M60,206C106.6,334 141.4,334 188,206S269.4,78 316,206S397.4,334 444,206S525.4,78 572,206S653.4,334 700,206S781.4,78 828,206" stroke="#ffe23a" stroke-opacity="0.28" stroke-width="9"/>
+    <path d="M60,206C106.6,334 141.4,334 188,206S269.4,78 316,206S397.4,334 444,206S525.4,78 572,206S653.4,334 700,206S781.4,78 828,206" stroke="#ffe85a" stroke-width="3.2"/>
+  </g>
+  <!-- channel and trigger markers -->
+  <path d="M20,193H44L57,206L44,219H20Z" fill="#ffe23a"/>
+  <text x="32" y="213" text-anchor="middle" font-size="19" font-weight="700" fill="#141200">1</text>
+  <path d="M20,401H44L57,414L44,427H20Z" fill="#35e6ff"/>
+  <text x="32" y="421" text-anchor="middle" font-size="19" font-weight="700" fill="#00141a">2</text>
+  <path d="M828,206L815,196H802V216H815Z" fill="#ff9a2e"/>
+  <text x="809" y="212" text-anchor="middle" font-size="14" font-weight="700" fill="#1a0c00">T</text>
+  <path d="M436,46H452L444,58Z" fill="#ff9a2e"/>
+  <!-- measurements along the bottom of the graticule -->
+  <g font-size="17" font-family="Menlo, monospace">
+    <text x="72" y="548" fill="#ffe23a">Freq=1.250kHz</text>
+    <text x="250" y="548" fill="#ffe23a">Vpp=3.04V</text>
+    <text x="392" y="548" fill="#35e6ff">Vpp=4.08V</text>
+    <text x="534" y="548" fill="#35e6ff">Duty=50.0%</text>
+  </g>
+  <!-- the soft-key menu -->
+  <rect x="840" y="46" width="176" height="512" fill="#0b1116" stroke="#35454f" stroke-width="1.5"/>
+  <rect x="840" y="46" width="176" height="40" fill="#ffe23a"/>
+  <text x="928" y="74" text-anchor="middle" font-size="22" font-weight="700" fill="#141200">CH1</text>
+  <g stroke="#35454f" stroke-width="1.5">
+    <path d="M840,164H1016M840,242H1016M840,320H1016M840,398H1016M840,476H1016"/>
+  </g>
+  <g text-anchor="middle" font-size="16" fill="#8fa0aa">
+    <text x="928" y="112">Coupling</text><text x="928" y="190">BW Limit</text><text x="928" y="268">Probe</text>
+    <text x="928" y="346">Invert</text><text x="928" y="424">Volts/Div</text><text x="928" y="502">Unit</text>
+  </g>
+  <g text-anchor="middle" font-size="23" font-weight="500" fill="#eef3f6">
+    <text x="928" y="144">DC</text><text x="928" y="222">OFF</text><text x="928" y="300">10X</text>
+    <text x="928" y="378">OFF</text><text x="928" y="456">Coarse</text><text x="928" y="534">[V]</text>
+  </g>
+  <!-- channel bar -->
+  <g font-size="20">
+    <rect x="60" y="572" width="34" height="32" rx="4" fill="#ffe23a"/>
+    <text x="77" y="595" text-anchor="middle" font-weight="700" fill="#141200">1</text>
+    <text x="102" y="595" fill="#ffe23a">= 1.00V</text>
+    <rect x="252" y="572" width="34" height="32" rx="4" fill="#35e6ff"/>
+    <text x="269" y="595" text-anchor="middle" font-weight="700" fill="#00141a">2</text>
+    <text x="294" y="595" fill="#35e6ff">= 2.00V</text>
+    <rect x="444" y="572" width="34" height="32" rx="4" fill="none" stroke="#5a4a66" stroke-width="1.5"/>
+    <text x="461" y="595" text-anchor="middle" fill="#6d5a7a">3</text>
+    <rect x="636" y="572" width="34" height="32" rx="4" fill="none" stroke="#3f4f73" stroke-width="1.5"/>
+    <text x="653" y="595" text-anchor="middle" fill="#506491">4</text>
+    <text x="1012" y="595" text-anchor="end" font-size="17" fill="#8fa0aa">DS-1104</text>
+  </g>
+</svg>

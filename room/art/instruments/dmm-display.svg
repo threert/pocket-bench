@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="880" height="240" viewBox="0 0 1100 300" font-family="Helvetica Neue, Helvetica, Arial">
+  <!-- The bench multimeter's vacuum-fluorescent display (110 x 30 mm). -->
+  <defs>
+    <polygon id="h" points="7,0 43,0 48,5 43,10 7,10 2,5"/>
+    <polygon id="v" points="0,7 5,2 10,7 10,43 5,48 0,43"/>
+    <use id="A" xlink:href="#h" x="5"/><use id="G" xlink:href="#h" x="5" y="45"/><use id="D" xlink:href="#h" x="5" y="90"/>
+    <use id="F" xlink:href="#v" y="5"/><use id="B" xlink:href="#v" x="50" y="5"/><use id="E" xlink:href="#v" y="50"/><use id="C" xlink:href="#v" x="50" y="50"/>
+    <g id="n8"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#C"/><use xlink:href="#D"/><use xlink:href="#E"/><use xlink:href="#F"/><use xlink:href="#G"/><circle cx="68" cy="95" r="6"/></g>
+    <g id="n0"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#C"/><use xlink:href="#D"/><use xlink:href="#E"/><use xlink:href="#F"/></g>
+    <g id="n1"><use xlink:href="#B"/><use xlink:href="#C"/></g>
+    <g id="n2"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#G"/><use xlink:href="#E"/><use xlink:href="#D"/></g>
+    <g id="n3"><use xlink:href="#A"/><use xlink:href="#B"/><use xlink:href="#G"/><use xlink:href="#C"/><use xlink:href="#D"/></g>
+    <circle id="dp" cx="68" cy="95" r="6"/>
+  </defs>
+  <rect width="1100" height="300" fill="#030807"/>
+  <g font-size="26" font-weight="500" fill="#b6ffe4">
+    <text x="60" y="40">AUTO</text><text x="170" y="40">TRIG</text><text x="486" y="40">10 V</text><text x="610" y="40" fill="#123229">HOLD</text><text x="366" y="40" fill="#123229">MATH</text><text x="266" y="40" fill="#123229">REM</text>
+  </g>
+  <!-- 17 mm digits: unit 100 -> 170, pitch 136 -->
+  <g transform="translate(78,78) skewX(-6) scale(1.7)">
+    <g fill="#0a1d18"><use xlink:href="#n8"/><use xlink:href="#n8" x="80"/><use xlink:href="#n8" x="160"/><use xlink:href="#n8" x="240"/><use xlink:href="#n8" x="320"/></g>
+    <g fill="#bfffe8"><use xlink:href="#n3"/><use xlink:href="#dp"/><use xlink:href="#n3" x="80"/><use xlink:href="#n0" x="160"/><use xlink:href="#n1" x="240"/><use xlink:href="#n2" x="320"/></g>
+  </g>
+  <text x="792" y="246" font-size="150" font-weight="500" fill="#bfffe8">V</text>
+  <text x="902" y="246" font-size="84" font-weight="500" fill="#bfffe8">DC</text>
+  <text x="902" y="150" font-size="34" font-weight="500" fill="#b6ffe4">5½</text>
+  <text x="980" y="150" font-size="34" font-weight="500" fill="#123229">AC</text>
+</svg>

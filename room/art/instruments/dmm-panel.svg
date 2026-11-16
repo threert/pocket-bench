@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1536" height="620" viewBox="0 0 2130 860" font-family="Helvetica Neue, Helvetica, Arial" text-anchor="middle">
+  <!-- The bench multimeter's front, 213 x 86 mm; one unit is 0.1 mm. -->
+  <defs><rect id="k" x="-70.5" y="-45.5" width="141" height="91" rx="12"/></defs>
+  <rect width="2130" height="860" fill="#d8d7d2"/>
+  <g text-anchor="start">
+    <text x="80" y="82" font-size="40" font-weight="700" fill="#26282c" letter-spacing="1">DM-3055</text>
+    <text x="292" y="82" font-size="25" fill="#5c6066">5½ Digit Multimeter</text>
+  </g>
+  <rect x="70" y="100" width="1180" height="380" rx="22" fill="#060708"/>
+  <!-- power -->
+  <circle cx="130" cy="660" r="50" fill="#c2c4c8"/>
+  <g fill="none" stroke="#2a2c30" stroke-width="6" stroke-linecap="round"><path d="M115,646A23,23 0 1 0 145,646M130,634V660"/></g>
+  <!-- function keys -->
+  <g fill="#474c54">
+    <use xlink:href="#k" x="310" y="580"/><use xlink:href="#k" x="480" y="580"/><use xlink:href="#k" x="650" y="580"/><use xlink:href="#k" x="820" y="580"/><use xlink:href="#k" x="990" y="580"/><use xlink:href="#k" x="1160" y="580"/>
+    <use xlink:href="#k" x="310" y="730"/><use xlink:href="#k" x="480" y="730"/><use xlink:href="#k" x="650" y="730"/><use xlink:href="#k" x="820" y="730"/><use xlink:href="#k" x="990" y="730"/><use xlink:href="#k" x="1160" y="730"/>
+    <use xlink:href="#k" x="1390" y="190"/><use xlink:href="#k" x="1560" y="190"/><use xlink:href="#k" x="1390" y="340"/><use xlink:href="#k" x="1560" y="340"/>
+    <use xlink:href="#k" x="1390" y="580"/><use xlink:href="#k" x="1390" y="730"/><use xlink:href="#k" x="1560" y="730"/>
+  </g>
+  <use xlink:href="#k" x="1560" y="580" fill="#2a62c9"/>
+  <g font-size="27" font-weight="500" fill="#f1f2f3">
+    <text x="310" y="590">DCV</text><text x="480" y="590">ACV</text><text x="650" y="590">Ω 2W</text><text x="820" y="590">Ω 4W</text><text x="990" y="590">Freq</text><text x="1160" y="590">Cont</text>
+    <text x="310" y="740">DCI</text><text x="480" y="740">ACI</text><text x="650" y="740">Cap</text><text x="820" y="740">Temp</text><text x="990" y="740">Null</text><text x="1160" y="740">Math</text>
+    <text x="1390" y="200">Auto</text><text x="1390" y="350">Hold</text>
+    <text x="1390" y="590">Trig</text><text x="1560" y="590">Shift</text><text x="1390" y="740">Menu</text><text x="1560" y="740">Enter</text>
+  </g>
+  <g fill="#f1f2f3"><path d="M1560,172L1582,206H1538Z"/><path d="M1560,358L1582,324H1538Z"/></g>
+  <g font-size="17" font-weight="500" fill="#2a62c9">
+    <text x="310" y="518">Ratio</text><text x="480" y="518">dB</text><text x="990" y="518">Period</text><text x="1160" y="518">Diode</text>
+    <text x="1560" y="126" fill="#5c6066">Range</text>
+  </g>
+  <path d="M1690,60V800" stroke="#b3b2ad" stroke-width="3"/>
+  <!-- terminals -->
+  <g font-size="17" font-weight="500" fill="#3a3d42">
+    <text x="1800" y="112">Sense Ω 4W</text><text x="2000" y="112">Input V Ω</text>
+    <text x="1800" y="366" font-size="15" fill="#5c6066">200 V Max</text><text x="2000" y="366" font-size="15" fill="#5c6066">1000 V Max</text>
+    <text x="1800" y="810" font-size="15" fill="#5c6066">Fuse 3 A</text><text x="2000" y="810" font-size="15" fill="#5c6066">Front / Rear</text>
+  </g>
+  <g font-size="25" font-weight="700" fill="#26282c"><text x="1900" y="249">HI</text><text x="1900" y="489">LO</text></g>
+  <g fill="none" stroke-width="6">
+    <circle cx="1800" cy="240" r="70" stroke="#c9382e"/><circle cx="2000" cy="240" r="70" stroke="#c9382e"/>
+    <circle cx="1800" cy="480" r="70" stroke="#3a3d42"/><circle cx="2000" cy="480" r="70" stroke="#3a3d42"/>
+  </g>
+  <g stroke="#3a3d42" stroke-width="3" fill="none"><path d="M1700,580H2100"/></g>
+  <rect x="1955" y="655" width="90" height="90" rx="12" fill="#474c54"/>
+</svg>

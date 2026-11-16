@@ -15,6 +15,9 @@ export interface I2CChip {
   read(length: number, now: number): Uint8Array | undefined;
   /** Whether the address is acknowledged at all right now (default: yes). */
   acks?(now: number): boolean;
+  /** The transaction ended with STOP. Parts that act on a write only then, or
+   *  that tell a repeated START from a new transaction, hook this. */
+  stop?(now: number): void;
   /** The bus lost power or the unit was plugged in: back to the power-on state. */
   reset?(now: number): void;
 }
@@ -76,11 +79,18 @@ export class I2CBus {
   probe(address: number, now: number): Transfer {
     const chip = this.chip(address, now);
     this.trace?.({ at: now, address, op: "probe", bytes: [], ack: !!chip });
+    chip?.stop?.(now);
     return { status: chip ? Status.ok : Status.failed, data: new Uint8Array(0), micros: this.byteMicros(1) };
   }
 
-  /** One script as io/i2c.ts encodeI2CScript packs it. */
+  /** One script as io/i2c.ts encodeI2CScript packs it: its steps follow each
+   *  other after repeated STARTs, and one STOP ends it. */
   run(address: number, payload: Uint8Array, now: number): Transfer {
+    const transfer = this.steps(address, payload, now);
+    this.chip(address, now + transfer.micros)?.stop?.(now + transfer.micros);
+    return transfer;
+  }
+  private steps(address: number, payload: Uint8Array, now: number): Transfer {
     if (payload.length < 4 || payload[0] !== 1) return { status: Status.invalid, data: new Uint8Array(0), micros: 0 };
     const steps = payload[1]!;
     const out: number[] = [];

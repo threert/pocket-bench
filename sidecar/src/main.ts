@@ -1,13 +1,16 @@
 // Pocket Bench's sidecar: the simulated Tab5, the project's builds and the
 // coding agent, for the app that shows them.
 //   bun src/main.ts [--project <name>] [--port N]
+import { installAgent, installCli } from "./agent/index.ts";
 import { Server } from "./server.ts";
 import { listProjects } from "./workspace.ts";
 
 const args = process.argv.slice(2);
 const option = (name: string) => { const index = args.indexOf(name); return index >= 0 ? args[index + 1] : undefined; };
 const server = new Server();
+installAgent(server);
 const port = server.start(option("--port") ? Number(option("--port")) : undefined);
+installCli();
 // The app reads this line to find the port.
 console.log(JSON.stringify({ t: "listening", port }));
 const wanted = option("--project");

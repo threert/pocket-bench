@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="768" height="603" viewBox="0 0 1070 840" font-family="Helvetica Neue, Helvetica, Arial" text-anchor="middle">
+  <!-- The soldering station's front, 107 x 84 mm; one unit is 0.1 mm. -->
+  <rect width="1070" height="840" fill="#24262a"/>
+  <rect x="80" y="90" width="400" height="220" rx="20" fill="#060607"/>
+  <text x="566" y="150" font-size="17" font-weight="700" fill="#c9ccd1" letter-spacing="1">HEAT</text>
+  <!-- the temperature scale around the knob -->
+  <g transform="translate(800,280)">
+    <path d="M-113,113A160,160 0 1 1 113,113" fill="none" stroke="#e8c11c" stroke-width="7" stroke-linecap="round"/>
+    <g stroke="#e6e7e9" stroke-width="5" stroke-linecap="round">
+      <path id="t" d="M0,-172V-190"/>
+      <use xlink:href="#t" transform="rotate(-135)"/><use xlink:href="#t" transform="rotate(-90)"/><use xlink:href="#t" transform="rotate(-45)"/>
+      <use xlink:href="#t" transform="rotate(45)"/><use xlink:href="#t" transform="rotate(90)"/><use xlink:href="#t" transform="rotate(135)"/>
+    </g>
+    <g font-size="24" font-weight="500" fill="#e6e7e9">
+      <text x="-166" y="178">200</text><text x="0" y="-204">350</text><text x="166" y="178">480</text>
+    </g>
+    <text x="0" y="214" font-size="26" font-weight="700" fill="#e8c11c">°C</text>
+  </g>
+  <g text-anchor="start">
+    <text x="84" y="412" font-size="58" font-weight="700" fill="#f0f1f2" letter-spacing="1">ST-90</text>
+    <text x="86" y="462" font-size="19" fill="#a9aeb5" letter-spacing="1.5">SOLDERING STATION  90 W</text>
+    <rect x="86" y="486" width="140" height="34" rx="6" fill="none" stroke="#e8c11c" stroke-width="3"/>
+    <text x="100" y="510" font-size="19" font-weight="700" fill="#e8c11c" letter-spacing="1.5">ESD SAFE</text>
+  </g>
+  <circle cx="330" cy="680" r="104" fill="none" stroke="#7b8088" stroke-width="5"/>
+  <g font-size="18" font-weight="700" fill="#c9ccd1" letter-spacing="2">
+    <text x="330" y="556">IRON</text><text x="800" y="556">POWER</text>
+  </g>
+</svg>

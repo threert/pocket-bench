@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="920" viewBox="0 0 557 500">
+  <!-- A louvred / perforated steel tool panel, 557 x 500 mm, powder-coated light blue. Units are millimetres.
+       Louvres: 5 columns (centres x = 40 + 54 i) by 13 rows (y = 34 + 36 j). Square holes: 7 columns
+       (x = 300 + 38 i) by 12 rows (y = 41 + 38 j). room/decor/station.ts puts the pressed lips over the slots. -->
+  <defs>
+    <linearGradient id="sheet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4aa0da"/>
+      <stop offset="1" stop-color="#3f95d0"/>
+    </linearGradient>
+    <pattern id="slot" x="13" y="16" width="54" height="36" patternUnits="userSpaceOnUse">
+      <rect x="6" y="11.5" width="42" height="12.5" rx="4" fill="#3586bf"/>
+      <rect x="7" y="14" width="40" height="9" rx="3" fill="#0f2c44"/>
+      <rect x="7" y="21.6" width="40" height="1.6" rx="0.8" fill="#6db9ea"/>
+    </pattern>
+    <pattern id="hole" x="281" y="22" width="38" height="38" patternUnits="userSpaceOnUse">
+      <rect x="13.6" y="13.6" width="10.8" height="10.8" rx="1.8" fill="#3384bd"/>
+      <rect x="14.5" y="14.5" width="9" height="9" rx="1.2" fill="#12283a"/>
+      <rect x="14.5" y="22.3" width="9" height="1.2" fill="#2a516f"/>
+    </pattern>
+  </defs>
+  <rect width="557" height="500" fill="url(#sheet)"/>
+  <rect x="13" y="16" width="270" height="468" fill="url(#slot)"/>
+  <rect x="281" y="22" width="266" height="456" fill="url(#hole)"/>
+  <!-- The folded rim reads as a slightly lighter band. -->
+  <rect x="1.5" y="1.5" width="554" height="497" fill="none" stroke="#5fb0e6" stroke-width="3"/>
+  <rect x="0.4" y="0.4" width="556.2" height="499.2" fill="none" stroke="#2f7fb8" stroke-width="0.8"/>
+</svg>

@@ -13,5 +13,11 @@ case $1 in
   app) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "$2" ;;
   shot) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.shot\",\"path\":\"$2\"${3:+,\"panels\":false}}" ;;
   screen) curl -s -m 30 -o "$2" "localhost:$PORT/api/shot.png?scale=2" ;;
+  click) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.pointer\",\"u\":$2,\"v\":$3,\"click\":true}" ;;
+  move) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.pointer\",\"u\":$2,\"v\":$3}" ;;
+  down) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.pointer\",\"u\":$2,\"v\":$3,\"button\":0,\"down\":true}" ;;
+  up) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.pointer\",\"u\":$2,\"v\":$3,\"button\":0,\"down\":false}" ;;
+  key) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.key\",\"key\":\"$2\"}" ;;
+  status) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d '{"t":"app.status"}' ;;
   room) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.room\",\"message\":$2}" ;;
 esac

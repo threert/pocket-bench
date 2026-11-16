@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="328" height="120" viewBox="0 0 82 30">
+  <!-- The rework station's display, 82 x 30 mm: a blue negative LCD. Emissive art. -->
+  <rect width="82" height="30" fill="#1438c8"/>
+  <rect x="1" y="1" width="80" height="28" fill="#1a46e0"/>
+  <g font-family="Menlo, monospace" fill="#eaf2ff">
+    <text x="4" y="13" font-size="5">TEMP</text>
+    <text x="40" y="20" text-anchor="end" font-size="15" font-weight="700">380</text>
+    <text x="41" y="13" font-size="5">°C</text>
+    <text x="51" y="13" font-size="5">AIR</text>
+    <text x="79" y="20" text-anchor="end" font-size="15" font-weight="700">45</text>
+    <text x="4" y="27" font-size="3.6">SET 380   HEAT ▮▮▮▯   STBY OFF</text>
+  </g>
+  <path d="M47 3 V22" stroke="#7fa0ff" stroke-width="0.4"/>
+</svg>

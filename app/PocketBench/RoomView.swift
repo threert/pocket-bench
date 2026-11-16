@@ -25,9 +25,20 @@ final class RoomNSView: NSView {
     override var isFlipped: Bool { true }
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
-    private var scale: CGFloat { window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2 }
+    /// The most pixels the room is traced at: a Retina window's 5 million would halve the frame rate for sharpness
+    /// the path tracer's own resolve does not have. The layer is scaled up to the view.
+    static var maxPixels: CGFloat = 1_900_000
+    private var scale: CGFloat {
+        let backing = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
+        let points = max(bounds.width * bounds.height, 1)
+        return min(backing, (RoomNSView.maxPixels / points).squareRoot())
+    }
     private var pixels: (UInt32, UInt32) {
         (UInt32(max(1, (bounds.width * scale).rounded())), UInt32(max(1, (bounds.height * scale).rounded())))
+    }
+    /// Tells the room's script the picture's shape: its rays through the pointer need it.
+    func sendView() {
+        send(["t": "room.view", "width": Double(bounds.width), "height": Double(bounds.height)])
     }
 
     func start() {
@@ -63,6 +74,7 @@ final class RoomNSView: NSView {
         metal.contentsScale = scale
         let (w, h) = pixels
         bench_resize(handle, w, h, Float(scale))
+        sendView()
     }
 
     override func viewDidChangeBackingProperties() {
@@ -127,6 +139,18 @@ final class RoomNSView: NSView {
     func stream(_ name: String, width: Int, height: Int, pixels: UnsafeRawBufferPointer) {
         guard let handle, let base = pixels.baseAddress else { return }
         bench_stream(handle, name, UInt32(width), UInt32(height), base.assumingMemoryBound(to: UInt8.self), pixels.count)
+    }
+    /// The pointer, for a test that drives the room: its place, and a button going down or up.
+    func pointer(u: Double, v: Double, button: Int? = nil, down: Bool = false) {
+        guard let handle else { return }
+        bench_pointer(handle, Float(u), Float(v))
+        if let button { bench_button(handle, UInt8(button), down) }
+    }
+    func wheel(_ notches: Double) { if let handle { bench_wheel(handle, Float(notches)) } }
+    func key(_ name: String, down: Bool) {
+        guard let handle else { return }
+        let code = name.count == 1 ? (name.first!.isNumber ? "Digit\(name)" : "Key\(name)") : name
+        bench_key(handle, code, name, down)
     }
     func snapshot(to path: String) { if let handle { bench_snapshot(handle, path) } }
     func reload(_ bundle: String) { if let handle { bench_reload(handle, bundle) } }

@@ -22,7 +22,7 @@ struct PocketBenchApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(model)
-                .frame(minWidth: 1100, minHeight: 700)
+                .frame(minWidth: 1180, minHeight: 720)
                 .preferredColorScheme(.dark)
         }
         .windowStyle(.hiddenTitleBar)
@@ -32,20 +32,46 @@ struct PocketBenchApp: App {
 
 struct RootView: View {
     @EnvironmentObject var model: Model
+    @StateObject private var pointer = PointerTracker()
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack {
             RoomView(view: model.room).ignoresSafeArea()
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Pocket Bench").font(.system(size: 15, weight: .semibold))
-                Text("\(model.connection) · \(model.phase) · \(model.projectTitle ?? "no project")").font(.system(size: 11)).foregroundStyle(.secondary)
-                Text(String(format: "%.0f fps · GPU %.1f ms · scale %.2f · %@", model.fps, model.gpuMs, model.renderScale, model.adapter)).font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
-                if let error = model.rendererError { Text(error).font(.system(size: 11)).foregroundStyle(.red) }
+            // Left: where you are and what to do.
+            VStack(alignment: .leading, spacing: 10) {
+                TopBar().padding(.leading, 70)
+                QuestCard()
+                Spacer(minLength: 0)
+                if let unit = model.selectedUnit, !unit.isEmpty { UnitCard(id: unit).transition(.move(edge: .leading).combined(with: .opacity)) }
             }
-            .padding(12)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
-            .padding(.top, 40).padding(.leading, 16)
+            .padding(.leading, 14).padding(.top, 10).padding(.bottom, 14)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .animation(.easeOut(duration: 0.18), value: model.selectedUnit)
+            // Right: the Tab5's screen and the agent.
+            AgentPanel()
+                .padding(.trailing, 12).padding(.top, 12).padding(.bottom, 12)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
+            // Bottom: views.
+            ViewBar()
+                .padding(.bottom, 14).padding(.trailing, 384)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            if let toast = model.toastMessage {
+                ToastView(toast: toast).padding(.top, 16).padding(.trailing, 384)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+            if let hover = model.hover {
+                HoverTip(hover: hover)
+                    .position(x: min(max(pointer.location.x + 18, 120), 1040), y: max(pointer.location.y - 30, 40))
+                    .allowsHitTesting(false)
+            }
+            if let error = model.rendererError {
+                Text(error).font(.system(size: 12)).foregroundStyle(Theme.bad).padding().glass()
+            }
         }
         .ignoresSafeArea()
+        .animation(.easeOut(duration: 0.2), value: model.toastMessage)
+        .sheet(isPresented: $model.showLessons) { LessonsSheet().environmentObject(model) }
+        .sheet(isPresented: $model.showProjects) { ProjectsSheet().environmentObject(model) }
     }
 }
