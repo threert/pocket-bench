@@ -1,0 +1,8 @@
+{
+  "name": "pocket-bench-sidecar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "smoke": "bun src/smoke.ts"
+  }
+}
