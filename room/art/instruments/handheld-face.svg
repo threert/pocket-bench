@@ -14,11 +14,11 @@
   <!-- the LCD -->
   <rect x="70" y="112" width="640" height="340" rx="22" fill="#0e0f10"/>
   <rect x="92" y="132" width="596" height="300" rx="10" fill="#a3ad9c"/>
-  <g transform="translate(150,196) skewX(-6) scale(1.8)" fill="#1e231d">
+  <g transform="translate(132,206) skewX(-6) scale(1.6)" fill="#1e231d">
     <use xlink:href="#n0"/><circle cx="70" cy="95" r="6"/><use xlink:href="#n0" x="82"/><use xlink:href="#n0" x="164"/><use xlink:href="#n0" x="246"/>
   </g>
   <g font-size="26" font-weight="700" fill="#1e231d" text-anchor="start"><text x="112" y="172">AUTO</text><text x="212" y="172">DC</text></g>
-  <text x="664" y="400" font-size="60" font-weight="700" fill="#1e231d" text-anchor="end">V</text>
+  <text x="672" y="372" font-size="60" font-weight="700" fill="#1e231d" text-anchor="end">V</text>
   <!-- keys -->
   <use xlink:href="#k" x="135" y="540" fill="#e8b923"/>
   <g fill="#6c7078"><use xlink:href="#k" x="305" y="540"/><use xlink:href="#k" x="475" y="540"/><use xlink:href="#k" x="645" y="540"/></g>

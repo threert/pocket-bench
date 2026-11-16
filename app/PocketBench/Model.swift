@@ -96,6 +96,7 @@ final class Model: ObservableObject {
     let sidecar = Sidecar()
     let mirror = ScreenMirror()
     private var state: JSON = [:]
+    private var probe: JSON = [:]
     private var logSeq = 0
     private var toastSeq = 0
     private var snapshotWaiters: [String: () -> Void] = [:]
@@ -147,6 +148,7 @@ final class Model: ObservableObject {
         case "ui.toast": toast(post["text"] as? String ?? "", tone: post["tone"] as? String ?? "info")
         case "ui.quest": showLessons = true
         case "ui.sound": Sounds.play(post["name"] as? String ?? "")
+        case "ui.probe": probe = post
         default: break
         }
     }
@@ -258,6 +260,9 @@ final class Model: ObservableObject {
             // A message for the room's script, from a tool.
             if let inner = message["message"] as? JSON { room.send(inner) }
             answer(message, ["ok": true])
+        case "app.probe":
+            room(do: "probe")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { self.answer(message, ["ok": true, "probe": self.probe]) }
         case "app.ui":
             // A test opens or closes a sheet, or types a prompt.
             if let lessons = message["lessons"] as? Bool { showLessons = lessons }

@@ -86,6 +86,8 @@ export class World {
   private readonly trunk: Mesh;
   private lastClick = { at: -1, id: "" };
   private simPending: Record<string, unknown> | null = null;
+  private trace: string[] = [];
+  private note(text: string): void { this.trace.push(`${this.time.toFixed(2)} ${text}`); if (this.trace.length > 12) this.trace.shift(); }
 
   constructor(private readonly parts: RoomParts, private readonly post: Post) {
     this.cableKit = new Kit(parts.scene);
@@ -244,6 +246,22 @@ export class World {
       case "select": this.select(type); break;
       case "load": { const load = this.parts.props.loads.find(item => item.id === message.id); if (load) { load.manual = message.on === undefined ? !load.manual : !!message.on; } break; }
       case "reset": for (const state of this.propStates) this.dropProp(state, state.prop.home, true); break;
+      case "probe": {
+        // Where things are in the picture, for a test that drives the pointer.
+        const points: Record<string, [number, number] | null> = {};
+        const put = (id: string, at: V3) => { const p = this.project(at); points[id] = p ? [Math.round(p.u * 1000) / 1000, Math.round(p.v * 1000) / 1000] : null; };
+        for (const unit of this.units.values()) {
+          put(unit.model.spec.id, this.unitPoint(unit.pose, [0, unit.model.size[1] * 0.6, 0]));
+          for (const control of unit.model.controls) put(`${unit.model.spec.id}:${control.id}`, this.unitPoint(unit.pose, control.at));
+        }
+        for (const state of this.propStates) put(`prop:${state.prop.id}`, [state.pose.at[0], state.pose.at[1] + state.prop.half[1], state.pose.at[2]]);
+        for (const pad of PADS) put(pad.id, pad.at);
+        for (const load of this.parts.props.loads) put(`load:${load.id}`, load.center);
+        put("switch", this.parts.props.switchPlate.center);
+        put("screen", this.tab5Point(PANEL.at));
+        this.post({ t: "ui.probe", trace: this.trace, points, view: this.view, where: Object.fromEntries([...this.units.values()].map(unit => [unit.model.spec.id, unit.where])) });
+        break;
+      }
     }
   }
 
@@ -371,6 +389,7 @@ export class World {
     for (const button of [0, 2, 1]) {
       if (input.pressed(`Mouse${button}`) && !this.press) {
         this.press = { u, v, at: this.time, button, target: button === 0 ? target : null, moved: false, last: { u, v } };
+        this.note(`press ${button} on ${target ? target.kind + ":" + target.id : "nothing"}`);
         if (button === 0 && target) this.begin(target, u, v);
       }
     }
@@ -391,6 +410,7 @@ export class World {
       }
       press.last = { u, v };
       if (input.released(`Mouse${press.button}`) || !input.button(press.button)) {
+        this.note(`release moved=${press.moved} held=${input.button(press.button)} carried=${this.carried?.kind ?? "-"}`);
         this.end(u, v);
         this.press = null;
       }
@@ -461,6 +481,7 @@ export class World {
   }
 
   private grab(target: Target, u: number, v: number): void {
+    this.note(`grab ${target.kind}:${target.id}`);
     if (target.kind === "unit") {
       const unit = this.units.get(target.id)!;
       if (unit.flight) return;
@@ -468,33 +489,28 @@ export class World {
       this.removeCable(unit);
       if (was.startsWith("pad")) { this.post({ t: "room.unplug", uid: `${target.id}-1` }); for (const state of this.propStates) if (state.onDeck === target.id) this.dropProp(state, [state.at[0], TOP, state.at[2]], false); }
       unit.where = "hand";
-      const plane = this.onPlane(u, v, unit.pose.at[1]) ?? new Vector3(...unit.pose.at);
-      this.carried = { kind: "unit", unit, grab: new Vector3(unit.pose.at[0] - plane.x, 0, unit.pose.at[2] - plane.z) };
+      const plane = this.onPlane(u, v, TOP) ?? new Vector3(...unit.pose.at);
+      // (Held near where it was taken, but never far from the pointer: a tall Unit is not dragged by its shadow.)
+      this.carried = { kind: "unit", unit, grab: new Vector3(clamp(unit.pose.at[0] - plane.x, -0.03, 0.03), 0, clamp(unit.pose.at[2] - plane.z, -0.03, 0.03)) };
       this.select(target.id);
       this.post({ t: "ui.sound", name: "lift" });
     } else if (target.kind === "prop") {
       const state = this.propStates.find(item => item.prop.id === target.id)!;
       state.flight = undefined;
       state.onDeck = undefined;
-      const plane = this.onPlane(u, v, state.pose.at[1]) ?? new Vector3(...state.pose.at);
-      this.carried = { kind: "prop", state, grab: new Vector3(state.pose.at[0] - plane.x, 0, state.pose.at[2] - plane.z) };
+      const plane = this.onPlane(u, v, TOP) ?? new Vector3(...state.pose.at);
+      this.carried = { kind: "prop", state, grab: new Vector3(clamp(state.pose.at[0] - plane.x, -0.03, 0.03), 0, clamp(state.pose.at[2] - plane.z, -0.03, 0.03)) };
     }
   }
 
+  /** What is carried hangs above the point of the bench the pointer is over. */
   private carry(u: number, v: number): void {
     const carried = this.carried!;
-    const lift = 0.05;
-    if (carried.kind === "unit") {
-      const p = this.onPlane(u, v, TOP + lift);
-      if (!p) return;
-      const unit = carried.unit;
-      unit.pose.at = [clamp(p.x + carried.grab.x, BENCH.left + 0.03, BENCH.right - 0.03), TOP + lift, clamp(p.z + carried.grab.z, BENCH.back + 0.34, BENCH.front - 0.02)];
-      unit.pose.tip = approach(unit.pose.tip, 0, 0.016, 0.05);
-    } else {
-      const p = this.onPlane(u, v, TOP + lift);
-      if (!p) return;
-      carried.state.pose.at = [clamp(p.x + carried.grab.x, BENCH.left + 0.03, BENCH.right - 0.03), TOP + lift, clamp(p.z + carried.grab.z, BENCH.back + 0.34, BENCH.front - 0.02)];
-    }
+    const p = this.onPlane(u, v, TOP);
+    if (!p) return;
+    const at: V3 = [clamp(p.x + carried.grab.x, BENCH.left + 0.03, BENCH.right - 0.03), TOP + 0.045, clamp(p.z + carried.grab.z, BENCH.back + 0.34, BENCH.front - 0.02)];
+    if (carried.kind === "unit") { carried.unit.pose.at = at; carried.unit.pose.tip = 0; }
+    else carried.state.pose.at = at;
   }
 
   /** The free pad nearest a point, within reach. */
@@ -784,7 +800,8 @@ export class World {
       const lamps = unit.model.lamps;
       const plugged = unit.where.startsWith("pad") && !!state;
       switch (unit.model.spec.id) {
-        case "angle8": for (let i = 0; i < 9; i++) setLamp(lamps[`led${i}`]!, plugged ? (state!.leds as number[][] | undefined)?.[i] : undefined); break;
+        // (The 8Angle's firmware dims its lamps to a tenth: its state tops out at 25.)
+        case "angle8": for (let i = 0; i < 9; i++) setLamp(lamps[`led${i}`]!, plugged ? (state!.leds as number[][] | undefined)?.[i]?.map(c => Math.min(255, c * 10)) : undefined); break;
         case "encoder": for (let i = 0; i < 2; i++) setLamp(lamps[`led${i}`]!, plugged ? (state!.leds as number[][] | undefined)?.[i] : undefined); break;
         case "joystick2": case "scales": setLamp(lamps.led!, plugged ? (state!.led as number[] | undefined) : undefined); break;
         case "relay4": {

@@ -57,7 +57,8 @@ async function main(): Promise<void> {
     } catch (error) {
       reply = { id, error: error instanceof Error ? error.message : String(error), name: error instanceof Error ? error.name : "" };
     }
-    console.log(`@reply ${JSON.stringify(reply, (_key, value) => (value instanceof Uint8Array ? Array.from(value) : value))}`);
+    // Bytes travel as arrays. (Not `instanceof`: in the simulator a result's bytes come from the host's realm.)
+    console.log(`@reply ${JSON.stringify(reply, (_key, value) => (ArrayBuffer.isView(value) ? Array.from(value as Uint8Array) : value))}`);
   }
 }
 void main();

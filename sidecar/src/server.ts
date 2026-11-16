@@ -65,15 +65,17 @@ export class Server {
     for (const socket of this.sockets) socket.send(packet);
   }
 
-  /** Asks the app (the first one connected) and waits for its answer: a window screenshot, a camera move. */
+  /** Asks the app and waits for its answer: a window screenshot, a camera move. Every connected app hears the
+   *  request (a socket that went stale does not swallow it); the first answer is the answer. */
   askApp(message: Json, timeoutMs = 8000): Promise<Json> {
-    const app = [...this.sockets].find(socket => socket.data.role === "app");
-    if (!app) return Promise.resolve({ ok: false, error: "the app is not connected" });
+    const apps = [...this.sockets].filter(socket => socket.data.role === "app");
+    if (!apps.length) return Promise.resolve({ ok: false, error: "the app is not connected" });
     const request = this.nextRequest++;
     return new Promise(resolve => {
       const timer = setTimeout(() => { this.pending.delete(request); resolve({ ok: false, error: "the app did not answer" }); }, timeoutMs);
       this.pending.set(request, answer => { clearTimeout(timer); resolve(answer); });
-      app.send(JSON.stringify({ ...message, request }));
+      const text = JSON.stringify({ ...message, request });
+      for (const app of apps) app.send(text);
     });
   }
 

@@ -108,10 +108,10 @@
   <g stroke="#ffe14a" stroke-width="1.6" fill="none" opacity="0.9">
     <path d="M400 215 V285 M365 250 H435"/>
     <circle cx="400" cy="250" r="22"/>
-    <path d="M610 468 H730 M610 460 V476 M730 460 V476"/>
+    <path d="M440 474 H560 M440 466 V482 M560 466 V482"/>
   </g>
   <g font-family="Menlo, monospace" font-size="19" fill="#ffe14a">
-    <text x="670" y="452" text-anchor="middle">500 µm</text>
+    <text x="500" y="462" text-anchor="middle">500 µm</text>
     <text x="18" y="484">48x  1080P60  AE</text>
   </g>
   <rect x="18" y="16" width="14" height="14" rx="7" fill="#ff4a3a"/>

@@ -4,10 +4,10 @@
 // it: three mesh-back task chairs, a tower of plastic drawer units between the benches, a waste bin, a power strip
 // and shipping boxes by the right wall.
 import {
-  BufferGeometry, DataTexture, Group, InstancedMesh, LatheGeometry, Matrix4, Mesh, MeshGeometry, MeshPhysicalMaterial, MeshStandardMaterial,
-  Object3D, RingGeometry, Texture, TorusGeometry, Vector3, type Scene,
+  BufferGeometry, DataTexture, Group, InstancedMesh, LatheGeometry, MaterialFunction, Matrix4, Mesh, MeshGeometry, MeshPhysicalMaterial, MeshStandardMaterial,
+  Object3D, RingGeometry, SphereGeometry, Texture, TorusGeometry, Vector3, type Scene,
 } from "@threert/scene";
-import { Kit, coated, curve, glow, mm, noiseTexture, rng, roundedBox, roundedPlate, std, tube, type V3 } from "../lib.ts";
+import { Kit, aim, coated, curve, glow, mm, noiseTexture, rng, roundedBox, roundedPlate, std, tube, type V3 } from "../lib.ts";
 import { ROOM } from "../layout.ts";
 
 export interface StationHandles {
@@ -24,7 +24,7 @@ export const STATION = {
   /** The tool panels' span in height, the shelf's top and the frame's. */
   panel: [0.95, 1.45] as [number, number], shelf: 1.5, frameTop: 1.75,
   /** Nits of the strip light when it is on. */
-  stripNits: 4800,
+  stripNits: 5200,
 } as const;
 
 const TAU = Math.PI * 2;
@@ -95,6 +95,7 @@ function labelBand(radius: number, height: number, arc: number, rect: Rect, segm
 
 // ----------------------------------------------------------------------------------------------- shapes
 
+const BALL = new SphereGeometry(1, 12, 8);
 const SOFT = new Map<string, BufferGeometry>();
 /** A rounded box, shared between parts of the same size. */
 function softGeo(size: V3, r: number, segments = 2): BufferGeometry {
@@ -194,6 +195,35 @@ function ribbedTube(path: V3[], radius: number, rib: number, pitch: number, side
   return new BufferGeometry().setData(positions, normals, uvs, index);
 }
 
+/** A tube with an elliptical section along a path: half-width `a` across and `b` through. `thin` is roughly the
+ *  direction of the thin axis (a chair's flat frame: its back's normal), or `wide` that of the wide one. */
+function band(path: V3[], a: number, b: number, axis: { thin?: V3; wide?: V3 }, sides = 10): BufferGeometry {
+  const positions: number[] = [], normals: number[] = [], uvs: number[] = [], index: number[] = [];
+  const points = path.map(p => new Vector3(...p));
+  const reference = new Vector3(...(axis.thin ?? axis.wide!));
+  for (let i = 0; i < points.length; i++) {
+    const tangent = new Vector3().subVectors(points[Math.min(i + 1, points.length - 1)]!, points[Math.max(i - 1, 0)]!).normalize();
+    const first = reference.clone().addScaledVector(tangent, -reference.dot(tangent)).normalize();
+    const second = new Vector3().crossVectors(tangent, first);
+    const [across, through] = axis.thin ? [second, first] : [first, second];
+    for (let s = 0; s <= sides; s++) {
+      const angle = (s / sides) * TAU, c = Math.cos(angle), d = Math.sin(angle);
+      positions.push(points[i]!.x + across.x * c * a + through.x * d * b, points[i]!.y + across.y * c * a + through.y * d * b, points[i]!.z + across.z * c * a + through.z * d * b);
+      const nx = across.x * c / a + through.x * d / b, ny = across.y * c / a + through.y * d / b, nz = across.z * c / a + through.z * d / b, length = Math.hypot(nx, ny, nz);
+      normals.push(nx / length, ny / length, nz / length);
+      uvs.push(s / sides, i / (points.length - 1));
+    }
+  }
+  const ring = sides + 1, flip = axis.thin ? 1 : 0;
+  for (let i = 0; i < points.length - 1; i++) {
+    for (let s = 0; s < sides; s++) {
+      const p = i * ring + s, q = p + 1, r = p + ring, e = r + 1;
+      if (flip) index.push(p, q, r, q, e, r); else index.push(p, r, q, q, r, e);
+    }
+  }
+  return new BufferGeometry().setData(positions, normals, uvs, index);
+}
+
 /** The outline of a rectangle with rounded corners, counter-clockwise from the middle of its bottom side. */
 function roundRect(width: number, height: number, r: number, perCorner = 6): [number, number][] {
   const out: [number, number][] = [[0, -height / 2]];
@@ -209,20 +239,24 @@ function roundRect(width: number, height: number, r: number, perCorner = 6): [nu
 
 // ----------------------------------------------------------------------------------------------- textures
 
-/** A chair's mesh back: a dark knit with rows of small holes, 8 x 8 holes a tile. */
-function meshTexture(): DataTexture {
-  const size = 64, px = new Uint8Array(size * size * 4), random = rng(77);
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const row = Math.floor(y / 8), cx = ((x + (row % 2) * 4) % 8) - 3.5, cy = (y % 8) - 3.5;
-      const hole = Math.max(0, 1 - Math.hypot(cx, cy * 1.25) / 3.0);
-      const v = 44 - 36 * Math.min(1, hole * 2.2) + (random() - 0.5) * 7;
-      const o = (y * size + x) * 4;
-      px[o] = v; px[o + 1] = v; px[o + 2] = v + 1; px[o + 3] = 255;
-    }
-  }
-  return new DataTexture(size, size, px);
-}
+/** A chair's mesh back: a dark knit with rows of holes one can see through from near. The holes are cut by the
+ *  alpha test from the UV alone, and close as they shrink under a pixel so the far view is a calm sheet. */
+const MESH_PITCH = 0.0029;
+const CHAIR_MESH = new MaterialFunction("station_chair_mesh", {
+  params: { Cells: 150, Hole: 0.34 },
+  code: `
+    let p = i.uv * $Cells;
+    let row = floor(p.y);
+    let q = vec2<f32>(fract(p.x + 0.5 * (row - 2.0 * floor(row * 0.5))) - 0.5, fract(p.y) - 0.5);
+    let d = length(q * vec2<f32>(1.0, 1.2));
+    let pixel = exp2(i.lod) * exp2(i.uvd) * $Cells;
+    let open = $Hole * clamp(1.75 - pixel * 0.8, 0.0, 1.0);
+    o.opacity = select(1.0, 0.0, d < open);
+    let thread = clamp((d - open) * 5.0, 0.0, 1.0);
+    o.base = vec3<f32>(0.011 + 0.022 * thread);
+    o.roughness = 0.78;
+    o.metallic = 0.0;`,
+});
 
 /** Milky drawer fronts with what is inside showing as soft patches of colour: eight rows, one per drawer. */
 const DRAWER_ROWS = 8;
@@ -251,12 +285,16 @@ function drawerTexture(): DataTexture {
 
 // ----------------------------------------------------------------------------------------------- materials
 
+function chairMesh(): MeshStandardMaterial {
+  const material = new MeshStandardMaterial({ name: "station_chair_mesh", color: 0x232325, roughness: 0.78, side: "double", alphaTest: 0.5 });
+  material.shader = CHAIR_MESH.with({ Cells: BACK.width / MESH_PITCH });
+  return material;
+}
+
 function materials() {
   const kraftMap = noiseTexture(41, 128, [0.70, 0.54, 0.37], 0.03, 16, 5);
-  const matMap = noiseTexture(42, 128, [0.80, 0.835, 0.82], 0.012, 22);
+  const matMap = noiseTexture(42, 128, [0.70, 0.79, 0.75], 0.014, 22);
   matMap.repeat = [4, 2];
-  const meshMap = meshTexture();
-  meshMap.repeat = [40, 40];
   const print = new Texture("room/assets/gen/station/print.png");
   print.wrap = "clamp";
   const panelMap = new Texture("room/assets/gen/station/panel.png");
@@ -268,10 +306,10 @@ function materials() {
   return {
     frame: coated("station_frame", 0xe9e9e6, 0.4, 0.3),
     laminate: std("station_laminate", 0xdfdfdb, 0.45),
-    dark: std("station_black", 0x1d1e20, 0.5),
+    dark: std("station_black", 0x242527, 0.46),
     rubber: std("station_rubber", 0x141415, 0.85),
-    fabric: std("station_fabric", 0x1b1b1d, 0.95),
-    mesh: new MeshStandardMaterial({ name: "station_chair_mesh", map: meshMap, roughness: 0.8, side: "double" }),
+    fabric: std("station_fabric", 0x202022, 0.95),
+    mesh: chairMesh(),
     mat: new MeshStandardMaterial({ name: "station_mat", map: matMap, roughness: 0.42 }),
     panel: new MeshStandardMaterial({ name: "station_panel", map: panelMap, roughness: 0.45 }),
     blue: coated("station_blue", 0x3f97d3, 0.42, 0.25),
@@ -292,7 +330,7 @@ function materials() {
     screen: new MeshStandardMaterial({ name: "microscope_screen", color: 0x000000, roughness: 0.2, emissive: 0xffffff, emissiveIntensity: 160, emissiveMap: scopeMap }),
     lcd: new MeshStandardMaterial({ name: "station_lcd", color: 0x000000, roughness: 0.3, emissive: 0xffffff, emissiveIntensity: 190, emissiveMap: lcdMap }),
     ring: glow("station_ring_light", 0xf2f6ff, 1400),
-    strip: glow("station_strip_light", 0xf1f6ff, STATION.stripNits),
+    strip: glow("station_strip_light", 0xf3f6ff, STATION.stripNits),
   };
 }
 type Mats = ReturnType<typeof materials>;
@@ -318,7 +356,12 @@ class Shop {
   rod(id: string, from: V3, to: V3, radius: number, material: MeshStandardMaterial, parent: Parent = this.root, sides = 10): Mesh {
     return this.kit.rod(id, from, to, radius, material, parent, sides);
   }
-  ball(id: string, radius: number, at: V3, material: MeshStandardMaterial, parent: Parent = this.root): Mesh { return this.kit.ball(id, radius, at, material, parent); }
+  /** A small sphere (12 x 8: the kit's is for bigger things). */
+  ball(id: string, radius: number, at: V3, material: MeshStandardMaterial, parent: Parent = this.root): Mesh {
+    const mesh = this.kit.mesh(id, BALL, at, material, parent);
+    mesh.scale.set(radius, radius, radius);
+    return mesh;
+  }
   mesh(id: string, geometry: BufferGeometry, at: V3, material: MeshStandardMaterial, parent: Parent = this.root): Mesh { return this.kit.mesh(id, geometry, at, material, parent); }
   /** A cable or hose through `points`. */
   cable(id: string, points: V3[], radius: number, material: MeshStandardMaterial, parent: Parent = this.root, steps = 6, sides = 6): Mesh {
@@ -392,8 +435,15 @@ function buildBenchFrame(shop: Shop): void {
   }
 }
 
-/** The pressed lip of one louvre: a wedge that opens downward. */
-const LIP = extrudeX([[0, 0.0045], [0.0052, -0.0045], [0, -0.0045]], 0.04);
+/** The pressed lip of one louvre: a pocket that opens upward (a bin's hook drops into it). Its top is open: one
+ *  looks in at the dark slot printed on the sheet. */
+const LIP = (() => {
+  const x = 0.02, h = 0.0048, d = 0.0058, slope = Math.hypot(2 * h, d);
+  const positions = [-x, -h, 0, x, -h, 0, x, h, d, -x, h, d, -x, -h, 0, -x, h, d, -x, h, 0, x, -h, 0, x, h, 0, x, h, d];
+  const front = [0, -d / slope, (2 * h) / slope];
+  const normals = [...front, ...front, ...front, ...front, -1, 0, 0, -1, 0, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0];
+  return new BufferGeometry().setData(positions, normals, new Array(20).fill(0.5), [0, 1, 2, 0, 2, 3, 4, 5, 6, 7, 8, 9]);
+})();
 
 function buildPanels(shop: Shop): void {
   const { m } = shop;
@@ -408,7 +458,7 @@ function buildPanels(shop: Shop): void {
     const matrix = new Matrix4();
     for (let column = 0; column < 5; column++) {
       for (let row = 0; row < 13; row++) {
-        const x = ((40 + 54 * column) / 557 - 0.5) * (PANEL_W - 0.006) * (mirrored ? -1 : 1), y = (0.5 - (34 + 36 * row) / 500) * (PANEL_H - 0.004) + 0.0035;
+        const x = ((40 + 54 * column) / 557 - 0.5) * (PANEL_W - 0.006) * (mirrored ? -1 : 1), y = (0.5 - (34.5 + 36 * row) / 500) * (PANEL_H - 0.004);
         lips.setMatrixAt(column * 13 + row, matrix.makeTranslation(x, y, 0.0003));
       }
     }
@@ -468,9 +518,6 @@ function buildShelf(shop: Shop, handles: { strip: Mesh | null }): void {
   }
   const reelLabel = shop.mesh("reel", sheet(0.075, 0.023, ART.reel), [0.02, 0.0605, 0.03], m.print, reels);
   reelLabel.rotation.set(-Math.PI / 2, 0, 0.3);
-  const standing = shop.drum("reel", 0.089, 0.0115, [0.16, 0.089, -0.085], m.dark, reels, 0.089, 28);
-  standing.rotation.set(Math.PI / 2 - 0.14, 0, 0);
-  shop.drum("reel", 0.03, 0.013, [0.16, 0.089, -0.0845], m.white, reels, 0.03, 20).rotation.set(Math.PI / 2 - 0.14, 0, 0);
 
   const small = shop.group("parts-boxes", [1.5, top, z], shelf);
   shop.soft("parts_box", [0.24, 0.085, 0.17], 0.003, [0, 0.0425, 0], m.kraft, small, 1).rotation.y = -0.06;
@@ -636,7 +683,7 @@ function buildMicroscope(shop: Shop): void {
 
 function buildExtractor(shop: Shop): void {
   const { m } = shop;
-  const unit = shop.group("fume-extractor", [2.31, S.top, -0.655]);
+  const unit = shop.group("fume-extractor", [2.31, S.top, -0.64]);
   unit.rotation.y = -0.1;
   const w = 0.2, h = 0.24, d = 0.2;
   shop.soft("fume_extractor", [w, h, d], 0.012, [0, h / 2 + 0.006, 0], m.white, unit, 3);
@@ -653,11 +700,10 @@ function buildExtractor(shop: Shop): void {
   const end = new Vector3(...path[path.length - 1]!), before = new Vector3(...path[path.length - 4]!);
   const along = new Vector3().subVectors(end, before).normalize();
   const hood = shop.group("fume-hood", [end.x, end.y, end.z], unit);
-  hood.quaternion.setFromAxisAngle(new Vector3().crossVectors(new Vector3(0, -1, 0), along).normalize(), Math.acos(Math.max(-1, Math.min(1, -along.y))));
+  aim(hood, new Vector3(0, -1, 0), along);
   shop.drum("fume_hose", 0.039, 0.024, [0, -0.008, 0], m.white, hood, 0.039, 24);
-  const mouth = shop.mesh("fume_hose", lathe([[0.036, -0.02], [0.04, -0.03], [0.074, -0.082], [0.077, -0.088], [0.073, -0.088], [0.036, -0.032], [0.0, -0.03]], 4), [0, 0, 0], m.hose, hood);
-  mouth.rotation.y = Math.PI / 4;
-  mouth.scale.set(1.25, 1, 0.8);
+  const mouth = shop.mesh("fume_hose", lathe([[0, -0.03], [0.036, -0.032], [0.073, -0.088], [0.077, -0.088], [0.074, -0.082], [0.04, -0.03], [0.036, -0.02]], 24), [0, 0, 0], m.hose, hood);
+  mouth.scale.set(1.3, 1, 0.78);
 }
 
 function buildRework(shop: Shop): void {
@@ -699,20 +745,20 @@ function buildRework(shop: Shop): void {
 
 function buildSolderStand(shop: Shop): void {
   const { m } = shop;
-  const stand = shop.group("solder-stand", [2.515, S.top, -0.55]);
+  const stand = shop.group("solder-stand", [2.49, S.top, -0.6]);
   stand.rotation.y = 0.5;
   shop.soft("solder_stand", [0.075, 0.018, 0.13], 0.005, [0, 0.009, 0], m.dark, stand);
   // The brass wool in its cup at the front.
   shop.drum("solder_stand", 0.027, 0.02, [0, 0.026, 0.035], m.steel, stand, 0.029, 18);
-  const wool = shop.ball("solder_stand", 0.026, [0, 0.036, 0.035], m.amber, stand);
-  wool.scale.y = 0.014;
+  const wool = shop.ball("solder_stand", 0.0255, [0, 0.034, 0.035], m.amber, stand);
+  wool.scale.y = 0.008;
   // The spring holder: a coil that widens toward its mouth, tipped up.
   const tilt = 0.75, sin = Math.sin(tilt), cos = Math.cos(tilt);
   const coil: V3[] = [];
   for (let i = 0; i <= 150; i++) {
     const t = i / 150, a = t * TAU * 12, r = 0.0095 + 0.007 * t * t, l = t * 0.085;
     const x = Math.cos(a) * r, y = Math.sin(a) * r;
-    coil.push([x, 0.04 + y * sin * 0 + l * sin + y * cos, -0.045 + l * cos * -1 * -1 - y * sin]);
+    coil.push([x, 0.04 + l * sin + y * cos, -0.045 + l * cos - y * sin]);
   }
   shop.mesh("solder_stand", tube(coil, 0.0011, 5), [0, 0, 0], m.steel, stand);
   shop.rod("solder_stand", [0, 0.018, -0.045], [0, 0.04, -0.045], 0.003, m.steel, stand, 8);
@@ -742,9 +788,10 @@ function buildWorkMat(shop: Shop): void {
   const random = rng(905);
   for (let i = 0; i < 16; i++) {
     const cell = Math.floor(random() * 5), x = -w / 2 + 0.02 + (cell + random() * 0.6) * (w - 0.012) / 8, z = -d / 2 + 0.016 + random() * 0.036;
-    const screw = shop.drum("work_mat_screw", 0.0011, 0.006, [x, 0.0041, z], i % 4 ? m.steel : m.dark, mat, 0.0011, 6);
-    screw.rotation.set(Math.PI / 2, 0, random() * 3);
-    shop.drum("work_mat_screw", 0.002, 0.0012, [x + Math.sin(screw.rotation.z) * 0.003, 0.0041, z + Math.cos(screw.rotation.z) * 0.003], i % 4 ? m.steel : m.dark, mat, 0.002, 6).rotation.copy(screw.rotation);
+    const screw = shop.group(null, [x, 0.0042, z], mat);
+    screw.rotation.y = random() * 3;
+    shop.roll("work_mat_screw", "x", 0.0011, 0.006, [0, 0, 0], i % 4 ? m.steel : m.dark, screw, 0.0011, 6);
+    shop.roll("work_mat_screw", "x", 0.002, 0.0012, [0.0034, 0, 0], i % 4 ? m.steel : m.dark, screw, 0.002, 8);
   }
   // The board being worked on, with a few parts standing on it.
   const board = shop.group("work-board", [0.05, 0.003, 0.035], mat);
@@ -788,7 +835,7 @@ const TWEEZER = taperedBar(0.12, 0.0009, 0.009, 0.0009, 0.0012, 0, 0.0003).rotat
 function buildBenchClutter(shop: Shop): void {
   const { m } = shop;
   // The alcohol bottle with its pump top.
-  const bottle = shop.group("ipa-bottle", [2.44, S.top, -0.4]);
+  const bottle = shop.group("ipa-bottle", [2.42, S.top, -0.38]);
   bottle.rotation.y = -0.35;
   shop.mesh("ipa_bottle", lathe([[0, 0], [0.028, 0], [0.031, 0.004], [0.031, 0.074], [0.028, 0.086], [0.0185, 0.094], [0.0185, 0.1], [0, 0.1]], 22), [0, 0, 0], m.bottle, bottle);
   shop.drum("ipa_bottle", 0.021, 0.014, [0, 0.105, 0], m.steel, bottle, 0.021, 20);
@@ -825,6 +872,47 @@ function buildBenchClutter(shop: Shop): void {
   held.rotation.x = 0.35;
 }
 
+/** A caddy of hand tools behind the mat, and the mains leads from the trunking's sockets. */
+function buildCaddyAndLeads(shop: Shop): void {
+  const { m } = shop;
+  const caddy = shop.group("tool-caddy", [1.735, S.top, -0.63]);
+  caddy.rotation.y = 0.18;
+  shop.soft("tool_caddy", [0.16, 0.042, 0.09], 0.006, [0, 0.021, 0], m.blue, caddy);
+  shop.soft("tool_caddy", [0.16, 0.036, 0.042], 0.006, [0, 0.058, -0.024], m.blue, caddy);
+  const lean = rng(88);
+  const grips = [m.yellow, m.red, m.dark, m.red, m.yellow, m.dark];
+  for (let i = 0; i < 6; i++) {
+    // Front row: screwdrivers standing in their holes, handles up.
+    const tool = shop.group(null, [-0.0625 + i * 0.025, 0.042, 0.02], caddy);
+    tool.rotation.set((lean() - 0.5) * 0.16, 0, (lean() - 0.5) * 0.16);
+    const shaft = 0.02 + lean() * 0.03, handle = 0.06 + lean() * 0.02;
+    shop.drum("tool_caddy", 0.0022, shaft + 0.01, [0, shaft / 2 - 0.005, 0], m.steel, tool, 0.0022, 6);
+    shop.drum("tool_caddy", 0.0058, 0.01, [0, shaft + 0.005, 0], m.dark, tool, 0.0058, 10);
+    shop.drum("tool_caddy", 0.0092, handle, [0, shaft + 0.01 + handle / 2, 0], grips[i]!, tool, 0.008, 12);
+  }
+  // Back row: two pairs of tweezers, flush cutters handles up, a marker, a brush.
+  for (const [x, tilt] of [[-0.06, 0.06], [-0.04, -0.05]] as [number, number][]) {
+    const blade = shop.soft("tool_caddy", [0.0085, 0.1, 0.0024], 0.001, [x, 0.076 + 0.045, -0.024], m.steel, caddy, 1);
+    blade.rotation.set(0.05, 0.4, tilt);
+  }
+  for (const side of [-1, 1]) shop.rod("tool_caddy", [-0.008 + side * 0.004, 0.074, -0.024], [-0.008 + side * 0.014, 0.165, -0.03], 0.0055, m.blue, caddy, 10);
+  shop.drum("tool_caddy", 0.007, 0.11, [0.024, 0.074 + 0.05, -0.024], m.white, caddy, 0.007, 12).rotation.z = -0.07;
+  shop.drum("tool_caddy", 0.0074, 0.03, [0.0275, 0.074 + 0.118, -0.024], m.dark, caddy, 0.0074, 12).rotation.z = -0.07;
+  shop.drum("tool_caddy", 0.006, 0.1, [0.052, 0.074 + 0.045, -0.024], m.yellow, caddy, 0.005, 10).rotation.x = -0.08;
+  shop.soft("tool_caddy", [0.016, 0.03, 0.008], 0.002, [0.052, 0.074 + 0.108, -0.0295], m.dark, caddy, 1).rotation.x = -0.08;
+
+  // Plugs in the trunking and their leads down to the machines.
+  const socketZ = BOARD_BACK + 0.046, y = S.top + 0.105;
+  const lead = (index: number, path: V3[]) => {
+    const x = S.left + 0.2 + index * 0.29;
+    shop.soft("mains_plug", [0.038, 0.038, 0.028], 0.007, [x, y, socketZ + 0.014], m.dark);
+    shop.cable("mains_lead", [[x, y - 0.012, socketZ + 0.026], [x + 0.002, y - 0.05, socketZ + 0.036], ...path], 0.003, m.rubber, undefined, 8, 6);
+  };
+  lead(0, [[1.43, S.top + 0.012, -0.745], [1.455, S.top + 0.0035, -0.765], [1.483, S.top + 0.003, -0.776]]);
+  lead(3, [[2.3, S.top + 0.02, -0.735], [2.33, S.top + 0.02, -0.745], [2.35, S.top + 0.05, -0.742]]);
+  lead(4, [[2.6, S.top + 0.012, -0.73], [2.66, S.top + 0.0035, -0.735], [2.72, S.top + 0.004, -0.74], [2.775, S.top + 0.02, -0.72]]);
+}
+
 // ----------------------------------------------------------------------------------------------- chairs
 
 const SPOKE = taperedBar(0.27, 0.036, 0.05, 0.022, 0.03, 0.03, 0.007);
@@ -837,7 +925,7 @@ const backPoint = (x: number, y: number, behind = 0): V3 => {
 const BACK_FRAME = (() => {
   const outline = roundRect(BACK.width, BACK.height, BACK.radius, 7);
   const path = [...outline, outline[0]!, outline[1]!].map(([x, y]) => backPoint(x, y));
-  return tube(path, 0.0125, 10);
+  return band(path, 0.019, 0.011, { thin: [0, 0, 1] }, 10);
 })();
 const BACK_MESH = (() => {
   const outline = roundRect(BACK.width - 0.01, BACK.height - 0.01, BACK.radius - 0.005, 7);
@@ -907,15 +995,13 @@ function buildChair(shop: Shop, index: number, at: [number, number], turn: numbe
   const fork: V3 = [0, 0.09, 0.062];
   for (const side of [-1, 1]) {
     const tip = backPoint(side * BACK.width / 2, 0.03, 0.006), mid = backPoint(side * 0.12, -0.07, 0.05);
-    const yoke = shop.mesh("chair_back", tube(curve([fork, [mid[0], cy + mid[1], mid[2]], [tip[0], cy + tip[1], tip[2]]], 8), 0.013, 8), [0, 0, 0], m.dark, back);
-    yoke.castShadow = true;
+    shop.mesh("chair_back", band(curve([fork, [mid[0], cy + mid[1], mid[2]], [tip[0], cy + tip[1], tip[2]]], 8), 0.021, 0.011, { thin: [0, 0, 1] }, 8), [0, 0, 0], m.dark, back);
   }
   const lumbar: V3[] = [];
   for (let i = 0; i <= 10; i++) { const p = backPoint((i / 10 - 0.5) * BACK.width * 0.93, -0.1, 0.012); lumbar.push([p[0], cy + p[1], p[2]]); }
-  shop.mesh("chair_back", tube(lumbar, 0.011, 8), [0, 0, 0], m.dark, back).scale.y = 1;
+  shop.mesh("chair_back", band(lumbar, 0.016, 0.007, { thin: [0, 0, 1] }, 8), [0, 0, 0], m.dark, back);
   const toSeat = (p: V3): V3 => [p[0], origin[1] + p[1] * cos - p[2] * sin, origin[2] + p[1] * sin + p[2] * cos];
-  const spine = shop.mesh("chair_back", tube(curve([[0, -0.1, 0.05], [0, -0.108, 0.17], [0, -0.085, 0.27], toSeat([0, 0.0, 0.07]), toSeat(fork), toSeat([0, 0.12, 0.058])], 8), 0.017, 10), [0, 0, 0], m.dark, seat);
-  spine.scale.x = 1.9;
+  shop.mesh("chair_back", band(curve([[0, -0.1, 0.05], [0, -0.108, 0.17], [0, -0.085, 0.27], toSeat([0, 0.0, 0.07]), toSeat(fork), toSeat([0, 0.12, 0.058])], 8), 0.034, 0.015, { wide: [1, 0, 0] }, 10), [0, 0, 0], m.dark, seat);
   return chair;
 }
 
@@ -924,12 +1010,12 @@ function buildChair(shop: Shop, index: number, at: [number, number], turn: numbe
 function buildDrawers(shop: Shop): void {
   const { m } = shop;
   // Narrow five-drawer towers: 0.26 m is what the gap between the two benches takes.
-  const w = 0.26, h = 0.6, d = 0.42, wall = 0.012;
+  const w = 0.255, h = 0.6, d = 0.42, wall = 0.012;
   const stack = shop.group("drawer-stack", [1.085, 0, -0.55]);
   const [u0, , u1] = [0.01, 0, 0.99];
   for (let unit = 0; unit < 2; unit++) {
-    const body = shop.group(`drawer-unit-${unit}`, [unit ? 0.003 : 0, unit * (h + 0.001), unit ? -0.006 : 0], stack);
-    body.rotation.y = unit ? 0.012 : 0;
+    const body = shop.group(`drawer-unit-${unit}`, [unit ? 0.001 : 0, unit * (h + 0.001), unit ? -0.006 : 0], stack);
+    body.rotation.y = unit ? 0.006 : 0;
     shop.soft("drawer_unit", [w, 0.02, d], 0.006, [0, h - 0.01, 0], m.white, body);
     shop.soft("drawer_unit", [w, 0.024, d], 0.006, [0, 0.012, 0], m.white, body);
     for (const side of [-1, 1]) shop.soft("drawer_unit", [wall, h - 0.02, d - 0.004], 0.004, [side * (w - wall) / 2, h / 2, 0], m.white, body, 1);
@@ -1028,12 +1114,13 @@ export function buildStation(scene: Scene): StationHandles {
   buildSolderStand(shop);
   buildWorkMat(shop);
   buildBenchClutter(shop);
+  buildCaddyAndLeads(shop);
   buildDrawers(shop);
   buildFloorItems(shop);
   const chairs = [
     buildChair(shop, 0, [2.1, 0.45], 0.35, 0.46, 0.16),
     buildChair(shop, 1, [3.0, 1.2], -2.2, 0.44, 0.2),
-    buildChair(shop, 2, [-1.3, 0.75], -0.61, 0.475, 0.13),
+    buildChair(shop, 2, [-1.32, 0.75], -0.61, 0.475, 0.13),
   ];
   return { microscopeScreen: shop.m.screen, stripLight: shop.m.strip, chairs };
 }

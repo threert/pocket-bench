@@ -73,6 +73,8 @@ export class WorkerRealm {
   private readonly channels = new Map<number, Channel>();
   private needsTurn = true;
   private readonly options: WorkerRealmOptions;
+  /** The worker realm's own Uint8Array: bytes handed to it are instances of it, as on the device. */
+  private readonly Bytes: Uint8ArrayConstructor;
 
   constructor(options: WorkerRealmOptions) {
     this.options = options;
@@ -81,6 +83,7 @@ export class WorkerRealm {
       __pocketWorker: this.host(),
       console: { log: consoleOf("log"), info: consoleOf("info"), warn: consoleOf("warn"), error: consoleOf("error"), debug: consoleOf("debug") },
     });
+    this.Bytes = new Script("Uint8Array").runInContext(this.context) as Uint8ArrayConstructor;
   }
 
   /** Evaluates the bundle: the worker's entry runs up to its first await. */
@@ -296,6 +299,7 @@ export class WorkerRealm {
           const channel = this.channels.get(next.channel);
           if (channel) --channel.pendingToWorker;
         }
+        next.data = new this.Bytes(next.data);
         facts.push(next);
       }
       for (const [id, timer] of this.timers) {

@@ -1,36 +1,8 @@
 // The main workbench: a white steel frame, a board with a green anti-static mat, and a riser at the back for the
 // instruments. The mat is printed like a cutting mat: a centimetre grid, bolder every five.
-import { DataTexture, Mesh, MeshStandardMaterial, type Scene } from "@threert/scene";
+import { Mesh, MeshStandardMaterial, Texture, type Scene } from "@threert/scene";
 import { Kit, coated, glow, roundedPlate, std, type V3 } from "./lib.ts";
 import { BENCH, PADS, RISER } from "./layout.ts";
-
-/** The mat's print: green rubber with a pale grid. 2048 x 864 texels over the mat. */
-function matTexture(width: number, depth: number): DataTexture {
-  const w = 2048, h = Math.round((2048 * depth) / width / 16) * 16;
-  const px = new Uint8Array(w * h * 4);
-  const base = [26, 104, 72], line = [118, 176, 150];
-  let seed = 7;
-  const random = () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296; };
-  const perMetre = w / width;
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      // Distance to the nearest grid line, in texels.
-      const cm = perMetre / 100;
-      const dx = Math.abs(((x + cm / 2) % cm) - cm / 2), dy = Math.abs(((y + cm / 2) % cm) - cm / 2);
-      const dx5 = Math.abs(((x + (cm * 5) / 2) % (cm * 5)) - (cm * 5) / 2), dy5 = Math.abs(((y + (cm * 5) / 2) % (cm * 5)) - (cm * 5) / 2);
-      let a = 0;
-      if (dx < 0.55 || dy < 0.55) a = 0.10;
-      if (dx5 < 1.1 || dy5 < 1.1) a = 0.27;
-      const grain = (random() - 0.5) * 9;
-      const o = (y * w + x) * 4;
-      for (let c = 0; c < 3; c++) px[o + c] = Math.max(0, Math.min(255, base[c]! + (line[c]! - base[c]!) * a + grain));
-      px[o + 3] = 255;
-    }
-  }
-  const texture = new DataTexture(w, h, px);
-  texture.wrap = "clamp";
-  return texture;
-}
 
 export interface BenchParts { pads: Record<string, { plate: Mesh; material: MeshStandardMaterial }> }
 
@@ -59,7 +31,10 @@ export function buildBench(scene: Scene): BenchParts {
   // The board with its edge band, and the mat on it.
   kit.soft("bench_top", [width, boardT, depth], 0.003, [0, top - boardT / 2 - 0.002, cz], board);
   kit.box("bench_top", [width + 0.002, boardT * 0.55, 0.004], [0, top - boardT / 2 - 0.002, BENCH.front + 0.001], edge);
-  const matMaterial = new MeshStandardMaterial({ name: "bench_mat", map: matTexture(width - 0.03, depth - 0.03), roughness: 0.62 });
+  // (The mat's print, a centimetre grid, is room/art/bench/mat.svg.)
+  const print = new Texture("room/assets/gen/bench/mat.png");
+  print.wrap = "clamp";
+  const matMaterial = new MeshStandardMaterial({ name: "bench_mat", map: print, roughness: 0.62 });
   const mat = kit.mesh("bench_mat", roundedPlate(width - 0.03, depth - 0.03, 0.002, 0.012), [0, top - 0.001, cz], matMaterial);
   mat.rotation.x = -Math.PI / 2;
 

@@ -90,7 +90,7 @@
     <text x="6" y="44" font-family="Helvetica Neue, Arial" font-size="5" fill="#111">Hardware Studio, Bench 2</text>
     <text x="6" y="51" font-family="Helvetica Neue, Arial" font-size="5" fill="#111">Building C, Floor 4 · Shenzhen</text>
     <path d="M2 56 H98 M2 92 H98 M60 56 V92" stroke="#111" stroke-width="0.7"/>
-    <text x="6" y="80" font-family="Helvetica Neue, Arial" font-weight="700" font-size="24" fill="#111">SZ-07</text>
+    <text x="6" y="80" font-family="Helvetica Neue, Arial" font-weight="700" font-size="17" fill="#111">SZ-07</text>
     <rect x="65" y="60" width="28" height="28" fill="url(#qr)"/>
     <rect x="65" y="60" width="8" height="8" fill="#111"/><rect x="85" y="60" width="8" height="8" fill="#111"/><rect x="65" y="80" width="8" height="8" fill="#111"/>
     <rect x="67" y="62" width="4" height="4" fill="#fbfbf8"/><rect x="87" y="62" width="4" height="4" fill="#fbfbf8"/><rect x="67" y="82" width="4" height="4" fill="#fbfbf8"/>

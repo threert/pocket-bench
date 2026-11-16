@@ -111,3 +111,13 @@ export async function unanswered(rig: Rig, unit: string, method: string, ...args
   if (!(error instanceof DriverError) || error.kind !== "BusError") throw new Error(`expected a BusError, got ${error.name}: ${error.message}`);
   return error;
 }
+
+export { bytes, encodeI2CScript, read, receive, write, type I2CStep } from "../../../vendor/pocket-m5/third_party/pocketjs/framework/src/io/i2c.ts";
+import { encodeI2CScript as encode, type I2CStep as Step } from "../../../vendor/pocket-m5/third_party/pocketjs/framework/src/io/i2c.ts";
+
+/** One script on the bus without a worker: what a driver written another
+ *  way would put on the wires. */
+export function transact(rig: Rig, address: number, script: readonly Step[]): { ok: boolean; data: number[] } {
+  const transfer = rig.bus.run(address, encode(script).payload, rig.now);
+  return { ok: transfer.status === 0, data: Array.from(transfer.data) };
+}

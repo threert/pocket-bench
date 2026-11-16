@@ -38,7 +38,7 @@
   <g font-size="16" font-weight="500" fill="#c9ccd1" letter-spacing="1">
     <text x="2020" y="322">ADJUST</text>
     <text x="2290" y="480">POSITION</text><text x="2290" y="688">SCALE</text>
-    <text x="2610" y="480">POSITION</text><text x="2610" y="692">SCALE</text>
+    <text x="2610" y="480">POSITION</text><text x="2610" y="752">SCALE</text>
     <text x="2880" y="480">LEVEL</text>
   </g>
   <!-- arcs around the two scale knobs -->

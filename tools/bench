@@ -18,6 +18,7 @@ case $1 in
   down) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.pointer\",\"u\":$2,\"v\":$3,\"button\":0,\"down\":true}" ;;
   up) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.pointer\",\"u\":$2,\"v\":$3,\"button\":0,\"down\":false}" ;;
   key) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.key\",\"key\":\"$2\"}" ;;
+  probe) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d '{"t":"app.probe"}' ;;
   status) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d '{"t":"app.status"}' ;;
   room) curl -s -m 30 -X POST "localhost:$PORT/api/app" -d "{\"t\":\"app.room\",\"message\":$2}" ;;
 esac
