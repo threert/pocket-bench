@@ -818,10 +818,9 @@ export class World {
           break;
         }
         case "dlight": {
-          const head: V3 = [lamp.root.position.x - 0.165, lamp.root.position.y + 0.23, lamp.root.position.z + 0.275];
-          const d = Math.hypot(head[0] - centre[0], head[1] - centre[1], head[2] - centre[2]);
-          const lampLux = lamp.on ? 520 / Math.max(0.05, d * d) * 0.32 : 0;
-          unit.values.lux = Math.round(6 + this.lightLevel * 540 + 120 + lampLux);
+          // The room's panels are most of it; the task strip leaves a glow when they are off, and the desk lamp
+          // (aimed at the other end of the bench) adds a little.
+          unit.values.lux = Math.round(12 + this.lightLevel * 570 + (lamp.on ? 22 : 0));
           break;
         }
         case "rfid2": {
