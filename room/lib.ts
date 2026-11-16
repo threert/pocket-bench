@@ -189,6 +189,7 @@ export function tube(path: V3[], radius: number, sides = 8): BufferGeometry {
 
 const BOXES = new Map<string, BoxGeometry>();
 const CYLINDERS = new Map<string, CylinderGeometry>();
+const SOFT = new Map<string, BufferGeometry>();
 const SPHERE = new SphereGeometry(1, 24, 14);
 
 /** Adds parts to a parent, giving every id one object ("drawer", "drawer#2", ...: a pick reads the name before the #). */
@@ -219,7 +220,10 @@ export class Kit {
   }
   /** A box with rounded edges. */
   soft(id: string | null, size: V3, r: number, at: V3, material: MeshStandardMaterial, parent: Object3D = this.root, segments = 3): Mesh {
-    return this.add(new Mesh(roundedBox(size[0], size[1], size[2], r, segments), material), id, at, parent);
+    const key = `${size.map(v => v.toFixed(5)).join("x")}:${r.toFixed(5)}:${segments}`;
+    let geometry = SOFT.get(key);
+    if (!geometry) SOFT.set(key, geometry = roundedBox(size[0], size[1], size[2], r, segments));
+    return this.add(new Mesh(geometry, material), id, at, parent);
   }
   /** An upright cylinder (axis Y); `top` is its radius at the top when it tapers. */
   drum(id: string | null, radius: number, height: number, at: V3, material: MeshStandardMaterial, parent: Object3D = this.root, top = radius, sides = 28): Mesh {

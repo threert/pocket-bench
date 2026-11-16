@@ -9,6 +9,7 @@ import type { ServerWebSocket } from "bun";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { Bench } from "./bench.ts";
+import { idleFrame } from "./idle.ts";
 import { encodePng } from "./png.ts";
 import { WORKSPACE } from "./paths.ts";
 import { SCREEN } from "./sim/tab5.ts";
@@ -106,7 +107,11 @@ export class Server {
       }
     });
     this.on("project.build", () => bench.build("asked"));
-    this.on("project.close", () => bench.close());
+    this.on("project.close", async () => {
+      bench.close();
+      const frame = await idleFrame();
+      if (frame) this.frame(0, frame);
+    });
     this.on("project.files", (_m, reply) => { if (bench.project) reply({ t: "project.files", files: projectFiles(bench.project.path) }); });
     this.on("project.read", (m, reply) => {
       if (!bench.project) return;
@@ -188,7 +193,8 @@ export class Server {
           self.sockets.add(socket);
           socket.send(JSON.stringify(self.state()));
           socket.send(JSON.stringify({ t: "catalog", units: catalog() }));
-          if (self.bench.lastFrame) self.frame(0, self.bench.lastFrame);
+          if (self.bench.project && self.bench.lastFrame) self.frame(0, self.bench.lastFrame);
+          else void idleFrame().then(frame => { if (frame && !self.bench.project) self.frame(0, frame); });
         },
         close(socket) { self.sockets.delete(socket); },
         async message(socket, data) {

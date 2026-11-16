@@ -2,29 +2,32 @@
 // the worker's `state` channel; it never touches hardware itself.
 import { createSignal } from "solid-js";
 import { mount } from "@pocketjs/framework/solid";
-import { Button, Card, Col, Header, Label, Row, Screen, Stat, useChannel } from "./ui";
-import { State } from "./protocol";
+import { hex } from "./drivers/bus";
+import { Command, State } from "./protocol";
+import { Button, Card, Field, Header, Label, Row, Screen, Stat, send, useChannel } from "./ui";
 
 mount(() => {
+  // The worker's newest record, decoded; it changes four times a second.
   const state = useChannel("state", State);
   const [count, setCount] = createSignal(0);
-  const portA = () => state().found
-    ? `${state().found} I2C address${state().found === 1 ? "" : "es"} on Port A`
-    : "Nothing on Port A yet";
+  const addresses = () => state().addresses.slice(0, state().found).map(hex).join(" ");
 
   return <Screen>
-    <Header title="Hello, Tab5" subtitle="A blank Pocket Bench app" status={portA()} tone={state().found ? "good" : "neutral"} />
+    <Header title="Hello, Tab5" subtitle="A blank Pocket Bench app"
+      status={state().found ? "Port A: a Unit answers" : "Port A: empty"} tone={state().found ? "good" : "neutral"} />
     <Row gap={12} grow align="stretch">
-      <Card title="TAPS" grow justify="between">
+      <Card title="TOUCH" grow justify="between">
         <Stat value={count()} unit={count() === 1 ? "tap" : "taps"} />
         <Button label="Tap me" tone="accent" onPress={() => setCount(count() + 1)} />
       </Card>
       <Card title="WORKER" grow justify="between">
-        <Stat value={state().uptime.toFixed(0)} unit="s up" size="md" />
-        <Col gap={2}>
-          <Label tone="muted">worker.ts publishes 4 times a second</Label>
-          <Label tone="muted">and scans Port A every second.</Label>
-        </Col>
+        <Row gap={0} align="stretch">
+          <Label tone="muted" grow>worker.ts runs beside the UI and owns the hardware.</Label>
+        </Row>
+        <Field label="Running for" value={`${state().uptime.toFixed(0)} s`} />
+        <Field label="Records published" value={`${state().ticks} so far`} />
+        <Field label="I2C on Port A" value={addresses() || "nothing answers"} />
+        <Button label="Scan Port A now" onPress={() => send("commands", Command.encode("scan"))} />
       </Card>
     </Row>
   </Screen>;

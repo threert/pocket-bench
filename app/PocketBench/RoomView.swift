@@ -5,7 +5,8 @@ import SwiftUI
 
 final class RoomNSView: NSView {
     let metal = CAMetalLayer()
-    var handle: OpaquePointer?
+    /// (Read off the main thread by `stream`: set once at start, cleared at stop.)
+    nonisolated(unsafe) var handle: OpaquePointer?
     var onPosts: (([[String: Any]]) -> Void)?
     private var timer: Timer?
     private var tracking: NSTrackingArea?
@@ -136,7 +137,7 @@ final class RoomNSView: NSView {
     override func keyDown(with event: NSEvent) { if !event.isARepeat { key(event, down: true) } }
     override func keyUp(with event: NSEvent) { key(event, down: false) }
 
-    func stream(_ name: String, width: Int, height: Int, pixels: UnsafeRawBufferPointer) {
+    nonisolated func stream(_ name: String, width: Int, height: Int, pixels: UnsafeRawBufferPointer) {
         guard let handle, let base = pixels.baseAddress else { return }
         bench_stream(handle, name, UInt32(width), UInt32(height), base.assumingMemoryBound(to: UInt8.self), pixels.count)
     }

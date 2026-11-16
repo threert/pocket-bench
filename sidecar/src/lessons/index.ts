@@ -63,20 +63,28 @@ interface ProjectNotes { lesson?: string; steps?: Record<string, string>; baseli
 
 const SAMPLE_MS = 100, RECENT_MS = 5000;
 
-/** Every text on the screen, top to bottom, left to right: what a person reads. */
-export function screenTexts(tree: unknown): string[] {
+export interface ScreenText { x: number; y: number; w: number; h: number; text: string }
+
+/** Every text on the screen with its box, top to bottom, left to right: what
+ *  a person reads. A <Text> made of several pieces ("Count: " and a number)
+ *  is one text here. */
+export function screenItems(tree: unknown): ScreenText[] {
   interface Node { type: string; text: string; hidden: boolean; rect: [number, number, number, number] | null; children: Node[] }
-  const found: { x: number; y: number; text: string }[] = [];
-  const walk = (node: Node | null, inherited: Node["rect"]) => {
+  const found: ScreenText[] = [];
+  const pieces = (node: Node): string => node.hidden ? "" : (node.text ?? "") + (node.children ?? []).map(pieces).join("");
+  const walk = (node: Node | null) => {
     if (!node || node.hidden) return;
-    const rect = node.rect ?? inherited;
-    if (node.type === "text" && node.text) found.push({ x: rect?.[0] ?? 0, y: rect?.[1] ?? 0, text: node.text });
-    for (const child of node.children ?? []) walk(child, node.type === "text" ? rect : null);
+    if (node.type === "text") {
+      const text = pieces(node);
+      if (text) found.push({ x: node.rect?.[0] ?? 0, y: node.rect?.[1] ?? 0, w: node.rect?.[2] ?? 0, h: node.rect?.[3] ?? 0, text });
+      return;
+    }
+    for (const child of node.children ?? []) walk(child);
   };
-  walk(tree as Node | null, null);
-  // The pieces of one <Text> share its box: they stay in the order written.
-  return found.map((item, index) => ({ ...item, index })).sort((a, b) => a.y - b.y || a.x - b.x || a.index - b.index).map(item => item.text);
+  walk(tree as Node | null);
+  return found.map((item, index) => ({ item, index })).sort((a, b) => a.item.y - b.item.y || a.item.x - b.item.x || a.index - b.index).map(entry => entry.item);
 }
+export const screenTexts = (tree: unknown): string[] => screenItems(tree).map(item => item.text);
 
 /** A digest of the project's own sources: everything but the kit's copies and what a build writes. */
 export function sourcesDigest(project: string): string {

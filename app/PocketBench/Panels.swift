@@ -166,11 +166,12 @@ struct StepRow: View {
 /// The Unit in hand: what it is, where it answers, and what its sensors see right now.
 struct UnitCard: View {
     @EnvironmentObject var model: Model
+    @ObservedObject var live = Model.shared.live
     let id: String
     var body: some View {
         let info = model.catalog[id]
         let plugged = model.plugged.contains(id)
-        let values = model.sim["\(id)-1"] ?? [:]
+        let values = live.units["\(id)-1"] ?? [:]
         VStack(alignment: .leading, spacing: 9) {
             HStack(alignment: .firstTextBaseline) {
                 Text(UNIT_NAMES[id] ?? id).font(.system(size: 14, weight: .bold)).foregroundStyle(Theme.ink)

@@ -83,12 +83,17 @@ function outputHolds(check: Extract<Check, { output: Source }>, value: unknown):
     const lit = list.some(entry => isColour(entry) ? Math.max(...entry) > (check.min ?? 0) : Number(entry) > (check.min ?? 0));
     if (lit !== check.lit) return false;
   }
+  if (check.dominant !== undefined) {
+    const channel = "rgb".indexOf(check.dominant);
+    const leads = (entry: number[]) => entry[channel]! > (check.min ?? 0) && entry.every((other, index) => index === channel || entry[channel]! >= other * 1.5);
+    if (!list.some(entry => isColour(entry) && leads(entry))) return false;
+  }
   if (check.near !== undefined) {
     const tolerance = check.tolerance ?? 60;
     if (!list.some(entry => isColour(entry) && entry.every((channel, index) => Math.abs(channel - check.near![index]!) <= tolerance))) return false;
   }
   if (hasCompare(check)) return compare(value, check);
-  return check.on !== undefined || check.lit !== undefined || check.near !== undefined ? true : list.some(Boolean);
+  return check.on !== undefined || check.lit !== undefined || check.near !== undefined || check.dominant !== undefined ? true : list.some(Boolean);
 }
 
 /** The states of the last `seconds`, the present one last. */
@@ -125,11 +130,12 @@ export function evaluate(check: Check, view: BenchView, memory: Memory = new Map
       return view.texts.some(line => pattern.test(line)) || pattern.test(view.texts.join(" "));
     }
     case "shows": {
-      const rule = check as Extract<Check, { shows: Source }>;
-      const value = read(rule.shows, view, view.sim);
+      const rule = check as Extract<Check, { shows: Source | number }>;
+      const value = typeof rule.shows === "number" ? rule.shows : read(rule.shows, view, view.sim);
       if (typeof value !== "number" || !Number.isFinite(value)) return false;
       const wanted = value * (rule.scale ?? 1) + (rule.offset ?? 0);
-      return numbersOn(view.texts, rule.pattern).some(number => Math.abs(number - wanted) <= rule.tolerance);
+      const allowed = Math.max(rule.tolerance, Math.abs(wanted) * (rule.percent ?? 0) / 100);
+      return numbersOn(view.texts, rule.pattern).some(number => Math.abs(number - wanted) <= allowed);
     }
     case "input": {
       const rule = check as Extract<Check, { input: Source }>;
@@ -186,7 +192,7 @@ export function describe(check: Check): string {
     case "changed": return "the project's sources changed";
     case "text": return `the screen says /${(check as { text: string }).text}/`;
     case "shows": {
-      const c = check as Extract<Check, { shows: Source }>;
+      const c = check as Extract<Check, { shows: Source | number }>;
       return `the screen shows ${c.shows}${c.scale !== undefined ? ` x ${c.scale}` : ""}${c.offset !== undefined ? ` + ${c.offset}` : ""} within ${c.tolerance}`;
     }
     case "input": {
@@ -196,7 +202,7 @@ export function describe(check: Check): string {
     }
     case "output": {
       const c = check as Extract<Check, { output: Source }>;
-      const parts = [c.on === undefined ? "" : c.on ? "is on" : "is off", c.lit === undefined ? "" : c.lit ? "is lit" : "is dark", c.near ? `is near rgb(${c.near.join(", ")})` : "", rule(c)].filter(Boolean);
+      const parts = [c.on === undefined ? "" : c.on ? "is on" : "is off", c.lit === undefined ? "" : c.lit ? "is lit" : "is dark", c.dominant ? `is mostly ${c.dominant}` : "", c.near ? `is near rgb(${c.near.join(", ")})` : "", rule(c)].filter(Boolean);
       return `${c.output} ${parts.join(", ") || "is on"}`;
     }
     case "all": return "all of these";
@@ -241,8 +247,8 @@ export function validate(check: Check, keys: Record<string, readonly string[]>):
       case "plugged": if (!keys[(node as { plugged: string }).plugged]) problems.push(`plugged: no Unit "${(node as { plugged: string }).plugged}"`); break;
       case "text": expression((node as { text: string }).text, (node as { flags?: string }).flags ?? "i"); break;
       case "shows": {
-        const c = node as Extract<Check, { shows: Source }>;
-        source(c.shows);
+        const c = node as Extract<Check, { shows: Source | number }>;
+        if (typeof c.shows !== "number") source(c.shows);
         if (!(c.tolerance >= 0)) problems.push(`${c.shows}: shows needs a tolerance`);
         if (c.pattern !== undefined) { expression(c.pattern); if (!/\((?!\?)/.test(c.pattern)) problems.push(`/${c.pattern}/: the pattern needs a group around the number`); }
         break;

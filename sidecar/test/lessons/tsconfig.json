@@ -1,0 +1,10 @@
+{
+  // Typecheck of the lessons engine, the lessons' data and their tests:
+  //   vendor/pocket-m5/third_party/pocketjs/node_modules/.bin/tsc --noEmit -p sidecar/test/lessons/tsconfig.json
+  "compilerOptions": {
+    "target": "ESNext", "module": "ESNext", "moduleResolution": "bundler", "lib": ["ESNext"],
+    "typeRoots": ["../../../vendor/pocket-m5/third_party/pocketjs/node_modules/@types"], "types": ["bun"],
+    "strict": true, "noEmit": true, "allowImportingTsExtensions": true, "verbatimModuleSyntax": true, "skipLibCheck": true
+  },
+  "include": ["../../src/lessons", ".", "../../../kit/lessons/*/lesson.ts", "../../../kit/lessons/*/playthrough.ts"]
+}

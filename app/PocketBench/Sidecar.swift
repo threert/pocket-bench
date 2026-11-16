@@ -5,12 +5,15 @@ import Foundation
 
 final class Sidecar: NSObject, URLSessionWebSocketDelegate {
     var onMessage: (([String: Any]) -> Void)?
+    /// Called off the main thread, for every frame.
     var onFrame: ((Int, Int, Data) -> Void)?
     var onStatus: ((String) -> Void)?
     private var process: Process?
     private var stdinPipe: Pipe?
     private var socket: URLSessionWebSocketTask?
-    private lazy var session = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
+    /// Messages arrive on a queue of their own: a second of frames is 27 MB, and the main thread has panels to draw.
+    private let queue: OperationQueue = { let q = OperationQueue(); q.maxConcurrentOperationCount = 1; q.qualityOfService = .userInteractive; return q }()
+    private lazy var session = URLSession(configuration: .default, delegate: self, delegateQueue: queue)
     private var url: URL?
     private var closed = false
     private var buffer = Data()
@@ -103,6 +106,7 @@ final class Sidecar: NSObject, URLSessionWebSocketDelegate {
             guard let self, self.socket === task else { return }
             switch result {
             case .failure:
+                task.cancel(with: .goingAway, reason: nil)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                     guard let self, self.socket === task else { return }
                     self.onStatus?("reconnecting")
@@ -121,7 +125,7 @@ final class Sidecar: NSObject, URLSessionWebSocketDelegate {
                         let height = Int(data[data.startIndex + 6]) | Int(data[data.startIndex + 7]) << 8
                         if data.count == 16 + width * height * 4 {
                             let pixels = data.subdata(in: (data.startIndex + 16)..<data.endIndex)
-                            DispatchQueue.main.async { self.onFrame?(width, height, pixels) }
+                            self.onFrame?(width, height, pixels)
                         }
                     }
                 @unknown default: break
@@ -132,7 +136,7 @@ final class Sidecar: NSObject, URLSessionWebSocketDelegate {
     }
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        onStatus?("connected")
+        DispatchQueue.main.async { self.onStatus?("connected") }
         send(["t": "hello", "client": "app"])
     }
 

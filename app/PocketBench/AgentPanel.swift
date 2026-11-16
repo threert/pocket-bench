@@ -49,7 +49,7 @@ struct MirrorView: View {
         VStack(spacing: 6) {
             ZStack {
                 RoundedRectangle(cornerRadius: 8).fill(Color.black)
-                if let image = mirror.image, model.projectName != nil {
+                if let image = mirror.image {
                     GeometryReader { geo in
                         Image(decorative: image, scale: 1).resizable().interpolation(.high)
                             .gesture(DragGesture(minimumDistance: 0)

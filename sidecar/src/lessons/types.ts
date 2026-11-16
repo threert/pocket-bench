@@ -32,20 +32,24 @@ export type Check =
    *  them joined by spaces, top to bottom. `flags` default to "i". */
   | { text: string; flags?: string }
   /** A number on the screen is within `tolerance` of the live value times
-   *  `scale` plus `offset` (grams shown as kilograms: scale 0.001).
+   *  `scale` plus `offset` (grams shown as kilograms: scale 0.001), or within
+   *  `percent` of it. `shows` may also be a fixed number ("the scale reads 0").
    *  `pattern` narrows where the number is read: a regular expression whose
    *  first group is the number, tried on each text and on all joined. */
-  | { shows: Source; tolerance: number; scale?: number; offset?: number; pattern?: string }
+  | { shows: Source | number; tolerance: number; percent?: number; scale?: number; offset?: number; pattern?: string }
   /** What the user did to a sensor with a prop, compared with a number
    *  (`gt`, `lt`, ...), or for a card reader `present` and `uid`
    *  ("04 A3 1B 7C"). True when it held at any moment of the last
    *  `withinSeconds` (1.5), so a short press is not missed. */
   | ({ input: Source; present?: boolean; uid?: string; withinSeconds?: number } & Compare)
-  /** What the app did to a Unit: a relay (`on`), an LED (`lit`: any channel
-   *  above `min`, default 0; `near`: an [r, g, b] it must be within
+  /** What the app did to a Unit: a relay (`on`), an LED (`lit`: a channel
+   *  above `min`, default 0; `dominant`: that channel is the strongest by
+   *  half again, whatever the brightness; `near`: an [r, g, b] it is within
    *  `tolerance` of, default 60 a channel). A list without an index is
-   *  tested as a whole: `on` and `lit` hold when any entry does. */
-  | ({ output: Source; on?: boolean; lit?: boolean; min?: number; near?: [number, number, number]; tolerance?: number; withinSeconds?: number } & Compare)
+   *  tested as a whole: `on`, `lit`, `dominant` and `near` hold when any
+   *  entry does, `on: false` and `lit: false` when none does. True when it
+   *  held at any moment of the last `withinSeconds` (1.5): a flash counts. */
+  | ({ output: Source; on?: boolean; lit?: boolean; min?: number; dominant?: "r" | "g" | "b"; near?: [number, number, number]; tolerance?: number; withinSeconds?: number } & Compare)
   | { all: Check[] }
   | { any: Check[] }
   /** Each check must become true after the one before it did: "the lamp went on, then off". */

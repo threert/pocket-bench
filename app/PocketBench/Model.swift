@@ -23,16 +23,40 @@ struct LogEntry: Identifiable {
     let at: Double
 }
 
-/// The Tab5's screen as the sidecar streams it, for the mirror in the side panel.
+/// What the Units read right now: it changes ten times a second, so only the card that shows it listens.
 @MainActor
+final class LiveValues: ObservableObject {
+    @Published var units: [String: JSON] = [:]
+}
+
+/// The Tab5's screen as the sidecar streams it, for the mirror in the side panel. Frames arrive off the main
+/// thread; the newest one waits in a slot and the panel takes it at most 15 times a second.
 final class ScreenMirror: ObservableObject {
     @Published var image: CGImage?
-    private var last = Date.distantPast
+    private let lock = NSLock()
+    private var waiting: (Int, Int, Data)?
+    private var scheduled = false
 
-    func show(width: Int, height: Int, pixels: Data) {
-        // The panel's copy need not be faster than 20 a second.
-        guard Date().timeIntervalSince(last) > 0.05, let provider = CGDataProvider(data: pixels as CFData) else { return }
-        last = Date()
+    func offer(width: Int, height: Int, pixels: Data) {
+        lock.lock()
+        waiting = (width, height, pixels)
+        let schedule = !scheduled
+        scheduled = true
+        lock.unlock()
+        if schedule { DispatchQueue.main.asyncAfter(deadline: .now() + 0.066) { [weak self] in self?.take() } }
+    }
+
+    private func take() {
+        lock.lock()
+        let frame = waiting
+        waiting = nil
+        scheduled = false
+        lock.unlock()
+        if let frame { show(width: frame.0, height: frame.1, pixels: frame.2) }
+    }
+
+    private func show(width: Int, height: Int, pixels: Data) {
+        guard let provider = CGDataProvider(data: pixels as CFData) else { return }
         image = CGImage(width: width, height: height, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: width * 4, space: CGColorSpace(name: CGColorSpace.sRGB)!,
                         bitmapInfo: CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue), provider: provider, decode: nil, shouldInterpolate: true, intent: .defaultIntent)
     }
@@ -64,7 +88,6 @@ final class Model: ObservableObject {
     @Published var failure: String?
     @Published var buildMs = 0
     @Published var catalog: [String: UnitInfo] = [:]
-    @Published var sim: [String: JSON] = [:]
     @Published var logs: [LogEntry] = []
 
     // The room.
@@ -95,8 +118,10 @@ final class Model: ObservableObject {
     let room = RoomNSView(frame: .zero)
     let sidecar = Sidecar()
     let mirror = ScreenMirror()
+    let live = LiveValues()
     private var state: JSON = [:]
     private var probe: JSON = [:]
+    private var welcomed = false
     private var logSeq = 0
     private var toastSeq = 0
     private var snapshotWaiters: [String: () -> Void] = [:]
@@ -107,10 +132,11 @@ final class Model: ObservableObject {
         room.onPosts = { [weak self] posts in self?.fromRoom(posts) }
         sidecar.onStatus = { [weak self] status in self?.connection = status }
         sidecar.onMessage = { [weak self] message in self?.fromSidecar(message) }
-        sidecar.onFrame = { [weak self] width, height, pixels in
-            guard let self else { return }
-            pixels.withUnsafeBytes { self.room.stream("tab5", width: width, height: height, pixels: $0) }
-            self.mirror.show(width: width, height: height, pixels: pixels)
+        let room = room, mirror = mirror
+        sidecar.onFrame = { width, height, pixels in
+            // (Off the main thread: the renderer takes the frame under its own lock.)
+            pixels.withUnsafeBytes { room.stream("tab5", width: width, height: height, pixels: $0) }
+            mirror.offer(width: width, height: height, pixels: pixels)
         }
         sidecar.start()
     }
@@ -178,6 +204,7 @@ final class Model: ObservableObject {
             room.sendView()
             // The room missed what the sidecar said before it was up.
             if !state.isEmpty { room.send(state) }
+            welcome()
         case "bench.fatal":
             rendererError = post["message"] as? String ?? "the renderer did not start"
         case "bench.stats":
@@ -208,7 +235,7 @@ final class Model: ObservableObject {
             for item in message["units"] as? [JSON] ?? [] { let unit = UnitInfo(item); next[unit.id] = unit }
             catalog = next
         case "sim":
-            sim = message["units"] as? [String: JSON] ?? [:]
+            if selectedUnit != nil { live.units = message["units"] as? [String: JSON] ?? [:] }
         case "logs":
             for line in message["lines"] as? [JSON] ?? [] {
                 append(domain: line["domain"] as? String ?? "", level: line["level"] as? String ?? "log", text: line["text"] as? String ?? "", at: (line["at"] as? Double ?? 0) / 1e6)
@@ -297,6 +324,14 @@ final class Model: ObservableObject {
         }
         lessons = (message["lessons"] as? [JSON] ?? []).map(Lesson.init)
         lesson = (message["lesson"] as? JSON).map(Lesson.init)
+        welcome()
+    }
+
+    /// A first visit with nothing open: the task cards are the way in.
+    private func welcome() {
+        guard !welcomed, rendererReady, !state.isEmpty, projectName == nil, !lessons.isEmpty else { return }
+        welcomed = true
+        showLessons = true
     }
 
     func open(file: String?) {
