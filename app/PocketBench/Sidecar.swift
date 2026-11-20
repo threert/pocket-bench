@@ -20,6 +20,7 @@ final class Sidecar: NSObject, URLSessionWebSocketDelegate {
 
     func start() {
         let env = ProcessInfo.processInfo.environment
+        // (POCKET_BENCH_SIDECAR=ws://127.0.0.1:<port>/app?role=app&token=<token>: a sidecar started by hand.)
         if let existing = env["POCKET_BENCH_SIDECAR"], let url = URL(string: existing) {
             self.url = url
             connect()
@@ -85,8 +86,8 @@ final class Sidecar: NSObject, URLSessionWebSocketDelegate {
                 if let text = String(data: line, encoding: .utf8) { FileHandle.standardError.write(("sidecar: " + text + "\n").data(using: .utf8)!) }
                 continue
             }
-            if object["t"] as? String == "listening", let port = object["port"] as? Int, url == nil {
-                url = URL(string: "ws://127.0.0.1:\(port)/app?role=app")
+            if object["t"] as? String == "listening", let port = object["port"] as? Int, let token = object["token"] as? String, url == nil {
+                url = URL(string: "ws://127.0.0.1:\(port)/app?role=app&token=\(token)")
                 connect()
             }
         }

@@ -7,6 +7,8 @@
 #   tools/bench screen <file.png>     the Tab5's screen
 HOME_DIR=${POCKET_BENCH_HOME:-/tmp/pb-home}
 PORT=$(python3 -I -c "import json;print(json.load(open('$HOME_DIR/.bench/server.json'))['port'])")
+TOKEN=$(python3 -I -c "import json;print(json.load(open('$HOME_DIR/.bench/server.json'))['token'])")
+curl() { command curl -H "Authorization: Bearer $TOKEN" "$@"; }
 case $1 in
   get) curl -s -m 30 "localhost:$PORT/api/$2" ;;
   send) curl -s -m 30 -X POST "localhost:$PORT/api/send" -d "$2" ;;

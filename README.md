@@ -1,5 +1,10 @@
 # Pocket Bench
 
+> **Archived demo.** Pocket Bench was built in November 2026 to try what a native app on
+> [ThreeRT](https://github.com/meshy-dev/ThreeRT) with a coding agent inside can be. It is kept here as it was and is
+> not maintained. To build an app like it, start from
+> [threert/native-app-template](https://github.com/threert/native-app-template), which grew out of it.
+
 A hardware studio you can play in. An M5Stack Tab5 stands on the bench of a path-traced workshop; you plug Units
 into it by hand, a local coding agent writes the app in TypeScript, and the app runs on the Tab5 in the room.
 
@@ -29,9 +34,9 @@ Requirements: an Apple-silicon Mac (M3 or later for hardware ray tracing) with m
 and Claude Code and/or Codex installed and signed in for the agent.
 
 ```sh
-# once: the engine checkout (engine/ is a link to a ThreeRT checkout with the stream-texture change), then
-vendor/bin/bun tools/art.ts            # printed surfaces (labels, panels, cards): SVG -> PNG
-vendor/bin/bun tools/app.ts --run      # room bundle, Rust core, Xcode project, app; opens it
+git clone https://github.com/threert/pocket-bench && cd pocket-bench
+sh tools/setup.sh                      # once: the engine and pocket-m5 (submodules), Bun 1.4.2, their packages
+vendor/bin/bun tools/app.ts --run      # printed art, room bundle, Rust core (a few minutes the first time), app; opens it
 ```
 
 Projects live in `~/PocketBench` (`POCKET_BENCH_HOME` to put them elsewhere). `tools/dev.sh` runs the app against a
@@ -52,9 +57,13 @@ bench to orbit, scroll to zoom, 1-6 for the views, L for the lights.
 | `room/` | The room: a ThreeRT game in TypeScript (`bench.game.ts`), its parts (`decor/`), its printed art (`art/`) |
 | `sidecar/` | The simulated Tab5, the builds, the Units' models, the lessons, the agent bridge (TypeScript on Bun) |
 | `kit/` | What every project gets: drivers, UI helpers, templates, the agent's guide, the lessons and their solutions |
-| `engine/` | A ThreeRT checkout (not in this repository) |
-| `vendor/` | Bun 1.4.2 and pocket-m5 with its pinned PocketJS (not in this repository) |
+| `engine/` | ThreeRT (git submodule) |
+| `vendor/` | pocket-m5 with its pinned PocketJS (git submodule), and Bun 1.4.2 (`tools/setup.sh` fetches it) |
 | `docs/` | Architecture, Units, lessons, the agent bridge |
+
+## License
+
+MIT (see [LICENSE](LICENSE)). The Tab5 enclosure model keeps its own MIT license (`room/assets/src/tab5/LICENSE`).
 
 ## Credits
 

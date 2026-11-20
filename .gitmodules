@@ -1,0 +1,6 @@
+[submodule "engine"]
+	path = engine
+	url = https://github.com/meshy-dev/ThreeRT.git
+[submodule "vendor/pocket-m5"]
+	path = vendor/pocket-m5
+	url = https://github.com/pocket-nexus/pocket-m5.git

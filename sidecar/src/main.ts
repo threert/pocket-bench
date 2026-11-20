@@ -14,7 +14,7 @@ installLessons(server);
 const port = server.start(option("--port") ? Number(option("--port")) : undefined);
 installCli();
 // The app reads this line to find the port.
-console.log(JSON.stringify({ t: "listening", port }));
+console.log(JSON.stringify({ t: "listening", port, token: server.token }));
 const wanted = option("--project");
 if (wanted) {
   const project = listProjects().find(item => item.name === wanted);

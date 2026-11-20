@@ -45,13 +45,15 @@ const number = (value: unknown) => typeof value === "number" ? String(Math.round
 const pairs = (record: Record<string, unknown>) => Object.entries(record).map(([key, value]) => `${key}=${number(value)}`).join(" ");
 
 let base = "";
+let token = "";
 function connect(): void {
   const file = join(WORKSPACE, ".bench", "server.json");
-  try { base = `http://127.0.0.1:${JSON.parse(readFileSync(file, "utf8")).port}`; } catch { throw new Stop(`The bench is not running (no ${file}). Open Pocket Bench.`, 2); }
+  try { const server = JSON.parse(readFileSync(file, "utf8")); base = `http://127.0.0.1:${server.port}`; token = server.token; } catch { throw new Stop(`The bench is not running (no ${file}). Open Pocket Bench.`, 2); }
 }
 async function call(path: string, body?: unknown): Promise<Response> {
   try {
-    return await fetch(`${base}/api/${path}`, body === undefined ? {} : { method: "POST", body: JSON.stringify(body) });
+    const headers = { authorization: `Bearer ${token}` };
+    return await fetch(`${base}/api/${path}`, body === undefined ? { headers } : { method: "POST", headers, body: JSON.stringify(body) });
   } catch {
     throw new Stop(`The bench does not answer at ${base}. Open Pocket Bench. (A sandbox that blocks the loopback also ends here: run bench outside it.)`, 2);
   }

@@ -3,7 +3,7 @@
 // every agent message and every change of the agent's state to a JSONL file
 // and prints a summary. A permission item ends the run (the point of the
 // bench's rules is that the common path has none) unless --answer is given.
-//   vendor/bin/bun sidecar/test/agent/live.ts --port 8741 --agent claude --prompt "..." [--out file.jsonl] [--answer <option kind>] [--timeout 300]
+//   vendor/bin/bun sidecar/test/agent/live.ts --port 8741 --token <the sidecar's> --agent claude --prompt "..." [--out file.jsonl] [--answer <option kind>] [--timeout 300]
 import { appendFileSync, writeFileSync } from "node:fs";
 
 const args = process.argv.slice(2);
@@ -29,7 +29,7 @@ function finish(code: number, why: string): never {
   process.exit(code);
 }
 
-const socket = new WebSocket(`ws://127.0.0.1:${port}/app?role=test`);
+const socket = new WebSocket(`ws://127.0.0.1:${port}/app?role=test&token=${option("--token", "")}`);
 socket.onerror = () => finish(2, `no sidecar on port ${port}`);
 setTimeout(() => finish(1, `no end of the turn after ${timeout} s`), timeout * 1000);
 socket.onmessage = event => {

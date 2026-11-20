@@ -6,7 +6,8 @@
 // A frame is 16 bytes of header ("PBF1", width u16, height u16, frame u32, reserved u32, little endian) and
 // then width x height RGBA8 pixels.
 import type { ServerWebSocket } from "bun";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { randomBytes } from "node:crypto";
+import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { Bench } from "./bench.ts";
 import { idleFrame } from "./idle.ts";
@@ -173,6 +174,11 @@ export class Server {
     return json({ error: `no ${path}` }, 404);
   }
 
+  /** What every request must carry (the socket's `?token=`, the API's `Authorization: Bearer`): the app gets it on the
+   *  sidecar's first line of output, `bench` from <workspace>/.bench/server.json. A request with an Origin (a web page
+   *  in the user's browser) is refused, token or not: the agent runs commands as the user. */
+  readonly token = randomBytes(24).toString("hex");
+
   start(port = Number(process.env.POCKET_BENCH_PORT ?? 0)): number {
     ensureWorkspace();
     const self = this;
@@ -181,6 +187,9 @@ export class Server {
       port,
       async fetch(request, server) {
         const url = new URL(request.url);
+        if (request.headers.has("origin")) return new Response("forbidden", { status: 403 });
+        const token = url.searchParams.get("token") ?? request.headers.get("authorization")?.replace(/^Bearer /, "");
+        if (token !== self.token) return new Response("forbidden", { status: 403 });
         if (url.pathname === "/app") {
           return server.upgrade(request, { data: { role: url.searchParams.get("role") ?? "app" } }) ? undefined as unknown as Response : new Response("expected a WebSocket", { status: 400 });
         }
@@ -207,7 +216,9 @@ export class Server {
     });
     const actual = this.server.port!;
     mkdirSync(join(WORKSPACE, ".bench"), { recursive: true });
-    writeFileSync(join(WORKSPACE, ".bench", "server.json"), JSON.stringify({ port: actual, pid: process.pid, started: new Date().toISOString() }) + "\n");
+    const file = join(WORKSPACE, ".bench", "server.json");
+    rmSync(file, { force: true });  // (made anew: `mode` applies to a new file only)
+    writeFileSync(file, JSON.stringify({ port: actual, token: this.token, pid: process.pid, started: new Date().toISOString() }) + "\n", { mode: 0o600 });
     return actual;
   }
 }
